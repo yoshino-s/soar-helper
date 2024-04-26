@@ -1,0 +1,26 @@
+# https://taskfile.dev
+version: '3'
+
+vars:
+  VERSION: dev
+
+tasks:
+  tools:
+    cmds:
+      - echo "Installing tools..."
+      - |
+        go install \
+        github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway \
+        github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2 \
+        google.golang.org/protobuf/cmd/protoc-gen-go \
+        google.golang.org/grpc/cmd/protoc-gen-go-grpc
+      - go install github.com/bufbuild/buf/cmd/buf@v1.31.0
+      - go install go install github.com/goreleaser/goreleaser@latest
+      - go install github.com/google/ko@latest
+    silent: true
+  proto:
+    cmds:
+      - buf generate proto
+  build:
+    cmds:
+      - echo "Building {{.VERSION}}..."

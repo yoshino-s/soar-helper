@@ -20,6 +20,8 @@ func init() {
 	})
 	configuration.LogConfiguration.Register(rootCmd.PersistentFlags())
 	configuration.GenerateConfiguration.Register(rootCmd.PersistentFlags())
+	configuration.TelemetryConfiguration.Register(rootCmd.PersistentFlags())
+
 	rootCmd.AddCommand(common.VersionCmd)
 }
 

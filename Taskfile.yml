@@ -1,8 +1,8 @@
 # https://taskfile.dev
 version: '3'
 
-vars:
-  VERSION: dev
+env:
+  KO_DOCKER_REPO: ghcr.io/yoshino-s/go-template
 
 tasks:
   tools:
@@ -23,4 +23,4 @@ tasks:
       - buf generate proto
   build:
     cmds:
-      - echo "Building {{.VERSION}}..."
+      - goreleaser build --snapshot --clean --single-target

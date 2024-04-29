@@ -1,4 +1,4 @@
-package grpc_handler
+package grpc
 
 import (
 	"context"
@@ -10,8 +10,8 @@ type GoTemplateServiceService struct {
 	v1.GoTemplateServiceServer
 }
 
-func NewGoTemplateServiceService() (*GoTemplateServiceService, error) {
-	return &GoTemplateServiceService{}, nil
+func New() *GoTemplateServiceService {
+	return &GoTemplateServiceService{}
 }
 
 func (GoTemplateServiceService) Echo(_ context.Context, msg *v1.StringMessage) (*v1.StringMessage, error) {

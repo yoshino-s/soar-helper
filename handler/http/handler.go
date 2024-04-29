@@ -1,4 +1,4 @@
-package http_handler
+package http
 
 import (
 	"context"
@@ -18,21 +18,19 @@ type Handler struct {
 	grpc v1.GoTemplateServiceServer
 }
 
-func NewHandler(config http.Config, grpc v1.GoTemplateServiceServer) (*Handler, error) {
-	hh, err := http.New(config)
-	if err != nil {
-		return nil, err
+func New() *Handler {
+	return &Handler{
+		Handler: http.New(),
 	}
+}
 
-	h := &Handler{
-		hh,
-		grpc,
-	}
-
-	return h, nil
+func (h *Handler) SetGrpcServer(grpc v1.GoTemplateServiceServer) {
+	h.grpc = grpc
 }
 
 func (h *Handler) Setup(ctx context.Context) {
+	h.Handler.Setup(ctx)
+
 	gh, err := grpc_gateway.New()
 	if err != nil {
 		panic(err)
@@ -43,6 +41,4 @@ func (h *Handler) Setup(ctx context.Context) {
 	h.Group("/api").Any("/*", echo.WrapHandler(gh))
 
 	h.Swagger("/swagger", openapiv2.V1ServiceSwaggerJSON)
-
-	h.Handler.Setup(ctx)
 }

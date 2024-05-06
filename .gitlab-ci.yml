@@ -1,29 +1,29 @@
 stages:
   - release
 
-release:
+.release:
   stage: release
   image:
     name: goreleaser/goreleaser
     entrypoint: [""]
+  variables:
+    # Disable shallow cloning so that goreleaser can diff between tags to
+    # generate a changelog.
+    GIT_DEPTH: 0
+    GITLAB_TOKEN: $CI_JOB_TOKEN
+    KO_DOCKER_REPO: $CI_REGISTRY_IMAGE
+  before_script:
+    - ko login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - goreleaser release --clean
+
+release:
+  extends: .release
   only:
     - tags
-  variables:
-    # Disable shallow cloning so that goreleaser can diff between tags to
-    # generate a changelog.
-    GIT_DEPTH: 0
-  script:
-    - GITLAB_TOKEN=$CI_JOB_TOKEN goreleaser release --clean
 
 snapshot-release:
-  stage: release
-  image:
-    name: goreleaser/goreleaser
-    entrypoint: [""]
+  extends: .release
   when: manual
-  variables:
-    # Disable shallow cloning so that goreleaser can diff between tags to
-    # generate a changelog.
-    GIT_DEPTH: 0
   script:
-    - GITLAB_TOKEN=$CI_JOB_TOKEN goreleaser release --snapshot --clean
+    - goreleaser release --snapshot --clean

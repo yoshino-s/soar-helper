@@ -13,6 +13,9 @@ stages:
     GITLAB_TOKEN: $CI_JOB_TOKEN
     KO_DOCKER_REPO: $CI_REGISTRY_IMAGE
   before_script:
+    - echo https://dl-cdn.alpinelinux.org/alpine/edge/testing/ >> /etc/apk/repositories
+    - apk update
+    - apk add ko
     - ko login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
     - goreleaser release --clean

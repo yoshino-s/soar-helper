@@ -26,9 +26,9 @@ var (
 				}
 
 				if ok, _ := cmd.Flags().GetBool("dry-run"); ok {
-					common.MustNoError(entApp.Schema.WriteTo(ctx, cmd.OutOrStdout(), opts...))
+					common.MustNoError(dbApp.Schema.WriteTo(ctx, cmd.OutOrStdout(), opts...))
 				} else {
-					common.MustNoError(entApp.Schema.Create(ctx, opts...))
+					common.MustNoError(dbApp.Schema.Create(ctx, opts...))
 				}
 			}))
 

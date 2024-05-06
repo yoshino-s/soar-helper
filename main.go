@@ -1,6 +1,6 @@
 package main
 
-import "github.com/yoshino-s/go-template/cmd"
+import "gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/cmd"
 
 func main() {
 	cmd.Execute()

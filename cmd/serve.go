@@ -4,8 +4,9 @@ import (
 	"context"
 
 	"github.com/spf13/cobra"
-	"github.com/yoshino-s/go-template/handler/grpc"
-	"github.com/yoshino-s/go-template/handler/http"
+	"gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/chinaz"
+	"gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/handler/grpc"
+	"gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/handler/http"
 )
 
 func init() {
@@ -14,14 +15,20 @@ func init() {
 }
 
 var (
-	httpApp  = http.New()
-	grpcApp  = grpc.New()
-	serveCmd = &cobra.Command{
+	httpApp   = http.New()
+	grpcApp   = grpc.New()
+	chinazApp = chinaz.New()
+	serveCmd  = &cobra.Command{
 		Use:   "serve",
 		Short: `Serve runs the HTTP and gRPC server.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			httpApp.SetGrpcServer(grpcApp)
+			grpcApp.SetChinaz(chinazApp)
+			grpcApp.SetDB(dbApp)
+
+			chinazApp.SetDB(dbApp)
 			app.Append(httpApp)
+			app.Append(chinazApp)
 			app.Go(context.Background())
 		},
 	}

@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,89 +20,163 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	GoTemplateService_Echo_FullMethodName = "/your.service.v1.GoTemplateService/Echo"
+	IcpQueryService_Query_FullMethodName      = "/yoshino_s.icp_lookup.gen.go.v1.IcpQueryService/Query"
+	IcpQueryService_BatchQuery_FullMethodName = "/yoshino_s.icp_lookup.gen.go.v1.IcpQueryService/BatchQuery"
+	IcpQueryService_Statistic_FullMethodName  = "/yoshino_s.icp_lookup.gen.go.v1.IcpQueryService/Statistic"
 )
 
-// GoTemplateServiceClient is the client API for GoTemplateService service.
+// IcpQueryServiceClient is the client API for IcpQueryService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type GoTemplateServiceClient interface {
-	Echo(ctx context.Context, in *StringMessage, opts ...grpc.CallOption) (*StringMessage, error)
+type IcpQueryServiceClient interface {
+	Query(ctx context.Context, in *QueryRequest, opts ...grpc.CallOption) (*QueryResponse, error)
+	BatchQuery(ctx context.Context, in *BatchQueryRequest, opts ...grpc.CallOption) (*BatchQueryResponse, error)
+	Statistic(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*StatisticResponse, error)
 }
 
-type goTemplateServiceClient struct {
+type icpQueryServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewGoTemplateServiceClient(cc grpc.ClientConnInterface) GoTemplateServiceClient {
-	return &goTemplateServiceClient{cc}
+func NewIcpQueryServiceClient(cc grpc.ClientConnInterface) IcpQueryServiceClient {
+	return &icpQueryServiceClient{cc}
 }
 
-func (c *goTemplateServiceClient) Echo(ctx context.Context, in *StringMessage, opts ...grpc.CallOption) (*StringMessage, error) {
-	out := new(StringMessage)
-	err := c.cc.Invoke(ctx, GoTemplateService_Echo_FullMethodName, in, out, opts...)
+func (c *icpQueryServiceClient) Query(ctx context.Context, in *QueryRequest, opts ...grpc.CallOption) (*QueryResponse, error) {
+	out := new(QueryResponse)
+	err := c.cc.Invoke(ctx, IcpQueryService_Query_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// GoTemplateServiceServer is the server API for GoTemplateService service.
-// All implementations must embed UnimplementedGoTemplateServiceServer
+func (c *icpQueryServiceClient) BatchQuery(ctx context.Context, in *BatchQueryRequest, opts ...grpc.CallOption) (*BatchQueryResponse, error) {
+	out := new(BatchQueryResponse)
+	err := c.cc.Invoke(ctx, IcpQueryService_BatchQuery_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *icpQueryServiceClient) Statistic(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*StatisticResponse, error) {
+	out := new(StatisticResponse)
+	err := c.cc.Invoke(ctx, IcpQueryService_Statistic_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// IcpQueryServiceServer is the server API for IcpQueryService service.
+// All implementations must embed UnimplementedIcpQueryServiceServer
 // for forward compatibility
-type GoTemplateServiceServer interface {
-	Echo(context.Context, *StringMessage) (*StringMessage, error)
-	mustEmbedUnimplementedGoTemplateServiceServer()
+type IcpQueryServiceServer interface {
+	Query(context.Context, *QueryRequest) (*QueryResponse, error)
+	BatchQuery(context.Context, *BatchQueryRequest) (*BatchQueryResponse, error)
+	Statistic(context.Context, *emptypb.Empty) (*StatisticResponse, error)
+	mustEmbedUnimplementedIcpQueryServiceServer()
 }
 
-// UnimplementedGoTemplateServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedGoTemplateServiceServer struct {
+// UnimplementedIcpQueryServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedIcpQueryServiceServer struct {
 }
 
-func (UnimplementedGoTemplateServiceServer) Echo(context.Context, *StringMessage) (*StringMessage, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Echo not implemented")
+func (UnimplementedIcpQueryServiceServer) Query(context.Context, *QueryRequest) (*QueryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Query not implemented")
 }
-func (UnimplementedGoTemplateServiceServer) mustEmbedUnimplementedGoTemplateServiceServer() {}
+func (UnimplementedIcpQueryServiceServer) BatchQuery(context.Context, *BatchQueryRequest) (*BatchQueryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchQuery not implemented")
+}
+func (UnimplementedIcpQueryServiceServer) Statistic(context.Context, *emptypb.Empty) (*StatisticResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Statistic not implemented")
+}
+func (UnimplementedIcpQueryServiceServer) mustEmbedUnimplementedIcpQueryServiceServer() {}
 
-// UnsafeGoTemplateServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to GoTemplateServiceServer will
+// UnsafeIcpQueryServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to IcpQueryServiceServer will
 // result in compilation errors.
-type UnsafeGoTemplateServiceServer interface {
-	mustEmbedUnimplementedGoTemplateServiceServer()
+type UnsafeIcpQueryServiceServer interface {
+	mustEmbedUnimplementedIcpQueryServiceServer()
 }
 
-func RegisterGoTemplateServiceServer(s grpc.ServiceRegistrar, srv GoTemplateServiceServer) {
-	s.RegisterService(&GoTemplateService_ServiceDesc, srv)
+func RegisterIcpQueryServiceServer(s grpc.ServiceRegistrar, srv IcpQueryServiceServer) {
+	s.RegisterService(&IcpQueryService_ServiceDesc, srv)
 }
 
-func _GoTemplateService_Echo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(StringMessage)
+func _IcpQueryService_Query_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GoTemplateServiceServer).Echo(ctx, in)
+		return srv.(IcpQueryServiceServer).Query(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: GoTemplateService_Echo_FullMethodName,
+		FullMethod: IcpQueryService_Query_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GoTemplateServiceServer).Echo(ctx, req.(*StringMessage))
+		return srv.(IcpQueryServiceServer).Query(ctx, req.(*QueryRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// GoTemplateService_ServiceDesc is the grpc.ServiceDesc for GoTemplateService service.
+func _IcpQueryService_BatchQuery_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchQueryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IcpQueryServiceServer).BatchQuery(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IcpQueryService_BatchQuery_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IcpQueryServiceServer).BatchQuery(ctx, req.(*BatchQueryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IcpQueryService_Statistic_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IcpQueryServiceServer).Statistic(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IcpQueryService_Statistic_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IcpQueryServiceServer).Statistic(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// IcpQueryService_ServiceDesc is the grpc.ServiceDesc for IcpQueryService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var GoTemplateService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "your.service.v1.GoTemplateService",
-	HandlerType: (*GoTemplateServiceServer)(nil),
+var IcpQueryService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "yoshino_s.icp_lookup.gen.go.v1.IcpQueryService",
+	HandlerType: (*IcpQueryServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Echo",
-			Handler:    _GoTemplateService_Echo_Handler,
+			MethodName: "Query",
+			Handler:    _IcpQueryService_Query_Handler,
+		},
+		{
+			MethodName: "BatchQuery",
+			Handler:    _IcpQueryService_BatchQuery_Handler,
+		},
+		{
+			MethodName: "Statistic",
+			Handler:    _IcpQueryService_Statistic_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

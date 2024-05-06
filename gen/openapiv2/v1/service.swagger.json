@@ -6,7 +6,7 @@
   },
   "tags": [
     {
-      "name": "GoTemplateService"
+      "name": "IcpQueryService"
     }
   ],
   "consumes": [
@@ -16,14 +16,14 @@
     "application/json"
   ],
   "paths": {
-    "/api/v1/example/echo": {
+    "/api/v1/batch_query": {
       "post": {
-        "operationId": "GoTemplateService_Echo",
+        "operationId": "IcpQueryService_BatchQuery",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1StringMessage"
+              "$ref": "#/definitions/v1BatchQueryResponse"
             }
           },
           "default": {
@@ -39,12 +39,66 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1StringMessage"
+              "$ref": "#/definitions/v1BatchQueryRequest"
             }
           }
         ],
         "tags": [
-          "GoTemplateService"
+          "IcpQueryService"
+        ]
+      }
+    },
+    "/api/v1/query": {
+      "post": {
+        "operationId": "IcpQueryService_Query",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1QueryResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1QueryRequest"
+            }
+          }
+        ],
+        "tags": [
+          "IcpQueryService"
+        ]
+      }
+    },
+    "/api/v1/statistic": {
+      "get": {
+        "operationId": "IcpQueryService_Statistic",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1StatisticResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "IcpQueryService"
         ]
       }
     }
@@ -78,11 +132,109 @@
         }
       }
     },
-    "v1StringMessage": {
+    "v1BatchQueryRequest": {
       "type": "object",
       "properties": {
-        "value": {
+        "hosts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "v1BatchQueryResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "message": {
           "type": "string"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1IcpRecord"
+          }
+        }
+      }
+    },
+    "v1IcpRecord": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "host": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "province": {
+          "type": "string"
+        },
+        "company": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "homepage": {
+          "type": "string"
+        },
+        "permit": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "cached": {
+          "type": "boolean"
+        }
+      }
+    },
+    "v1QueryRequest": {
+      "type": "object",
+      "properties": {
+        "host": {
+          "type": "string"
+        }
+      }
+    },
+    "v1QueryResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "message": {
+          "type": "string"
+        },
+        "data": {
+          "$ref": "#/definitions/v1IcpRecord"
+        }
+      }
+    },
+    "v1StatisticResponse": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "string",
+          "format": "int64"
         }
       }
     }

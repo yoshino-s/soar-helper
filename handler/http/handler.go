@@ -7,15 +7,15 @@ import (
 	"github.com/yoshino-s/go-framework/application"
 	"github.com/yoshino-s/go-framework/handlers/grpc_gateway"
 	"github.com/yoshino-s/go-framework/handlers/http"
-	v1 "github.com/yoshino-s/go-template/gen/go/v1"
-	"github.com/yoshino-s/go-template/gen/openapiv2"
+	v1 "gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/gen/go/v1"
+	"gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/gen/openapiv2"
 )
 
 var _ application.Application = (*Handler)(nil)
 
 type Handler struct {
 	*http.Handler
-	grpc v1.GoTemplateServiceServer
+	grpc v1.IcpQueryServiceServer
 }
 
 func New() *Handler {
@@ -24,7 +24,7 @@ func New() *Handler {
 	}
 }
 
-func (h *Handler) SetGrpcServer(grpc v1.GoTemplateServiceServer) {
+func (h *Handler) SetGrpcServer(grpc v1.IcpQueryServiceServer) {
 	h.grpc = grpc
 }
 
@@ -36,7 +36,7 @@ func (h *Handler) Setup(ctx context.Context) {
 		panic(err)
 	}
 
-	v1.RegisterGoTemplateServiceHandlerServer(ctx, gh.ServeMux, h.grpc)
+	v1.RegisterIcpQueryServiceHandlerServer(ctx, gh.ServeMux, h.grpc)
 
 	h.Group("/api").Any("/*", echo.WrapHandler(gh))
 

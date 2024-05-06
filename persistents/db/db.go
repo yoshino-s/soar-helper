@@ -12,7 +12,7 @@ import (
 	"github.com/yoshino-s/go-framework/application"
 	"github.com/yoshino-s/go-framework/common"
 	"github.com/yoshino-s/go-framework/configuration"
-	"github.com/yoshino-s/go-template/ent"
+	"gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/ent"
 )
 
 var _ application.Application = (*Client)(nil)

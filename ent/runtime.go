@@ -2,8 +2,35 @@
 
 package ent
 
+import (
+	"time"
+
+	"gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/ent/icp"
+	"gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/ent/schema"
+)
+
 // The init function reads all schema descriptors with runtime code
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	icpFields := schema.Icp{}.Fields()
+	_ = icpFields
+	// icpDescCity is the schema descriptor for city field.
+	icpDescCity := icpFields[1].Descriptor()
+	// icp.DefaultCity holds the default value on creation for the city field.
+	icp.DefaultCity = icpDescCity.Default.(string)
+	// icpDescProvince is the schema descriptor for province field.
+	icpDescProvince := icpFields[2].Descriptor()
+	// icp.DefaultProvince holds the default value on creation for the province field.
+	icp.DefaultProvince = icpDescProvince.Default.(string)
+	// icpDescCreatedAt is the schema descriptor for created_at field.
+	icpDescCreatedAt := icpFields[8].Descriptor()
+	// icp.DefaultCreatedAt holds the default value on creation for the created_at field.
+	icp.DefaultCreatedAt = icpDescCreatedAt.Default.(time.Time)
+	// icpDescUpdatedAt is the schema descriptor for updated_at field.
+	icpDescUpdatedAt := icpFields[9].Descriptor()
+	// icp.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	icp.DefaultUpdatedAt = icpDescUpdatedAt.Default.(time.Time)
+	// icp.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	icp.UpdateDefaultUpdatedAt = icpDescUpdatedAt.UpdateDefault.(func() time.Time)
 }

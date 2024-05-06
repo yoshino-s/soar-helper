@@ -62,6 +62,17 @@ checksum:
 snapshot:
   name_template: "{{ .Tag }}-next"
 
+gitlab_urls:
+  api: https://gitlab.yoshino-s.xyz/api/v4/
+  download: https://gitlab.yoshino-s.xyz
+  # set to true if you want to upload to the Package Registry rather than attachments
+  # Only works with GitLab 13.5+
+  use_package_registry: true
+
+  # Set this if you set GITLAB_TOKEN to the value of CI_JOB_TOKEN.
+  use_job_token: true
+
+
 changelog:
   sort: asc
   use: github

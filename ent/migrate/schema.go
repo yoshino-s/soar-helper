@@ -8,19 +8,29 @@ import (
 )
 
 var (
-	// UsersColumns holds the columns for the "users" table.
-	UsersColumns = []*schema.Column{
+	// IcpsColumns holds the columns for the "icps" table.
+	IcpsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "host", Type: field.TypeString, Unique: true},
+		{Name: "city", Type: field.TypeString, Default: ""},
+		{Name: "province", Type: field.TypeString, Default: ""},
+		{Name: "company", Type: field.TypeString},
+		{Name: "owner", Type: field.TypeString},
+		{Name: "type", Type: field.TypeString},
+		{Name: "homepage", Type: field.TypeString},
+		{Name: "permit", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
 	}
-	// UsersTable holds the schema information for the "users" table.
-	UsersTable = &schema.Table{
-		Name:       "users",
-		Columns:    UsersColumns,
-		PrimaryKey: []*schema.Column{UsersColumns[0]},
+	// IcpsTable holds the schema information for the "icps" table.
+	IcpsTable = &schema.Table{
+		Name:       "icps",
+		Columns:    IcpsColumns,
+		PrimaryKey: []*schema.Column{IcpsColumns[0]},
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
-		UsersTable,
+		IcpsTable,
 	}
 )
 

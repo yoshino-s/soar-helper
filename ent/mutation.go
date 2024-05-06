@@ -7,10 +7,12 @@ import (
 	"errors"
 	"fmt"
 	"sync"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/yoshino-s/go-template/ent/predicate"
+	"gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/ent/icp"
+	"gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/ent/predicate"
 )
 
 const (
@@ -22,32 +24,42 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypeUser = "User"
+	TypeIcp = "Icp"
 )
 
-// UserMutation represents an operation that mutates the User nodes in the graph.
-type UserMutation struct {
+// IcpMutation represents an operation that mutates the Icp nodes in the graph.
+type IcpMutation struct {
 	config
 	op            Op
 	typ           string
 	id            *int
+	host          *string
+	city          *string
+	province      *string
+	company       *string
+	owner         *string
+	_type         *string
+	homepage      *string
+	permit        *string
+	created_at    *time.Time
+	updated_at    *time.Time
 	clearedFields map[string]struct{}
 	done          bool
-	oldValue      func(context.Context) (*User, error)
-	predicates    []predicate.User
+	oldValue      func(context.Context) (*Icp, error)
+	predicates    []predicate.Icp
 }
 
-var _ ent.Mutation = (*UserMutation)(nil)
+var _ ent.Mutation = (*IcpMutation)(nil)
 
-// userOption allows management of the mutation configuration using functional options.
-type userOption func(*UserMutation)
+// icpOption allows management of the mutation configuration using functional options.
+type icpOption func(*IcpMutation)
 
-// newUserMutation creates new mutation for the User entity.
-func newUserMutation(c config, op Op, opts ...userOption) *UserMutation {
-	m := &UserMutation{
+// newIcpMutation creates new mutation for the Icp entity.
+func newIcpMutation(c config, op Op, opts ...icpOption) *IcpMutation {
+	m := &IcpMutation{
 		config:        c,
 		op:            op,
-		typ:           TypeUser,
+		typ:           TypeIcp,
 		clearedFields: make(map[string]struct{}),
 	}
 	for _, opt := range opts {
@@ -56,20 +68,20 @@ func newUserMutation(c config, op Op, opts ...userOption) *UserMutation {
 	return m
 }
 
-// withUserID sets the ID field of the mutation.
-func withUserID(id int) userOption {
-	return func(m *UserMutation) {
+// withIcpID sets the ID field of the mutation.
+func withIcpID(id int) icpOption {
+	return func(m *IcpMutation) {
 		var (
 			err   error
 			once  sync.Once
-			value *User
+			value *Icp
 		)
-		m.oldValue = func(ctx context.Context) (*User, error) {
+		m.oldValue = func(ctx context.Context) (*Icp, error) {
 			once.Do(func() {
 				if m.done {
 					err = errors.New("querying old values post mutation is not allowed")
 				} else {
-					value, err = m.Client().User.Get(ctx, id)
+					value, err = m.Client().Icp.Get(ctx, id)
 				}
 			})
 			return value, err
@@ -78,10 +90,10 @@ func withUserID(id int) userOption {
 	}
 }
 
-// withUser sets the old User of the mutation.
-func withUser(node *User) userOption {
-	return func(m *UserMutation) {
-		m.oldValue = func(context.Context) (*User, error) {
+// withIcp sets the old Icp of the mutation.
+func withIcp(node *Icp) icpOption {
+	return func(m *IcpMutation) {
+		m.oldValue = func(context.Context) (*Icp, error) {
 			return node, nil
 		}
 		m.id = &node.ID
@@ -90,7 +102,7 @@ func withUser(node *User) userOption {
 
 // Client returns a new `ent.Client` from the mutation. If the mutation was
 // executed in a transaction (ent.Tx), a transactional client is returned.
-func (m UserMutation) Client() *Client {
+func (m IcpMutation) Client() *Client {
 	client := &Client{config: m.config}
 	client.init()
 	return client
@@ -98,7 +110,7 @@ func (m UserMutation) Client() *Client {
 
 // Tx returns an `ent.Tx` for mutations that were executed in transactions;
 // it returns an error otherwise.
-func (m UserMutation) Tx() (*Tx, error) {
+func (m IcpMutation) Tx() (*Tx, error) {
 	if _, ok := m.driver.(*txDriver); !ok {
 		return nil, errors.New("ent: mutation is not running in a transaction")
 	}
@@ -109,7 +121,7 @@ func (m UserMutation) Tx() (*Tx, error) {
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *UserMutation) ID() (id int, exists bool) {
+func (m *IcpMutation) ID() (id int, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -120,7 +132,7 @@ func (m *UserMutation) ID() (id int, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *UserMutation) IDs(ctx context.Context) ([]int, error) {
+func (m *IcpMutation) IDs(ctx context.Context) ([]int, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
@@ -129,21 +141,381 @@ func (m *UserMutation) IDs(ctx context.Context) ([]int, error) {
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
-		return m.Client().User.Query().Where(m.predicates...).IDs(ctx)
+		return m.Client().Icp.Query().Where(m.predicates...).IDs(ctx)
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
 }
 
-// Where appends a list predicates to the UserMutation builder.
-func (m *UserMutation) Where(ps ...predicate.User) {
+// SetHost sets the "host" field.
+func (m *IcpMutation) SetHost(s string) {
+	m.host = &s
+}
+
+// Host returns the value of the "host" field in the mutation.
+func (m *IcpMutation) Host() (r string, exists bool) {
+	v := m.host
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHost returns the old "host" field's value of the Icp entity.
+// If the Icp object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *IcpMutation) OldHost(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldHost is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldHost requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHost: %w", err)
+	}
+	return oldValue.Host, nil
+}
+
+// ResetHost resets all changes to the "host" field.
+func (m *IcpMutation) ResetHost() {
+	m.host = nil
+}
+
+// SetCity sets the "city" field.
+func (m *IcpMutation) SetCity(s string) {
+	m.city = &s
+}
+
+// City returns the value of the "city" field in the mutation.
+func (m *IcpMutation) City() (r string, exists bool) {
+	v := m.city
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCity returns the old "city" field's value of the Icp entity.
+// If the Icp object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *IcpMutation) OldCity(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCity is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCity requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCity: %w", err)
+	}
+	return oldValue.City, nil
+}
+
+// ResetCity resets all changes to the "city" field.
+func (m *IcpMutation) ResetCity() {
+	m.city = nil
+}
+
+// SetProvince sets the "province" field.
+func (m *IcpMutation) SetProvince(s string) {
+	m.province = &s
+}
+
+// Province returns the value of the "province" field in the mutation.
+func (m *IcpMutation) Province() (r string, exists bool) {
+	v := m.province
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldProvince returns the old "province" field's value of the Icp entity.
+// If the Icp object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *IcpMutation) OldProvince(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldProvince is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldProvince requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldProvince: %w", err)
+	}
+	return oldValue.Province, nil
+}
+
+// ResetProvince resets all changes to the "province" field.
+func (m *IcpMutation) ResetProvince() {
+	m.province = nil
+}
+
+// SetCompany sets the "company" field.
+func (m *IcpMutation) SetCompany(s string) {
+	m.company = &s
+}
+
+// Company returns the value of the "company" field in the mutation.
+func (m *IcpMutation) Company() (r string, exists bool) {
+	v := m.company
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCompany returns the old "company" field's value of the Icp entity.
+// If the Icp object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *IcpMutation) OldCompany(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCompany is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCompany requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCompany: %w", err)
+	}
+	return oldValue.Company, nil
+}
+
+// ResetCompany resets all changes to the "company" field.
+func (m *IcpMutation) ResetCompany() {
+	m.company = nil
+}
+
+// SetOwner sets the "owner" field.
+func (m *IcpMutation) SetOwner(s string) {
+	m.owner = &s
+}
+
+// Owner returns the value of the "owner" field in the mutation.
+func (m *IcpMutation) Owner() (r string, exists bool) {
+	v := m.owner
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOwner returns the old "owner" field's value of the Icp entity.
+// If the Icp object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *IcpMutation) OldOwner(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOwner is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOwner requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOwner: %w", err)
+	}
+	return oldValue.Owner, nil
+}
+
+// ResetOwner resets all changes to the "owner" field.
+func (m *IcpMutation) ResetOwner() {
+	m.owner = nil
+}
+
+// SetType sets the "type" field.
+func (m *IcpMutation) SetType(s string) {
+	m._type = &s
+}
+
+// GetType returns the value of the "type" field in the mutation.
+func (m *IcpMutation) GetType() (r string, exists bool) {
+	v := m._type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldType returns the old "type" field's value of the Icp entity.
+// If the Icp object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *IcpMutation) OldType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldType: %w", err)
+	}
+	return oldValue.Type, nil
+}
+
+// ResetType resets all changes to the "type" field.
+func (m *IcpMutation) ResetType() {
+	m._type = nil
+}
+
+// SetHomepage sets the "homepage" field.
+func (m *IcpMutation) SetHomepage(s string) {
+	m.homepage = &s
+}
+
+// Homepage returns the value of the "homepage" field in the mutation.
+func (m *IcpMutation) Homepage() (r string, exists bool) {
+	v := m.homepage
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHomepage returns the old "homepage" field's value of the Icp entity.
+// If the Icp object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *IcpMutation) OldHomepage(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldHomepage is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldHomepage requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHomepage: %w", err)
+	}
+	return oldValue.Homepage, nil
+}
+
+// ResetHomepage resets all changes to the "homepage" field.
+func (m *IcpMutation) ResetHomepage() {
+	m.homepage = nil
+}
+
+// SetPermit sets the "permit" field.
+func (m *IcpMutation) SetPermit(s string) {
+	m.permit = &s
+}
+
+// Permit returns the value of the "permit" field in the mutation.
+func (m *IcpMutation) Permit() (r string, exists bool) {
+	v := m.permit
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPermit returns the old "permit" field's value of the Icp entity.
+// If the Icp object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *IcpMutation) OldPermit(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPermit is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPermit requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPermit: %w", err)
+	}
+	return oldValue.Permit, nil
+}
+
+// ResetPermit resets all changes to the "permit" field.
+func (m *IcpMutation) ResetPermit() {
+	m.permit = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *IcpMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *IcpMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the Icp entity.
+// If the Icp object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *IcpMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *IcpMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *IcpMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *IcpMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the Icp entity.
+// If the Icp object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *IcpMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *IcpMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// Where appends a list predicates to the IcpMutation builder.
+func (m *IcpMutation) Where(ps ...predicate.Icp) {
 	m.predicates = append(m.predicates, ps...)
 }
 
-// WhereP appends storage-level predicates to the UserMutation builder. Using this method,
+// WhereP appends storage-level predicates to the IcpMutation builder. Using this method,
 // users can use type-assertion to append predicates that do not depend on any generated package.
-func (m *UserMutation) WhereP(ps ...func(*sql.Selector)) {
-	p := make([]predicate.User, len(ps))
+func (m *IcpMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Icp, len(ps))
 	for i := range ps {
 		p[i] = ps[i]
 	}
@@ -151,140 +523,318 @@ func (m *UserMutation) WhereP(ps ...func(*sql.Selector)) {
 }
 
 // Op returns the operation name.
-func (m *UserMutation) Op() Op {
+func (m *IcpMutation) Op() Op {
 	return m.op
 }
 
 // SetOp allows setting the mutation operation.
-func (m *UserMutation) SetOp(op Op) {
+func (m *IcpMutation) SetOp(op Op) {
 	m.op = op
 }
 
-// Type returns the node type of this mutation (User).
-func (m *UserMutation) Type() string {
+// Type returns the node type of this mutation (Icp).
+func (m *IcpMutation) Type() string {
 	return m.typ
 }
 
 // Fields returns all fields that were changed during this mutation. Note that in
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
-func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 0)
+func (m *IcpMutation) Fields() []string {
+	fields := make([]string, 0, 10)
+	if m.host != nil {
+		fields = append(fields, icp.FieldHost)
+	}
+	if m.city != nil {
+		fields = append(fields, icp.FieldCity)
+	}
+	if m.province != nil {
+		fields = append(fields, icp.FieldProvince)
+	}
+	if m.company != nil {
+		fields = append(fields, icp.FieldCompany)
+	}
+	if m.owner != nil {
+		fields = append(fields, icp.FieldOwner)
+	}
+	if m._type != nil {
+		fields = append(fields, icp.FieldType)
+	}
+	if m.homepage != nil {
+		fields = append(fields, icp.FieldHomepage)
+	}
+	if m.permit != nil {
+		fields = append(fields, icp.FieldPermit)
+	}
+	if m.created_at != nil {
+		fields = append(fields, icp.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, icp.FieldUpdatedAt)
+	}
 	return fields
 }
 
 // Field returns the value of a field with the given name. The second boolean
 // return value indicates that this field was not set, or was not defined in the
 // schema.
-func (m *UserMutation) Field(name string) (ent.Value, bool) {
+func (m *IcpMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case icp.FieldHost:
+		return m.Host()
+	case icp.FieldCity:
+		return m.City()
+	case icp.FieldProvince:
+		return m.Province()
+	case icp.FieldCompany:
+		return m.Company()
+	case icp.FieldOwner:
+		return m.Owner()
+	case icp.FieldType:
+		return m.GetType()
+	case icp.FieldHomepage:
+		return m.Homepage()
+	case icp.FieldPermit:
+		return m.Permit()
+	case icp.FieldCreatedAt:
+		return m.CreatedAt()
+	case icp.FieldUpdatedAt:
+		return m.UpdatedAt()
+	}
 	return nil, false
 }
 
 // OldField returns the old value of the field from the database. An error is
 // returned if the mutation operation is not UpdateOne, or the query to the
 // database failed.
-func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
-	return nil, fmt.Errorf("unknown User field %s", name)
+func (m *IcpMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case icp.FieldHost:
+		return m.OldHost(ctx)
+	case icp.FieldCity:
+		return m.OldCity(ctx)
+	case icp.FieldProvince:
+		return m.OldProvince(ctx)
+	case icp.FieldCompany:
+		return m.OldCompany(ctx)
+	case icp.FieldOwner:
+		return m.OldOwner(ctx)
+	case icp.FieldType:
+		return m.OldType(ctx)
+	case icp.FieldHomepage:
+		return m.OldHomepage(ctx)
+	case icp.FieldPermit:
+		return m.OldPermit(ctx)
+	case icp.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case icp.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	}
+	return nil, fmt.Errorf("unknown Icp field %s", name)
 }
 
 // SetField sets the value of a field with the given name. It returns an error if
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
-func (m *UserMutation) SetField(name string, value ent.Value) error {
+func (m *IcpMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case icp.FieldHost:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHost(v)
+		return nil
+	case icp.FieldCity:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCity(v)
+		return nil
+	case icp.FieldProvince:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetProvince(v)
+		return nil
+	case icp.FieldCompany:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCompany(v)
+		return nil
+	case icp.FieldOwner:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOwner(v)
+		return nil
+	case icp.FieldType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetType(v)
+		return nil
+	case icp.FieldHomepage:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHomepage(v)
+		return nil
+	case icp.FieldPermit:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPermit(v)
+		return nil
+	case icp.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case icp.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
 	}
-	return fmt.Errorf("unknown User field %s", name)
+	return fmt.Errorf("unknown Icp field %s", name)
 }
 
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
-func (m *UserMutation) AddedFields() []string {
+func (m *IcpMutation) AddedFields() []string {
 	return nil
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
-func (m *UserMutation) AddedField(name string) (ent.Value, bool) {
+func (m *IcpMutation) AddedField(name string) (ent.Value, bool) {
 	return nil, false
 }
 
 // AddField adds the value to the field with the given name. It returns an error if
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
-func (m *UserMutation) AddField(name string, value ent.Value) error {
-	return fmt.Errorf("unknown User numeric field %s", name)
+func (m *IcpMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown Icp numeric field %s", name)
 }
 
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
-func (m *UserMutation) ClearedFields() []string {
+func (m *IcpMutation) ClearedFields() []string {
 	return nil
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
 // cleared in this mutation.
-func (m *UserMutation) FieldCleared(name string) bool {
+func (m *IcpMutation) FieldCleared(name string) bool {
 	_, ok := m.clearedFields[name]
 	return ok
 }
 
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
-func (m *UserMutation) ClearField(name string) error {
-	return fmt.Errorf("unknown User nullable field %s", name)
+func (m *IcpMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown Icp nullable field %s", name)
 }
 
 // ResetField resets all changes in the mutation for the field with the given name.
 // It returns an error if the field is not defined in the schema.
-func (m *UserMutation) ResetField(name string) error {
-	return fmt.Errorf("unknown User field %s", name)
+func (m *IcpMutation) ResetField(name string) error {
+	switch name {
+	case icp.FieldHost:
+		m.ResetHost()
+		return nil
+	case icp.FieldCity:
+		m.ResetCity()
+		return nil
+	case icp.FieldProvince:
+		m.ResetProvince()
+		return nil
+	case icp.FieldCompany:
+		m.ResetCompany()
+		return nil
+	case icp.FieldOwner:
+		m.ResetOwner()
+		return nil
+	case icp.FieldType:
+		m.ResetType()
+		return nil
+	case icp.FieldHomepage:
+		m.ResetHomepage()
+		return nil
+	case icp.FieldPermit:
+		m.ResetPermit()
+		return nil
+	case icp.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case icp.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown Icp field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
-func (m *UserMutation) AddedEdges() []string {
+func (m *IcpMutation) AddedEdges() []string {
 	edges := make([]string, 0, 0)
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
-func (m *UserMutation) AddedIDs(name string) []ent.Value {
+func (m *IcpMutation) AddedIDs(name string) []ent.Value {
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
-func (m *UserMutation) RemovedEdges() []string {
+func (m *IcpMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 0)
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
-func (m *UserMutation) RemovedIDs(name string) []ent.Value {
+func (m *IcpMutation) RemovedIDs(name string) []ent.Value {
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
-func (m *UserMutation) ClearedEdges() []string {
+func (m *IcpMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 0)
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
-func (m *UserMutation) EdgeCleared(name string) bool {
+func (m *IcpMutation) EdgeCleared(name string) bool {
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
-func (m *UserMutation) ClearEdge(name string) error {
-	return fmt.Errorf("unknown User unique edge %s", name)
+func (m *IcpMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown Icp unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
-func (m *UserMutation) ResetEdge(name string) error {
-	return fmt.Errorf("unknown User edge %s", name)
+func (m *IcpMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown Icp edge %s", name)
 }

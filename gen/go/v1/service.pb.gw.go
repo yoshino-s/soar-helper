@@ -21,6 +21,7 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 // Suppress "imported and not used" errors
@@ -31,39 +32,83 @@ var _ = runtime.String
 var _ = utilities.NewDoubleArray
 var _ = metadata.Join
 
-func request_GoTemplateService_Echo_0(ctx context.Context, marshaler runtime.Marshaler, client GoTemplateServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq StringMessage
+func request_IcpQueryService_Query_0(ctx context.Context, marshaler runtime.Marshaler, client IcpQueryServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq QueryRequest
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := client.Echo(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.Query(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_GoTemplateService_Echo_0(ctx context.Context, marshaler runtime.Marshaler, server GoTemplateServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq StringMessage
+func local_request_IcpQueryService_Query_0(ctx context.Context, marshaler runtime.Marshaler, server IcpQueryServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq QueryRequest
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := server.Echo(ctx, &protoReq)
+	msg, err := server.Query(ctx, &protoReq)
 	return msg, metadata, err
 
 }
 
-// RegisterGoTemplateServiceHandlerServer registers the http handlers for service GoTemplateService to "mux".
-// UnaryRPC     :call GoTemplateServiceServer directly.
+func request_IcpQueryService_BatchQuery_0(ctx context.Context, marshaler runtime.Marshaler, client IcpQueryServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq BatchQueryRequest
+	var metadata runtime.ServerMetadata
+
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.BatchQuery(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func local_request_IcpQueryService_BatchQuery_0(ctx context.Context, marshaler runtime.Marshaler, server IcpQueryServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq BatchQueryRequest
+	var metadata runtime.ServerMetadata
+
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := server.BatchQuery(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
+func request_IcpQueryService_Statistic_0(ctx context.Context, marshaler runtime.Marshaler, client IcpQueryServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq emptypb.Empty
+	var metadata runtime.ServerMetadata
+
+	msg, err := client.Statistic(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func local_request_IcpQueryService_Statistic_0(ctx context.Context, marshaler runtime.Marshaler, server IcpQueryServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq emptypb.Empty
+	var metadata runtime.ServerMetadata
+
+	msg, err := server.Statistic(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
+// RegisterIcpQueryServiceHandlerServer registers the http handlers for service IcpQueryService to "mux".
+// UnaryRPC     :call IcpQueryServiceServer directly.
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
-// Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterGoTemplateServiceHandlerFromEndpoint instead.
-func RegisterGoTemplateServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server GoTemplateServiceServer) error {
+// Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterIcpQueryServiceHandlerFromEndpoint instead.
+func RegisterIcpQueryServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server IcpQueryServiceServer) error {
 
-	mux.Handle("POST", pattern_GoTemplateService_Echo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_IcpQueryService_Query_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -71,12 +116,12 @@ func RegisterGoTemplateServiceHandlerServer(ctx context.Context, mux *runtime.Se
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/your.service.v1.GoTemplateService/Echo", runtime.WithHTTPPathPattern("/api/v1/example/echo"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/yoshino_s.icp_lookup.gen.go.v1.IcpQueryService/Query", runtime.WithHTTPPathPattern("/api/v1/query"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_GoTemplateService_Echo_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_IcpQueryService_Query_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -84,16 +129,66 @@ func RegisterGoTemplateServiceHandlerServer(ctx context.Context, mux *runtime.Se
 			return
 		}
 
-		forward_GoTemplateService_Echo_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_IcpQueryService_Query_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("POST", pattern_IcpQueryService_BatchQuery_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/yoshino_s.icp_lookup.gen.go.v1.IcpQueryService/BatchQuery", runtime.WithHTTPPathPattern("/api/v1/batch_query"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_IcpQueryService_BatchQuery_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_IcpQueryService_BatchQuery_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("GET", pattern_IcpQueryService_Statistic_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/yoshino_s.icp_lookup.gen.go.v1.IcpQueryService/Statistic", runtime.WithHTTPPathPattern("/api/v1/statistic"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_IcpQueryService_Statistic_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_IcpQueryService_Statistic_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
 	return nil
 }
 
-// RegisterGoTemplateServiceHandlerFromEndpoint is same as RegisterGoTemplateServiceHandler but
+// RegisterIcpQueryServiceHandlerFromEndpoint is same as RegisterIcpQueryServiceHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
-func RegisterGoTemplateServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
+func RegisterIcpQueryServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
 	conn, err := grpc.DialContext(ctx, endpoint, opts...)
 	if err != nil {
 		return err
@@ -113,41 +208,85 @@ func RegisterGoTemplateServiceHandlerFromEndpoint(ctx context.Context, mux *runt
 		}()
 	}()
 
-	return RegisterGoTemplateServiceHandler(ctx, mux, conn)
+	return RegisterIcpQueryServiceHandler(ctx, mux, conn)
 }
 
-// RegisterGoTemplateServiceHandler registers the http handlers for service GoTemplateService to "mux".
+// RegisterIcpQueryServiceHandler registers the http handlers for service IcpQueryService to "mux".
 // The handlers forward requests to the grpc endpoint over "conn".
-func RegisterGoTemplateServiceHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
-	return RegisterGoTemplateServiceHandlerClient(ctx, mux, NewGoTemplateServiceClient(conn))
+func RegisterIcpQueryServiceHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
+	return RegisterIcpQueryServiceHandlerClient(ctx, mux, NewIcpQueryServiceClient(conn))
 }
 
-// RegisterGoTemplateServiceHandlerClient registers the http handlers for service GoTemplateService
-// to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "GoTemplateServiceClient".
-// Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "GoTemplateServiceClient"
+// RegisterIcpQueryServiceHandlerClient registers the http handlers for service IcpQueryService
+// to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "IcpQueryServiceClient".
+// Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "IcpQueryServiceClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
-// "GoTemplateServiceClient" to call the correct interceptors.
-func RegisterGoTemplateServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client GoTemplateServiceClient) error {
+// "IcpQueryServiceClient" to call the correct interceptors.
+func RegisterIcpQueryServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client IcpQueryServiceClient) error {
 
-	mux.Handle("POST", pattern_GoTemplateService_Echo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_IcpQueryService_Query_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/your.service.v1.GoTemplateService/Echo", runtime.WithHTTPPathPattern("/api/v1/example/echo"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/yoshino_s.icp_lookup.gen.go.v1.IcpQueryService/Query", runtime.WithHTTPPathPattern("/api/v1/query"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_GoTemplateService_Echo_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_IcpQueryService_Query_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_GoTemplateService_Echo_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_IcpQueryService_Query_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("POST", pattern_IcpQueryService_BatchQuery_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/yoshino_s.icp_lookup.gen.go.v1.IcpQueryService/BatchQuery", runtime.WithHTTPPathPattern("/api/v1/batch_query"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_IcpQueryService_BatchQuery_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_IcpQueryService_BatchQuery_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("GET", pattern_IcpQueryService_Statistic_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/yoshino_s.icp_lookup.gen.go.v1.IcpQueryService/Statistic", runtime.WithHTTPPathPattern("/api/v1/statistic"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_IcpQueryService_Statistic_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_IcpQueryService_Statistic_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -155,9 +294,17 @@ func RegisterGoTemplateServiceHandlerClient(ctx context.Context, mux *runtime.Se
 }
 
 var (
-	pattern_GoTemplateService_Echo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"api", "v1", "example", "echo"}, ""))
+	pattern_IcpQueryService_Query_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"api", "v1", "query"}, ""))
+
+	pattern_IcpQueryService_BatchQuery_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"api", "v1", "batch_query"}, ""))
+
+	pattern_IcpQueryService_Statistic_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"api", "v1", "statistic"}, ""))
 )
 
 var (
-	forward_GoTemplateService_Echo_0 = runtime.ForwardResponseMessage
+	forward_IcpQueryService_Query_0 = runtime.ForwardResponseMessage
+
+	forward_IcpQueryService_BatchQuery_0 = runtime.ForwardResponseMessage
+
+	forward_IcpQueryService_Statistic_0 = runtime.ForwardResponseMessage
 )

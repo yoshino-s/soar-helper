@@ -1,19 +1,69 @@
 syntax = "proto3";
-package your.service.v1;
+package yoshino_s.icp_lookup.gen.go.v1;
 
 import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
 
-option go_package = "github.com/yourorg/yourprotos/gen/go/your/service/v1";
+option go_package = "gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/gen/go/v1";
 
-message StringMessage {
-  string value = 1;
+message QueryRequest {
+  string host = 1;
 }
 
-service GoTemplateService {
-  rpc Echo(StringMessage) returns (StringMessage) {
+message BatchQueryRequest {
+  repeated string hosts = 1;
+}
+
+message QueryResponse {
+  uint32 code = 1;
+  string message = 2;
+  IcpRecord data = 3;
+}
+
+message BatchQueryResponse {
+  uint32 code = 1;
+  string message = 2;
+  repeated IcpRecord data = 3;
+}
+
+message IcpRecord {
+  int64 id = 1;
+  string host = 2;
+  string city = 3;
+  string province = 4;
+  string company = 5;
+  string owner = 6;
+  string type = 7;
+  string homepage = 8;
+  string permit = 9;
+  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp updated_at = 11;
+  bool cached = 12;
+}
+
+message StatisticResponse {
+  int64 total = 1;
+}
+
+service IcpQueryService {
+  rpc Query(QueryRequest) returns (QueryResponse) {
     option (google.api.http) = {
-      post: "/api/v1/example/echo"
+      post: "/api/v1/query"
       body: "*"
+    };
+  }
+
+  rpc BatchQuery(BatchQueryRequest) returns (BatchQueryResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/batch_query"
+      body: "*"
+    };
+  }
+
+  rpc Statistic(google.protobuf.Empty) returns (StatisticResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/statistic"
     };
   }
 }

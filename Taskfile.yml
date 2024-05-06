@@ -2,7 +2,7 @@
 version: '3'
 
 env:
-  KO_DOCKER_REPO: ghcr.io/yoshino-s/go-template
+  KO_DOCKER_REPO: registry.yoshino-s.xyz/yoshino-s/icp-lookup
 
 tasks:
   tools:
@@ -23,4 +23,4 @@ tasks:
       - buf generate proto
   build:
     cmds:
-      - goreleaser build --snapshot --clean --single-target
+      - goreleaser build --snapshot --clean --single-target --skip before

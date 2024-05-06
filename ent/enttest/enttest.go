@@ -5,12 +5,12 @@ package enttest
 import (
 	"context"
 
-	"github.com/yoshino-s/go-template/ent"
+	"gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/ent"
 	// required by schema hooks.
-	_ "github.com/yoshino-s/go-template/ent/runtime"
+	_ "gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/ent/runtime"
 
 	"entgo.io/ent/dialect/sql/schema"
-	"github.com/yoshino-s/go-template/ent/migrate"
+	"gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/ent/migrate"
 )
 
 type (

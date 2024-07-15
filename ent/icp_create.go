@@ -74,6 +74,14 @@ func (ic *IcpCreate) SetType(s string) *IcpCreate {
 	return ic
 }
 
+// SetNillableType sets the "type" field if the given value is not nil.
+func (ic *IcpCreate) SetNillableType(s *string) *IcpCreate {
+	if s != nil {
+		ic.SetType(*s)
+	}
+	return ic
+}
+
 // SetHomepage sets the "homepage" field.
 func (ic *IcpCreate) SetHomepage(s string) *IcpCreate {
 	ic.mutation.SetHomepage(s)
@@ -156,6 +164,10 @@ func (ic *IcpCreate) defaults() {
 	if _, ok := ic.mutation.Province(); !ok {
 		v := icp.DefaultProvince
 		ic.mutation.SetProvince(v)
+	}
+	if _, ok := ic.mutation.GetType(); !ok {
+		v := icp.DefaultType
+		ic.mutation.SetType(v)
 	}
 	if _, ok := ic.mutation.CreatedAt(); !ok {
 		v := icp.DefaultCreatedAt

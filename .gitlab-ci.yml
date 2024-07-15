@@ -24,6 +24,7 @@ release:
   extends: .release
   only:
     - tags
+  when: always
 
 snapshot-release:
   extends: .release

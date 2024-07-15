@@ -11,6 +11,8 @@ import (
 
 func init() {
 	httpApp.Configuration().Register(serveCmd.Flags())
+	chinazApp.Configuration().Register(serveCmd.Flags())
+
 	rootCmd.AddCommand(serveCmd)
 }
 

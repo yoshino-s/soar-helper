@@ -23,6 +23,10 @@ func init() {
 	icpDescProvince := icpFields[2].Descriptor()
 	// icp.DefaultProvince holds the default value on creation for the province field.
 	icp.DefaultProvince = icpDescProvince.Default.(string)
+	// icpDescType is the schema descriptor for type field.
+	icpDescType := icpFields[5].Descriptor()
+	// icp.DefaultType holds the default value on creation for the type field.
+	icp.DefaultType = icpDescType.Default.(string)
 	// icpDescCreatedAt is the schema descriptor for created_at field.
 	icpDescCreatedAt := icpFields[8].Descriptor()
 	// icp.DefaultCreatedAt holds the default value on creation for the created_at field.

@@ -17,6 +17,9 @@ type config struct {
 func (c *config) Register(set *pflag.FlagSet) {
 	//set.String("chinaz.cookie", "", "chinaz cookie")
 	set.String("chinaz.token", "", "chinaz token")
+
+	common.MustNoError(viper.BindPFlags(set))
+	configuration.Register(c)
 }
 
 func (c *config) Read() {

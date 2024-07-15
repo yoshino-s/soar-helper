@@ -16,7 +16,7 @@ var (
 		{Name: "province", Type: field.TypeString, Default: ""},
 		{Name: "company", Type: field.TypeString},
 		{Name: "owner", Type: field.TypeString},
-		{Name: "type", Type: field.TypeString},
+		{Name: "type", Type: field.TypeString, Default: "INVALID"},
 		{Name: "homepage", Type: field.TypeString},
 		{Name: "permit", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime},

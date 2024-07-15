@@ -67,6 +67,8 @@ var (
 	DefaultCity string
 	// DefaultProvince holds the default value on creation for the "province" field.
 	DefaultProvince string
+	// DefaultType holds the default value on creation for the "type" field.
+	DefaultType string
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt time.Time
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.

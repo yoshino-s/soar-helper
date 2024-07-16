@@ -64,12 +64,3 @@ gitlab_urls:
 
   # Set this if you set GITLAB_TOKEN to the value of CI_JOB_TOKEN.
   use_job_token: true
-
-
-changelog:
-  sort: asc
-  use: github
-  filters:
-    exclude:
-      - '^docs:'
-      - '^test:'

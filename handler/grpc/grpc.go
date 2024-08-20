@@ -5,31 +5,31 @@ import (
 
 	"gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/chinaz"
 	v1 "gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/gen/go/v1"
-	"gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/persistents/db"
+	"gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/persistent/db"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-type IcpQueryerviceService struct {
+type IcpQueryService struct {
 	v1.IcpQueryServiceServer
 	chinaz *chinaz.Chinaz
 	db     *db.Client
 }
 
-func New() *IcpQueryerviceService {
-	return &IcpQueryerviceService{}
+func New() *IcpQueryService {
+	return &IcpQueryService{}
 }
 
-func (s *IcpQueryerviceService) SetChinaz(chinaz *chinaz.Chinaz) {
+func (s *IcpQueryService) SetChinaz(chinaz *chinaz.Chinaz) {
 	s.chinaz = chinaz
 }
 
-func (s *IcpQueryerviceService) SetDB(db *db.Client) {
+func (s *IcpQueryService) SetDB(db *db.Client) {
 	s.db = db
 }
 
-func (s *IcpQueryerviceService) Query(ctx context.Context, req *v1.QueryRequest) (*v1.QueryResponse, error) {
+func (s *IcpQueryService) Query(ctx context.Context, req *v1.QueryRequest) (*v1.QueryResponse, error) {
 	host := req.Host
 
 	icp, cached, err := s.chinaz.Query(ctx, host)
@@ -57,7 +57,7 @@ func (s *IcpQueryerviceService) Query(ctx context.Context, req *v1.QueryRequest)
 	}, nil
 }
 
-func (s *IcpQueryerviceService) BatchQuery(ctx context.Context, req *v1.BatchQueryRequest) (*v1.BatchQueryResponse, error) {
+func (s *IcpQueryService) BatchQuery(ctx context.Context, req *v1.BatchQueryRequest) (*v1.BatchQueryResponse, error) {
 	hosts := req.Hosts
 
 	records := make([]*v1.IcpRecord, 0, len(hosts))
@@ -90,7 +90,7 @@ func (s *IcpQueryerviceService) BatchQuery(ctx context.Context, req *v1.BatchQue
 	}, nil
 }
 
-func (s *IcpQueryerviceService) Statistic(ctx context.Context, _empty *emptypb.Empty) (*v1.StatisticResponse, error) {
+func (s *IcpQueryService) Statistic(ctx context.Context, _empty *emptypb.Empty) (*v1.StatisticResponse, error) {
 	total, err := s.db.Icp.Query().Count(ctx)
 	if err != nil {
 		return nil, err

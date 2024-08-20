@@ -16,10 +16,10 @@ builds:
     goos:
       # - windows
       - linux
-      - darwin
+      # - darwin
     goarch:
       - amd64
-      - arm64
+      # - arm64
       # - "386"
 
 kos:

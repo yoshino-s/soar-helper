@@ -11,6 +11,8 @@
         }
     },
     "cSpell.words": [
-        "grpcgateway"
+        "chinaz",
+        "grpcgateway",
+        "protobuf"
     ]
 }

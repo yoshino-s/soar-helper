@@ -18,7 +18,7 @@ var _ configuration.Configuration = (*Config)(nil)
 
 func (c *Config) Register(flagSet *pflag.FlagSet) {
 	flagSet.String("db.driver", dialect.SQLite, "database driver")
-	flagSet.String("db.datasource", "file:ent?mode=memory&cache=shared&_fk=1", "database datasource")
+	flagSet.String("db.datasource", ":memory:?_pragma=foreign_keys(1)", "database datasource")
 	flagSet.Bool("db.debug", false, "database debug")
 	common.MustNoError(viper.BindPFlags(flagSet))
 	configuration.Register(c)

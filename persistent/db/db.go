@@ -4,23 +4,19 @@ import (
 	"context"
 	"sync"
 
-	"go.uber.org/zap"
-
 	"entgo.io/ent/dialect/sql"
 
 	_ "github.com/glebarez/go-sqlite"
 	"github.com/yoshino-s/go-framework/application"
 	"github.com/yoshino-s/go-framework/common"
 	"github.com/yoshino-s/go-framework/configuration"
-	"gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/ent"
+	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/ent"
 )
 
-var _ application.Application = (*Client)(nil)
-
 type Client struct {
+	*application.EmptyApplication
 	*ent.Client
 	config Config
-	logger *zap.Logger
 }
 
 var (
@@ -30,12 +26,9 @@ var (
 
 func New() *Client {
 	return &Client{
-		config: Config{},
+		EmptyApplication: application.NewEmptyApplication(),
+		config:           Config{},
 	}
-}
-
-func (c *Client) SetLogger(l *zap.Logger) {
-	c.logger = l
 }
 
 func (c *Client) Configuration() configuration.Configuration {
@@ -44,12 +37,9 @@ func (c *Client) Configuration() configuration.Configuration {
 
 func (c *Client) Setup(context.Context) {
 	drv := common.Must(sql.Open(c.config.DriverName, c.config.DataSourceName))
-	c.Client = ent.NewClient(ent.Driver(drv))
-	if c.config.Debug {
-		c.Client = c.Client.DebugWithZap(c.logger)
-	}
+	c.Client = ent.NewClient(ent.Driver(drv)).DebugWithZap(c.Logger)
 }
-func (c *Client) Run(context.Context) {}
+
 func (c *Client) Close(context.Context) {
 	common.MustNoError(c.Client.Close())
 }

@@ -9,9 +9,9 @@ import (
 
 	"github.com/yoshino-s/go-framework/application"
 	"github.com/yoshino-s/go-framework/configuration"
-	"gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/ent"
-	"gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/ent/icp"
-	"gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/persistent/db"
+	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/ent"
+	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/ent/icp"
+	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/persistent/db"
 	"go.uber.org/zap"
 )
 

@@ -5,8 +5,8 @@ package ent
 import (
 	"time"
 
-	"gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/ent/icp"
-	"gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/ent/schema"
+	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/ent/icp"
+	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/ent/schema"
 )
 
 // The init function reads all schema descriptors with runtime code

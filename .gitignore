@@ -30,5 +30,5 @@ go.work
 dist
 
 # config and db
-icp-lookup.yml
-icp-lookup.db
+soar-helper.yml
+soar-helper.db

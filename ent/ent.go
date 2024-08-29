@@ -12,7 +12,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/ent/icp"
+	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/ent/icp"
 )
 
 // ent aliases to avoid import conflicts in user's code.

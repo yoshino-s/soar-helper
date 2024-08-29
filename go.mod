@@ -1,20 +1,21 @@
-module gitlab.yoshino-s.xyz/yoshino-s/icp-lookup
+module gitlab.yoshino-s.xyz/yoshino-s/soar-helper
 
 go 1.22.0
 
 require (
+	connectrpc.com/connect v1.16.2
+	connectrpc.com/grpcreflect v1.2.0
 	entgo.io/ent v0.13.1
 	github.com/glebarez/go-sqlite v1.22.0
 	github.com/google/uuid v1.6.0
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.20.0
-	github.com/labstack/echo/v4 v4.12.0
 	github.com/smartystreets/goconvey v1.8.1
+	github.com/sourcegraph/conc v0.3.0
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.18.2
-	github.com/yoshino-s/go-framework v0.3.1
+	github.com/yoshino-s/go-framework v0.4.0
+	go.akshayshah.org/connectproto v0.6.0
 	go.uber.org/zap v1.27.0
-	google.golang.org/genproto/googleapis/api v0.0.0-20240513163218-0867130af1f8
 	google.golang.org/grpc v1.64.0
 	google.golang.org/protobuf v1.34.1
 )
@@ -41,6 +42,7 @@ require (
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jtolds/gls v4.20.0+incompatible // indirect
 	github.com/labstack/echo-contrib v0.17.1 // indirect
+	github.com/labstack/echo/v4 v4.12.0 // indirect
 	github.com/labstack/gommon v0.4.2 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
@@ -60,7 +62,6 @@ require (
 	github.com/sagikazarmark/slog-shim v0.1.0 // indirect
 	github.com/sergi/go-diff v1.3.1 // indirect
 	github.com/smarty/assertions v1.15.0 // indirect
-	github.com/sourcegraph/conc v0.3.0 // indirect
 	github.com/spf13/afero v1.11.0 // indirect
 	github.com/spf13/cast v1.6.0 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
@@ -77,7 +78,6 @@ require (
 	golang.org/x/text v0.15.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
 	golang.org/x/xerrors v0.0.0-20231012003039-104605ab7028 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240513163218-0867130af1f8 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	modernc.org/libc v1.55.3 // indirect

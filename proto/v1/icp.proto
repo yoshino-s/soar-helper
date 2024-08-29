@@ -1,11 +1,10 @@
 syntax = "proto3";
-package yoshino_s.icp_lookup.gen.go.v1;
+package yoshino_s.soar_helper.v1;
 
-import "google/api/annotations.proto";
-import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
 
-option go_package = "gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/gen/go/v1";
+option go_package = "gitlab.yoshino-s.xyz/yoshino-s/soar-helper/gen/v1";
 
 message QueryRequest {
   string host = 1;
@@ -47,23 +46,7 @@ message StatisticResponse {
 }
 
 service IcpQueryService {
-  rpc Query(QueryRequest) returns (QueryResponse) {
-    option (google.api.http) = {
-      post: "/api/v1/query"
-      body: "*"
-    };
-  }
-
-  rpc BatchQuery(BatchQueryRequest) returns (BatchQueryResponse) {
-    option (google.api.http) = {
-      post: "/api/v1/batch_query"
-      body: "*"
-    };
-  }
-
-  rpc Statistic(google.protobuf.Empty) returns (StatisticResponse) {
-    option (google.api.http) = {
-      get: "/api/v1/statistic"
-    };
-  }
+  rpc Query(QueryRequest) returns (QueryResponse) {}
+  rpc BatchQuery(BatchQueryRequest) returns (BatchQueryResponse) {}
+  rpc Statistic(google.protobuf.Empty) returns (StatisticResponse) {}
 }

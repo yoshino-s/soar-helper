@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/ent/predicate"
+	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/ent/predicate"
 )
 
 // ID filters vertices based on their ID field.

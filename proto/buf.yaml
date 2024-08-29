@@ -1,11 +1,10 @@
-version: v1
+version: v2
+modules:
+  - name: buf.build/yoshino-s/soar-helper
+    path: .
 lint:
   use:
     - DEFAULT
 breaking:
   use:
     - FILE
-
-deps:
-  - buf.build/googleapis/googleapis
-  - buf.build/grpc-ecosystem/grpc-gateway

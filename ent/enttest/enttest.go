@@ -5,12 +5,12 @@ package enttest
 import (
 	"context"
 
-	"gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/ent"
+	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/ent"
 	// required by schema hooks.
-	_ "gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/ent/runtime"
+	_ "gitlab.yoshino-s.xyz/yoshino-s/soar-helper/ent/runtime"
 
 	"entgo.io/ent/dialect/sql/schema"
-	"gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/ent/migrate"
+	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/ent/migrate"
 )
 
 type (

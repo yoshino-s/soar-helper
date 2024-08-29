@@ -9,12 +9,12 @@ import (
 	"log"
 	"reflect"
 
-	"gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/ent/migrate"
+	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/ent/migrate"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
-	"gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/ent/icp"
+	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/ent/icp"
 
 	stdsql "database/sql"
 )

@@ -1,0 +1,64 @@
+syntax = "proto3";
+package yoshino_s.soar_helper.gen.v1;
+
+option go_package = "gitlab.yoshino-s.xyz/yoshino-s/soar-helper/gen/v1";
+
+
+message ReadFileRequest {
+  string path = 1;
+}
+
+message ReadFileResponse {
+  uint32 code = 1;
+  string message = 2;
+  string data = 3;
+}
+
+message WriteFileRequest {
+  string path = 1;
+  string content = 2;
+}
+
+message WriteFileResponse {
+  uint32 code = 1;
+  string message = 2;
+}
+
+message RunRequest {
+  repeated string commands = 1;
+  string stdin = 2;
+}
+
+message RunResult {
+  string stdout = 1;
+  string stderr = 2;
+  int32 exit_code = 3;
+}
+
+message RunResponse {
+  uint32 code = 1;
+  string message = 2;
+  RunResult data = 3;
+}
+
+enum RunStreamData_Type {
+  STDOUT = 0;
+  STDERR = 1;
+  EXIT_CODE = 2;
+}
+
+message RunStreamData {
+  RunStreamData_Type type = 1;
+  string data = 2;
+  int32 exit_code = 3;
+}
+
+service RunnerService {
+  rpc Run(RunRequest) returns (RunResponse) {}
+
+  rpc RunStream(RunRequest) returns (stream RunStreamData) {}
+
+  rpc ReadFile(ReadFileRequest) returns (ReadFileResponse) {}
+
+  rpc WriteFile(WriteFileRequest) returns (WriteFileResponse) {}
+}

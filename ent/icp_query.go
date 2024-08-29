@@ -10,8 +10,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/ent/icp"
-	"gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/ent/predicate"
+	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/ent/icp"
+	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/ent/predicate"
 )
 
 // IcpQuery is the builder for querying Icp entities.

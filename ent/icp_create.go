@@ -11,7 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/ent/icp"
+	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/ent/icp"
 )
 
 // IcpCreate is the builder for creating a Icp entity.

@@ -3,19 +3,23 @@ package http
 import (
 	"context"
 
-	"github.com/labstack/echo/v4"
+	"connectrpc.com/grpcreflect"
 	"github.com/yoshino-s/go-framework/application"
-	"github.com/yoshino-s/go-framework/handlers/grpc_gateway"
+	"github.com/yoshino-s/go-framework/common"
 	"github.com/yoshino-s/go-framework/handlers/http"
-	v1 "gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/gen/go/v1"
-	"gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/gen/openapiv2"
+	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/gen"
+	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/gen/v1/v1connect"
+	"go.akshayshah.org/connectproto"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 var _ application.Application = (*Handler)(nil)
 
 type Handler struct {
 	*http.Handler
-	grpc v1.IcpQueryServiceServer
+
+	icpQueryHandler v1connect.IcpQueryServiceHandler
+	runnerHandler   v1connect.RunnerServiceHandler
 }
 
 func New() *Handler {
@@ -24,21 +28,38 @@ func New() *Handler {
 	}
 }
 
-func (h *Handler) SetGrpcServer(grpc v1.IcpQueryServiceServer) {
-	h.grpc = grpc
+func (h *Handler) SetIcpQueryHandler(handler v1connect.IcpQueryServiceHandler) {
+	h.icpQueryHandler = handler
+}
+
+func (h *Handler) SetRunnerHandler(handler v1connect.RunnerServiceHandler) {
+	h.runnerHandler = handler
 }
 
 func (h *Handler) Setup(ctx context.Context) {
+	common.MustNoNil(h.icpQueryHandler, h.runnerHandler)
 	h.Handler.Setup(ctx)
 
-	gh, err := grpc_gateway.New()
-	if err != nil {
-		panic(err)
-	}
+	h.Swagger("/swagger", gen.OpenAPI)
 
-	v1.RegisterIcpQueryServiceHandlerServer(ctx, gh.ServeMux, h.grpc)
+	reflector := grpcreflect.NewStaticReflector(
+		v1connect.IcpQueryServiceName,
+		v1connect.RunnerServiceName,
+	)
 
-	h.Group("/api").Any("/*", echo.WrapHandler(gh))
+	h.HandleGrpc(grpcreflect.NewHandlerV1(reflector))
+	h.HandleGrpc(grpcreflect.NewHandlerV1Alpha(reflector))
 
-	h.Swagger("/swagger", openapiv2.V1ServiceSwaggerJSON)
+	opt := connectproto.WithJSON(
+		protojson.MarshalOptions{EmitUnpopulated: true, EmitDefaultValues: true},
+		protojson.UnmarshalOptions{DiscardUnknown: true},
+	)
+
+	h.HandleGrpc(v1connect.NewIcpQueryServiceHandler(h.icpQueryHandler, opt))
+
+	h.HandleGrpc(v1connect.NewRunnerServiceHandler(h.runnerHandler, opt))
+}
+
+func (h *Handler) Run(ctx context.Context) {
+	h.Handler.Run(ctx)
 }

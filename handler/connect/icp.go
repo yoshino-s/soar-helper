@@ -1,23 +1,26 @@
-package grpc
+package connect
 
 import (
 	"context"
 
-	"gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/chinaz"
-	v1 "gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/gen/go/v1"
-	"gitlab.yoshino-s.xyz/yoshino-s/icp-lookup/persistent/db"
+	"connectrpc.com/connect"
+	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/chinaz"
+	v1 "gitlab.yoshino-s.xyz/yoshino-s/soar-helper/gen/v1"
+	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/gen/v1/v1connect"
+	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/persistent/db"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
+var _ v1connect.IcpQueryServiceHandler = (*IcpQueryService)(nil)
+
 type IcpQueryService struct {
-	v1.IcpQueryServiceServer
 	chinaz *chinaz.Chinaz
 	db     *db.Client
 }
 
-func New() *IcpQueryService {
+func NewIcpQueryService() *IcpQueryService {
 	return &IcpQueryService{}
 }
 
@@ -29,15 +32,15 @@ func (s *IcpQueryService) SetDB(db *db.Client) {
 	s.db = db
 }
 
-func (s *IcpQueryService) Query(ctx context.Context, req *v1.QueryRequest) (*v1.QueryResponse, error) {
-	host := req.Host
+func (s *IcpQueryService) Query(ctx context.Context, req *connect.Request[v1.QueryRequest]) (*connect.Response[v1.QueryResponse], error) {
+	host := req.Msg.Host
 
 	icp, cached, err := s.chinaz.Query(ctx, host)
 	if err != nil {
 		return nil, err
 	}
 
-	return &v1.QueryResponse{
+	return connect.NewResponse(&v1.QueryResponse{
 		Code:    uint32(codes.OK),
 		Message: "ok",
 		Data: &v1.IcpRecord{
@@ -54,11 +57,11 @@ func (s *IcpQueryService) Query(ctx context.Context, req *v1.QueryRequest) (*v1.
 			UpdatedAt: timestamppb.New(icp.UpdatedAt),
 			Cached:    cached,
 		},
-	}, nil
+	}), nil
 }
 
-func (s *IcpQueryService) BatchQuery(ctx context.Context, req *v1.BatchQueryRequest) (*v1.BatchQueryResponse, error) {
-	hosts := req.Hosts
+func (s *IcpQueryService) BatchQuery(ctx context.Context, req *connect.Request[v1.BatchQueryRequest]) (*connect.Response[v1.BatchQueryResponse], error) {
+	hosts := req.Msg.Hosts
 
 	records := make([]*v1.IcpRecord, 0, len(hosts))
 	for _, host := range hosts {
@@ -83,19 +86,19 @@ func (s *IcpQueryService) BatchQuery(ctx context.Context, req *v1.BatchQueryRequ
 		})
 	}
 
-	return &v1.BatchQueryResponse{
+	return connect.NewResponse(&v1.BatchQueryResponse{
 		Code:    uint32(codes.OK),
 		Message: "ok",
 		Data:    records,
-	}, nil
+	}), nil
 }
 
-func (s *IcpQueryService) Statistic(ctx context.Context, _empty *emptypb.Empty) (*v1.StatisticResponse, error) {
+func (s *IcpQueryService) Statistic(ctx context.Context, req *connect.Request[emptypb.Empty]) (*connect.Response[v1.StatisticResponse], error) {
 	total, err := s.db.Icp.Query().Count(ctx)
 	if err != nil {
 		return nil, err
 	}
-	return &v1.StatisticResponse{
+	return connect.NewResponse(&v1.StatisticResponse{
 		Total: int64(total),
-	}, nil
+	}), nil
 }

@@ -12,7 +12,12 @@
     },
     "cSpell.words": [
         "chinaz",
+        "connectproto",
+        "connectrpc",
         "grpcgateway",
-        "protobuf"
+        "grpcreflect",
+        "openapiv",
+        "protobuf",
+        "protojson"
     ]
 }

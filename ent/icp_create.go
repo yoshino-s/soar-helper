@@ -62,9 +62,25 @@ func (ic *IcpCreate) SetCompany(s string) *IcpCreate {
 	return ic
 }
 
+// SetNillableCompany sets the "company" field if the given value is not nil.
+func (ic *IcpCreate) SetNillableCompany(s *string) *IcpCreate {
+	if s != nil {
+		ic.SetCompany(*s)
+	}
+	return ic
+}
+
 // SetOwner sets the "owner" field.
 func (ic *IcpCreate) SetOwner(s string) *IcpCreate {
 	ic.mutation.SetOwner(s)
+	return ic
+}
+
+// SetNillableOwner sets the "owner" field if the given value is not nil.
+func (ic *IcpCreate) SetNillableOwner(s *string) *IcpCreate {
+	if s != nil {
+		ic.SetOwner(*s)
+	}
 	return ic
 }
 
@@ -88,9 +104,39 @@ func (ic *IcpCreate) SetHomepage(s string) *IcpCreate {
 	return ic
 }
 
+// SetNillableHomepage sets the "homepage" field if the given value is not nil.
+func (ic *IcpCreate) SetNillableHomepage(s *string) *IcpCreate {
+	if s != nil {
+		ic.SetHomepage(*s)
+	}
+	return ic
+}
+
 // SetPermit sets the "permit" field.
 func (ic *IcpCreate) SetPermit(s string) *IcpCreate {
 	ic.mutation.SetPermit(s)
+	return ic
+}
+
+// SetNillablePermit sets the "permit" field if the given value is not nil.
+func (ic *IcpCreate) SetNillablePermit(s *string) *IcpCreate {
+	if s != nil {
+		ic.SetPermit(*s)
+	}
+	return ic
+}
+
+// SetWebName sets the "webName" field.
+func (ic *IcpCreate) SetWebName(s string) *IcpCreate {
+	ic.mutation.SetWebName(s)
+	return ic
+}
+
+// SetNillableWebName sets the "webName" field if the given value is not nil.
+func (ic *IcpCreate) SetNillableWebName(s *string) *IcpCreate {
+	if s != nil {
+		ic.SetWebName(*s)
+	}
 	return ic
 }
 
@@ -157,24 +203,16 @@ func (ic *IcpCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (ic *IcpCreate) defaults() {
-	if _, ok := ic.mutation.City(); !ok {
-		v := icp.DefaultCity
-		ic.mutation.SetCity(v)
-	}
-	if _, ok := ic.mutation.Province(); !ok {
-		v := icp.DefaultProvince
-		ic.mutation.SetProvince(v)
-	}
 	if _, ok := ic.mutation.GetType(); !ok {
 		v := icp.DefaultType
 		ic.mutation.SetType(v)
 	}
 	if _, ok := ic.mutation.CreatedAt(); !ok {
-		v := icp.DefaultCreatedAt
+		v := icp.DefaultCreatedAt()
 		ic.mutation.SetCreatedAt(v)
 	}
 	if _, ok := ic.mutation.UpdatedAt(); !ok {
-		v := icp.DefaultUpdatedAt
+		v := icp.DefaultUpdatedAt()
 		ic.mutation.SetUpdatedAt(v)
 	}
 }
@@ -184,26 +222,8 @@ func (ic *IcpCreate) check() error {
 	if _, ok := ic.mutation.Host(); !ok {
 		return &ValidationError{Name: "host", err: errors.New(`ent: missing required field "Icp.host"`)}
 	}
-	if _, ok := ic.mutation.City(); !ok {
-		return &ValidationError{Name: "city", err: errors.New(`ent: missing required field "Icp.city"`)}
-	}
-	if _, ok := ic.mutation.Province(); !ok {
-		return &ValidationError{Name: "province", err: errors.New(`ent: missing required field "Icp.province"`)}
-	}
-	if _, ok := ic.mutation.Company(); !ok {
-		return &ValidationError{Name: "company", err: errors.New(`ent: missing required field "Icp.company"`)}
-	}
-	if _, ok := ic.mutation.Owner(); !ok {
-		return &ValidationError{Name: "owner", err: errors.New(`ent: missing required field "Icp.owner"`)}
-	}
 	if _, ok := ic.mutation.GetType(); !ok {
 		return &ValidationError{Name: "type", err: errors.New(`ent: missing required field "Icp.type"`)}
-	}
-	if _, ok := ic.mutation.Homepage(); !ok {
-		return &ValidationError{Name: "homepage", err: errors.New(`ent: missing required field "Icp.homepage"`)}
-	}
-	if _, ok := ic.mutation.Permit(); !ok {
-		return &ValidationError{Name: "permit", err: errors.New(`ent: missing required field "Icp.permit"`)}
 	}
 	if _, ok := ic.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Icp.created_at"`)}
@@ -269,6 +289,10 @@ func (ic *IcpCreate) createSpec() (*Icp, *sqlgraph.CreateSpec) {
 	if value, ok := ic.mutation.Permit(); ok {
 		_spec.SetField(icp.FieldPermit, field.TypeString, value)
 		_node.Permit = value
+	}
+	if value, ok := ic.mutation.WebName(); ok {
+		_spec.SetField(icp.FieldWebName, field.TypeString, value)
+		_node.WebName = value
 	}
 	if value, ok := ic.mutation.CreatedAt(); ok {
 		_spec.SetField(icp.FieldCreatedAt, field.TypeTime, value)
@@ -342,6 +366,12 @@ func (u *IcpUpsert) UpdateCity() *IcpUpsert {
 	return u
 }
 
+// ClearCity clears the value of the "city" field.
+func (u *IcpUpsert) ClearCity() *IcpUpsert {
+	u.SetNull(icp.FieldCity)
+	return u
+}
+
 // SetProvince sets the "province" field.
 func (u *IcpUpsert) SetProvince(v string) *IcpUpsert {
 	u.Set(icp.FieldProvince, v)
@@ -351,6 +381,12 @@ func (u *IcpUpsert) SetProvince(v string) *IcpUpsert {
 // UpdateProvince sets the "province" field to the value that was provided on create.
 func (u *IcpUpsert) UpdateProvince() *IcpUpsert {
 	u.SetExcluded(icp.FieldProvince)
+	return u
+}
+
+// ClearProvince clears the value of the "province" field.
+func (u *IcpUpsert) ClearProvince() *IcpUpsert {
+	u.SetNull(icp.FieldProvince)
 	return u
 }
 
@@ -366,6 +402,12 @@ func (u *IcpUpsert) UpdateCompany() *IcpUpsert {
 	return u
 }
 
+// ClearCompany clears the value of the "company" field.
+func (u *IcpUpsert) ClearCompany() *IcpUpsert {
+	u.SetNull(icp.FieldCompany)
+	return u
+}
+
 // SetOwner sets the "owner" field.
 func (u *IcpUpsert) SetOwner(v string) *IcpUpsert {
 	u.Set(icp.FieldOwner, v)
@@ -375,6 +417,12 @@ func (u *IcpUpsert) SetOwner(v string) *IcpUpsert {
 // UpdateOwner sets the "owner" field to the value that was provided on create.
 func (u *IcpUpsert) UpdateOwner() *IcpUpsert {
 	u.SetExcluded(icp.FieldOwner)
+	return u
+}
+
+// ClearOwner clears the value of the "owner" field.
+func (u *IcpUpsert) ClearOwner() *IcpUpsert {
+	u.SetNull(icp.FieldOwner)
 	return u
 }
 
@@ -402,6 +450,12 @@ func (u *IcpUpsert) UpdateHomepage() *IcpUpsert {
 	return u
 }
 
+// ClearHomepage clears the value of the "homepage" field.
+func (u *IcpUpsert) ClearHomepage() *IcpUpsert {
+	u.SetNull(icp.FieldHomepage)
+	return u
+}
+
 // SetPermit sets the "permit" field.
 func (u *IcpUpsert) SetPermit(v string) *IcpUpsert {
 	u.Set(icp.FieldPermit, v)
@@ -411,6 +465,30 @@ func (u *IcpUpsert) SetPermit(v string) *IcpUpsert {
 // UpdatePermit sets the "permit" field to the value that was provided on create.
 func (u *IcpUpsert) UpdatePermit() *IcpUpsert {
 	u.SetExcluded(icp.FieldPermit)
+	return u
+}
+
+// ClearPermit clears the value of the "permit" field.
+func (u *IcpUpsert) ClearPermit() *IcpUpsert {
+	u.SetNull(icp.FieldPermit)
+	return u
+}
+
+// SetWebName sets the "webName" field.
+func (u *IcpUpsert) SetWebName(v string) *IcpUpsert {
+	u.Set(icp.FieldWebName, v)
+	return u
+}
+
+// UpdateWebName sets the "webName" field to the value that was provided on create.
+func (u *IcpUpsert) UpdateWebName() *IcpUpsert {
+	u.SetExcluded(icp.FieldWebName)
+	return u
+}
+
+// ClearWebName clears the value of the "webName" field.
+func (u *IcpUpsert) ClearWebName() *IcpUpsert {
+	u.SetNull(icp.FieldWebName)
 	return u
 }
 
@@ -488,6 +566,13 @@ func (u *IcpUpsertOne) UpdateCity() *IcpUpsertOne {
 	})
 }
 
+// ClearCity clears the value of the "city" field.
+func (u *IcpUpsertOne) ClearCity() *IcpUpsertOne {
+	return u.Update(func(s *IcpUpsert) {
+		s.ClearCity()
+	})
+}
+
 // SetProvince sets the "province" field.
 func (u *IcpUpsertOne) SetProvince(v string) *IcpUpsertOne {
 	return u.Update(func(s *IcpUpsert) {
@@ -499,6 +584,13 @@ func (u *IcpUpsertOne) SetProvince(v string) *IcpUpsertOne {
 func (u *IcpUpsertOne) UpdateProvince() *IcpUpsertOne {
 	return u.Update(func(s *IcpUpsert) {
 		s.UpdateProvince()
+	})
+}
+
+// ClearProvince clears the value of the "province" field.
+func (u *IcpUpsertOne) ClearProvince() *IcpUpsertOne {
+	return u.Update(func(s *IcpUpsert) {
+		s.ClearProvince()
 	})
 }
 
@@ -516,6 +608,13 @@ func (u *IcpUpsertOne) UpdateCompany() *IcpUpsertOne {
 	})
 }
 
+// ClearCompany clears the value of the "company" field.
+func (u *IcpUpsertOne) ClearCompany() *IcpUpsertOne {
+	return u.Update(func(s *IcpUpsert) {
+		s.ClearCompany()
+	})
+}
+
 // SetOwner sets the "owner" field.
 func (u *IcpUpsertOne) SetOwner(v string) *IcpUpsertOne {
 	return u.Update(func(s *IcpUpsert) {
@@ -527,6 +626,13 @@ func (u *IcpUpsertOne) SetOwner(v string) *IcpUpsertOne {
 func (u *IcpUpsertOne) UpdateOwner() *IcpUpsertOne {
 	return u.Update(func(s *IcpUpsert) {
 		s.UpdateOwner()
+	})
+}
+
+// ClearOwner clears the value of the "owner" field.
+func (u *IcpUpsertOne) ClearOwner() *IcpUpsertOne {
+	return u.Update(func(s *IcpUpsert) {
+		s.ClearOwner()
 	})
 }
 
@@ -558,6 +664,13 @@ func (u *IcpUpsertOne) UpdateHomepage() *IcpUpsertOne {
 	})
 }
 
+// ClearHomepage clears the value of the "homepage" field.
+func (u *IcpUpsertOne) ClearHomepage() *IcpUpsertOne {
+	return u.Update(func(s *IcpUpsert) {
+		s.ClearHomepage()
+	})
+}
+
 // SetPermit sets the "permit" field.
 func (u *IcpUpsertOne) SetPermit(v string) *IcpUpsertOne {
 	return u.Update(func(s *IcpUpsert) {
@@ -569,6 +682,34 @@ func (u *IcpUpsertOne) SetPermit(v string) *IcpUpsertOne {
 func (u *IcpUpsertOne) UpdatePermit() *IcpUpsertOne {
 	return u.Update(func(s *IcpUpsert) {
 		s.UpdatePermit()
+	})
+}
+
+// ClearPermit clears the value of the "permit" field.
+func (u *IcpUpsertOne) ClearPermit() *IcpUpsertOne {
+	return u.Update(func(s *IcpUpsert) {
+		s.ClearPermit()
+	})
+}
+
+// SetWebName sets the "webName" field.
+func (u *IcpUpsertOne) SetWebName(v string) *IcpUpsertOne {
+	return u.Update(func(s *IcpUpsert) {
+		s.SetWebName(v)
+	})
+}
+
+// UpdateWebName sets the "webName" field to the value that was provided on create.
+func (u *IcpUpsertOne) UpdateWebName() *IcpUpsertOne {
+	return u.Update(func(s *IcpUpsert) {
+		s.UpdateWebName()
+	})
+}
+
+// ClearWebName clears the value of the "webName" field.
+func (u *IcpUpsertOne) ClearWebName() *IcpUpsertOne {
+	return u.Update(func(s *IcpUpsert) {
+		s.ClearWebName()
 	})
 }
 
@@ -814,6 +955,13 @@ func (u *IcpUpsertBulk) UpdateCity() *IcpUpsertBulk {
 	})
 }
 
+// ClearCity clears the value of the "city" field.
+func (u *IcpUpsertBulk) ClearCity() *IcpUpsertBulk {
+	return u.Update(func(s *IcpUpsert) {
+		s.ClearCity()
+	})
+}
+
 // SetProvince sets the "province" field.
 func (u *IcpUpsertBulk) SetProvince(v string) *IcpUpsertBulk {
 	return u.Update(func(s *IcpUpsert) {
@@ -825,6 +973,13 @@ func (u *IcpUpsertBulk) SetProvince(v string) *IcpUpsertBulk {
 func (u *IcpUpsertBulk) UpdateProvince() *IcpUpsertBulk {
 	return u.Update(func(s *IcpUpsert) {
 		s.UpdateProvince()
+	})
+}
+
+// ClearProvince clears the value of the "province" field.
+func (u *IcpUpsertBulk) ClearProvince() *IcpUpsertBulk {
+	return u.Update(func(s *IcpUpsert) {
+		s.ClearProvince()
 	})
 }
 
@@ -842,6 +997,13 @@ func (u *IcpUpsertBulk) UpdateCompany() *IcpUpsertBulk {
 	})
 }
 
+// ClearCompany clears the value of the "company" field.
+func (u *IcpUpsertBulk) ClearCompany() *IcpUpsertBulk {
+	return u.Update(func(s *IcpUpsert) {
+		s.ClearCompany()
+	})
+}
+
 // SetOwner sets the "owner" field.
 func (u *IcpUpsertBulk) SetOwner(v string) *IcpUpsertBulk {
 	return u.Update(func(s *IcpUpsert) {
@@ -853,6 +1015,13 @@ func (u *IcpUpsertBulk) SetOwner(v string) *IcpUpsertBulk {
 func (u *IcpUpsertBulk) UpdateOwner() *IcpUpsertBulk {
 	return u.Update(func(s *IcpUpsert) {
 		s.UpdateOwner()
+	})
+}
+
+// ClearOwner clears the value of the "owner" field.
+func (u *IcpUpsertBulk) ClearOwner() *IcpUpsertBulk {
+	return u.Update(func(s *IcpUpsert) {
+		s.ClearOwner()
 	})
 }
 
@@ -884,6 +1053,13 @@ func (u *IcpUpsertBulk) UpdateHomepage() *IcpUpsertBulk {
 	})
 }
 
+// ClearHomepage clears the value of the "homepage" field.
+func (u *IcpUpsertBulk) ClearHomepage() *IcpUpsertBulk {
+	return u.Update(func(s *IcpUpsert) {
+		s.ClearHomepage()
+	})
+}
+
 // SetPermit sets the "permit" field.
 func (u *IcpUpsertBulk) SetPermit(v string) *IcpUpsertBulk {
 	return u.Update(func(s *IcpUpsert) {
@@ -895,6 +1071,34 @@ func (u *IcpUpsertBulk) SetPermit(v string) *IcpUpsertBulk {
 func (u *IcpUpsertBulk) UpdatePermit() *IcpUpsertBulk {
 	return u.Update(func(s *IcpUpsert) {
 		s.UpdatePermit()
+	})
+}
+
+// ClearPermit clears the value of the "permit" field.
+func (u *IcpUpsertBulk) ClearPermit() *IcpUpsertBulk {
+	return u.Update(func(s *IcpUpsert) {
+		s.ClearPermit()
+	})
+}
+
+// SetWebName sets the "webName" field.
+func (u *IcpUpsertBulk) SetWebName(v string) *IcpUpsertBulk {
+	return u.Update(func(s *IcpUpsert) {
+		s.SetWebName(v)
+	})
+}
+
+// UpdateWebName sets the "webName" field to the value that was provided on create.
+func (u *IcpUpsertBulk) UpdateWebName() *IcpUpsertBulk {
+	return u.Update(func(s *IcpUpsert) {
+		s.UpdateWebName()
+	})
+}
+
+// ClearWebName clears the value of the "webName" field.
+func (u *IcpUpsertBulk) ClearWebName() *IcpUpsertBulk {
+	return u.Update(func(s *IcpUpsert) {
+		s.ClearWebName()
 	})
 }
 

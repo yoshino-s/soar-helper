@@ -94,6 +94,11 @@ func Permit(v string) predicate.Icp {
 	return predicate.Icp(sql.FieldEQ(FieldPermit, v))
 }
 
+// WebName applies equality check predicate on the "webName" field. It's identical to WebNameEQ.
+func WebName(v string) predicate.Icp {
+	return predicate.Icp(sql.FieldEQ(FieldWebName, v))
+}
+
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.Icp {
 	return predicate.Icp(sql.FieldEQ(FieldCreatedAt, v))
@@ -224,6 +229,16 @@ func CityHasSuffix(v string) predicate.Icp {
 	return predicate.Icp(sql.FieldHasSuffix(FieldCity, v))
 }
 
+// CityIsNil applies the IsNil predicate on the "city" field.
+func CityIsNil() predicate.Icp {
+	return predicate.Icp(sql.FieldIsNull(FieldCity))
+}
+
+// CityNotNil applies the NotNil predicate on the "city" field.
+func CityNotNil() predicate.Icp {
+	return predicate.Icp(sql.FieldNotNull(FieldCity))
+}
+
 // CityEqualFold applies the EqualFold predicate on the "city" field.
 func CityEqualFold(v string) predicate.Icp {
 	return predicate.Icp(sql.FieldEqualFold(FieldCity, v))
@@ -287,6 +302,16 @@ func ProvinceHasPrefix(v string) predicate.Icp {
 // ProvinceHasSuffix applies the HasSuffix predicate on the "province" field.
 func ProvinceHasSuffix(v string) predicate.Icp {
 	return predicate.Icp(sql.FieldHasSuffix(FieldProvince, v))
+}
+
+// ProvinceIsNil applies the IsNil predicate on the "province" field.
+func ProvinceIsNil() predicate.Icp {
+	return predicate.Icp(sql.FieldIsNull(FieldProvince))
+}
+
+// ProvinceNotNil applies the NotNil predicate on the "province" field.
+func ProvinceNotNil() predicate.Icp {
+	return predicate.Icp(sql.FieldNotNull(FieldProvince))
 }
 
 // ProvinceEqualFold applies the EqualFold predicate on the "province" field.
@@ -354,6 +379,16 @@ func CompanyHasSuffix(v string) predicate.Icp {
 	return predicate.Icp(sql.FieldHasSuffix(FieldCompany, v))
 }
 
+// CompanyIsNil applies the IsNil predicate on the "company" field.
+func CompanyIsNil() predicate.Icp {
+	return predicate.Icp(sql.FieldIsNull(FieldCompany))
+}
+
+// CompanyNotNil applies the NotNil predicate on the "company" field.
+func CompanyNotNil() predicate.Icp {
+	return predicate.Icp(sql.FieldNotNull(FieldCompany))
+}
+
 // CompanyEqualFold applies the EqualFold predicate on the "company" field.
 func CompanyEqualFold(v string) predicate.Icp {
 	return predicate.Icp(sql.FieldEqualFold(FieldCompany, v))
@@ -417,6 +452,16 @@ func OwnerHasPrefix(v string) predicate.Icp {
 // OwnerHasSuffix applies the HasSuffix predicate on the "owner" field.
 func OwnerHasSuffix(v string) predicate.Icp {
 	return predicate.Icp(sql.FieldHasSuffix(FieldOwner, v))
+}
+
+// OwnerIsNil applies the IsNil predicate on the "owner" field.
+func OwnerIsNil() predicate.Icp {
+	return predicate.Icp(sql.FieldIsNull(FieldOwner))
+}
+
+// OwnerNotNil applies the NotNil predicate on the "owner" field.
+func OwnerNotNil() predicate.Icp {
+	return predicate.Icp(sql.FieldNotNull(FieldOwner))
 }
 
 // OwnerEqualFold applies the EqualFold predicate on the "owner" field.
@@ -549,6 +594,16 @@ func HomepageHasSuffix(v string) predicate.Icp {
 	return predicate.Icp(sql.FieldHasSuffix(FieldHomepage, v))
 }
 
+// HomepageIsNil applies the IsNil predicate on the "homepage" field.
+func HomepageIsNil() predicate.Icp {
+	return predicate.Icp(sql.FieldIsNull(FieldHomepage))
+}
+
+// HomepageNotNil applies the NotNil predicate on the "homepage" field.
+func HomepageNotNil() predicate.Icp {
+	return predicate.Icp(sql.FieldNotNull(FieldHomepage))
+}
+
 // HomepageEqualFold applies the EqualFold predicate on the "homepage" field.
 func HomepageEqualFold(v string) predicate.Icp {
 	return predicate.Icp(sql.FieldEqualFold(FieldHomepage, v))
@@ -614,6 +669,16 @@ func PermitHasSuffix(v string) predicate.Icp {
 	return predicate.Icp(sql.FieldHasSuffix(FieldPermit, v))
 }
 
+// PermitIsNil applies the IsNil predicate on the "permit" field.
+func PermitIsNil() predicate.Icp {
+	return predicate.Icp(sql.FieldIsNull(FieldPermit))
+}
+
+// PermitNotNil applies the NotNil predicate on the "permit" field.
+func PermitNotNil() predicate.Icp {
+	return predicate.Icp(sql.FieldNotNull(FieldPermit))
+}
+
 // PermitEqualFold applies the EqualFold predicate on the "permit" field.
 func PermitEqualFold(v string) predicate.Icp {
 	return predicate.Icp(sql.FieldEqualFold(FieldPermit, v))
@@ -622,6 +687,81 @@ func PermitEqualFold(v string) predicate.Icp {
 // PermitContainsFold applies the ContainsFold predicate on the "permit" field.
 func PermitContainsFold(v string) predicate.Icp {
 	return predicate.Icp(sql.FieldContainsFold(FieldPermit, v))
+}
+
+// WebNameEQ applies the EQ predicate on the "webName" field.
+func WebNameEQ(v string) predicate.Icp {
+	return predicate.Icp(sql.FieldEQ(FieldWebName, v))
+}
+
+// WebNameNEQ applies the NEQ predicate on the "webName" field.
+func WebNameNEQ(v string) predicate.Icp {
+	return predicate.Icp(sql.FieldNEQ(FieldWebName, v))
+}
+
+// WebNameIn applies the In predicate on the "webName" field.
+func WebNameIn(vs ...string) predicate.Icp {
+	return predicate.Icp(sql.FieldIn(FieldWebName, vs...))
+}
+
+// WebNameNotIn applies the NotIn predicate on the "webName" field.
+func WebNameNotIn(vs ...string) predicate.Icp {
+	return predicate.Icp(sql.FieldNotIn(FieldWebName, vs...))
+}
+
+// WebNameGT applies the GT predicate on the "webName" field.
+func WebNameGT(v string) predicate.Icp {
+	return predicate.Icp(sql.FieldGT(FieldWebName, v))
+}
+
+// WebNameGTE applies the GTE predicate on the "webName" field.
+func WebNameGTE(v string) predicate.Icp {
+	return predicate.Icp(sql.FieldGTE(FieldWebName, v))
+}
+
+// WebNameLT applies the LT predicate on the "webName" field.
+func WebNameLT(v string) predicate.Icp {
+	return predicate.Icp(sql.FieldLT(FieldWebName, v))
+}
+
+// WebNameLTE applies the LTE predicate on the "webName" field.
+func WebNameLTE(v string) predicate.Icp {
+	return predicate.Icp(sql.FieldLTE(FieldWebName, v))
+}
+
+// WebNameContains applies the Contains predicate on the "webName" field.
+func WebNameContains(v string) predicate.Icp {
+	return predicate.Icp(sql.FieldContains(FieldWebName, v))
+}
+
+// WebNameHasPrefix applies the HasPrefix predicate on the "webName" field.
+func WebNameHasPrefix(v string) predicate.Icp {
+	return predicate.Icp(sql.FieldHasPrefix(FieldWebName, v))
+}
+
+// WebNameHasSuffix applies the HasSuffix predicate on the "webName" field.
+func WebNameHasSuffix(v string) predicate.Icp {
+	return predicate.Icp(sql.FieldHasSuffix(FieldWebName, v))
+}
+
+// WebNameIsNil applies the IsNil predicate on the "webName" field.
+func WebNameIsNil() predicate.Icp {
+	return predicate.Icp(sql.FieldIsNull(FieldWebName))
+}
+
+// WebNameNotNil applies the NotNil predicate on the "webName" field.
+func WebNameNotNil() predicate.Icp {
+	return predicate.Icp(sql.FieldNotNull(FieldWebName))
+}
+
+// WebNameEqualFold applies the EqualFold predicate on the "webName" field.
+func WebNameEqualFold(v string) predicate.Icp {
+	return predicate.Icp(sql.FieldEqualFold(FieldWebName, v))
+}
+
+// WebNameContainsFold applies the ContainsFold predicate on the "webName" field.
+func WebNameContainsFold(v string) predicate.Icp {
+	return predicate.Icp(sql.FieldContainsFold(FieldWebName, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.

@@ -14,10 +14,14 @@
         "chinaz",
         "connectproto",
         "connectrpc",
+        "goflags",
         "grpcgateway",
         "grpcreflect",
+        "Httpx",
         "openapiv",
         "protobuf",
-        "protojson"
+        "protojson",
+        "unauthor",
+        "vulbox"
     ]
 }

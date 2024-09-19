@@ -164,10 +164,10 @@
         }
       }
     },
-    "/yoshino_s.soar_helper.gen.v1.RunnerService/Run": {
+    "/yoshino_s.soar_helper.v1.RunnerService/Run": {
       "post": {
         "tags": [
-          "yoshino_s.soar_helper.gen.v1.RunnerService"
+          "yoshino_s.soar_helper.v1.RunnerService"
         ],
         "parameters": [
           {
@@ -190,7 +190,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/yoshino_s.soar_helper.gen.v1.RunRequest"
+                "$ref": "#/components/schemas/yoshino_s.soar_helper.v1.RunRequest"
               }
             }
           },
@@ -210,7 +210,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/yoshino_s.soar_helper.gen.v1.RunResponse"
+                  "$ref": "#/components/schemas/yoshino_s.soar_helper.v1.RunResponse"
                 }
               }
             }
@@ -218,10 +218,10 @@
         }
       }
     },
-    "/yoshino_s.soar_helper.gen.v1.RunnerService/RunStream": {
+    "/yoshino_s.soar_helper.v1.RunnerService/RunStream": {
       "post": {
         "tags": [
-          "yoshino_s.soar_helper.gen.v1.RunnerService"
+          "yoshino_s.soar_helper.v1.RunnerService"
         ],
         "parameters": [
           {
@@ -244,7 +244,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/yoshino_s.soar_helper.gen.v1.RunRequest"
+                "$ref": "#/components/schemas/yoshino_s.soar_helper.v1.RunRequest"
               }
             }
           },
@@ -264,7 +264,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/yoshino_s.soar_helper.gen.v1.RunStreamData"
+                  "$ref": "#/components/schemas/yoshino_s.soar_helper.v1.RunStreamData"
                 }
               }
             }
@@ -272,10 +272,10 @@
         }
       }
     },
-    "/yoshino_s.soar_helper.gen.v1.RunnerService/ReadFile": {
+    "/yoshino_s.soar_helper.v1.RunnerService/ReadFile": {
       "post": {
         "tags": [
-          "yoshino_s.soar_helper.gen.v1.RunnerService"
+          "yoshino_s.soar_helper.v1.RunnerService"
         ],
         "parameters": [
           {
@@ -298,7 +298,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/yoshino_s.soar_helper.gen.v1.ReadFileRequest"
+                "$ref": "#/components/schemas/yoshino_s.soar_helper.v1.ReadFileRequest"
               }
             }
           },
@@ -318,7 +318,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/yoshino_s.soar_helper.gen.v1.ReadFileResponse"
+                  "$ref": "#/components/schemas/yoshino_s.soar_helper.v1.ReadFileResponse"
                 }
               }
             }
@@ -326,10 +326,10 @@
         }
       }
     },
-    "/yoshino_s.soar_helper.gen.v1.RunnerService/WriteFile": {
+    "/yoshino_s.soar_helper.v1.RunnerService/WriteFile": {
       "post": {
         "tags": [
-          "yoshino_s.soar_helper.gen.v1.RunnerService"
+          "yoshino_s.soar_helper.v1.RunnerService"
         ],
         "parameters": [
           {
@@ -352,7 +352,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/yoshino_s.soar_helper.gen.v1.WriteFileRequest"
+                "$ref": "#/components/schemas/yoshino_s.soar_helper.v1.WriteFileRequest"
               }
             }
           },
@@ -372,7 +372,169 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/yoshino_s.soar_helper.gen.v1.WriteFileResponse"
+                  "$ref": "#/components/schemas/yoshino_s.soar_helper.v1.WriteFileResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/yoshino_s.soar_helper.v1.S3Service/Upload": {
+      "post": {
+        "tags": [
+          "yoshino_s.soar_helper.v1.S3Service"
+        ],
+        "parameters": [
+          {
+            "name": "Connect-Protocol-Version",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/connect-protocol-version"
+            }
+          },
+          {
+            "name": "Connect-Timeout-Ms",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/connect-timeout-header"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/yoshino_s.soar_helper.v1.UploadRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/connect.error"
+                }
+              }
+            }
+          },
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/yoshino_s.soar_helper.v1.UploadResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/yoshino_s.soar_helper.v1.ToolsService/Unauthor": {
+      "post": {
+        "tags": [
+          "yoshino_s.soar_helper.v1.ToolsService"
+        ],
+        "parameters": [
+          {
+            "name": "Connect-Protocol-Version",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/connect-protocol-version"
+            }
+          },
+          {
+            "name": "Connect-Timeout-Ms",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/connect-timeout-header"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/yoshino_s.soar_helper.v1.UnauthorRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/connect.error"
+                }
+              }
+            }
+          },
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/yoshino_s.soar_helper.v1.UnauthorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/yoshino_s.soar_helper.v1.ToolsService/Httpx": {
+      "post": {
+        "tags": [
+          "yoshino_s.soar_helper.v1.ToolsService"
+        ],
+        "parameters": [
+          {
+            "name": "Connect-Protocol-Version",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/connect-protocol-version"
+            }
+          },
+          {
+            "name": "Connect-Timeout-Ms",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/connect-timeout-header"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/yoshino_s.soar_helper.v1.HttpxRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/connect.error"
+                }
+              }
+            }
+          },
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/yoshino_s.soar_helper.v1.HttpxResponse"
                 }
               }
             }
@@ -411,16 +573,6 @@
       "yoshino_s.soar_helper.v1.BatchQueryResponse": {
         "type": "object",
         "properties": {
-          "code": {
-            "type": "integer",
-            "title": "code",
-            "additionalProperties": false
-          },
-          "message": {
-            "type": "string",
-            "title": "message",
-            "additionalProperties": false
-          },
           "data": {
             "type": "array",
             "items": {
@@ -496,6 +648,16 @@
             "type": "boolean",
             "title": "cached",
             "additionalProperties": false
+          },
+          "input": {
+            "type": "string",
+            "title": "input",
+            "additionalProperties": false
+          },
+          "webName": {
+            "type": "string",
+            "title": "web_name",
+            "additionalProperties": false
           }
         },
         "title": "IcpRecord",
@@ -516,16 +678,6 @@
       "yoshino_s.soar_helper.v1.QueryResponse": {
         "type": "object",
         "properties": {
-          "code": {
-            "type": "integer",
-            "title": "code",
-            "additionalProperties": false
-          },
-          "message": {
-            "type": "string",
-            "title": "message",
-            "additionalProperties": false
-          },
           "data": {
             "$ref": "#/components/schemas/yoshino_s.soar_helper.v1.IcpRecord"
           }
@@ -623,7 +775,7 @@
         "additionalProperties": true,
         "description": "Contains an arbitrary serialized message along with a @type that describes the type of the serialized message."
       },
-      "yoshino_s.soar_helper.gen.v1.RunStreamData_Type": {
+      "yoshino_s.soar_helper.v1.RunStreamData_Type": {
         "type": "string",
         "title": "RunStreamData_Type",
         "enum": [
@@ -632,7 +784,7 @@
           "EXIT_CODE"
         ]
       },
-      "yoshino_s.soar_helper.gen.v1.ReadFileRequest": {
+      "yoshino_s.soar_helper.v1.ReadFileRequest": {
         "type": "object",
         "properties": {
           "path": {
@@ -644,19 +796,9 @@
         "title": "ReadFileRequest",
         "additionalProperties": false
       },
-      "yoshino_s.soar_helper.gen.v1.ReadFileResponse": {
+      "yoshino_s.soar_helper.v1.ReadFileResponse": {
         "type": "object",
         "properties": {
-          "code": {
-            "type": "integer",
-            "title": "code",
-            "additionalProperties": false
-          },
-          "message": {
-            "type": "string",
-            "title": "message",
-            "additionalProperties": false
-          },
           "data": {
             "type": "string",
             "title": "data",
@@ -666,7 +808,7 @@
         "title": "ReadFileResponse",
         "additionalProperties": false
       },
-      "yoshino_s.soar_helper.gen.v1.RunRequest": {
+      "yoshino_s.soar_helper.v1.RunRequest": {
         "type": "object",
         "properties": {
           "commands": {
@@ -686,27 +828,7 @@
         "title": "RunRequest",
         "additionalProperties": false
       },
-      "yoshino_s.soar_helper.gen.v1.RunResponse": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "title": "code",
-            "additionalProperties": false
-          },
-          "message": {
-            "type": "string",
-            "title": "message",
-            "additionalProperties": false
-          },
-          "data": {
-            "$ref": "#/components/schemas/yoshino_s.soar_helper.gen.v1.RunResult"
-          }
-        },
-        "title": "RunResponse",
-        "additionalProperties": false
-      },
-      "yoshino_s.soar_helper.gen.v1.RunResult": {
+      "yoshino_s.soar_helper.v1.RunResponse": {
         "type": "object",
         "properties": {
           "stdout": {
@@ -725,14 +847,14 @@
             "additionalProperties": false
           }
         },
-        "title": "RunResult",
+        "title": "RunResponse",
         "additionalProperties": false
       },
-      "yoshino_s.soar_helper.gen.v1.RunStreamData": {
+      "yoshino_s.soar_helper.v1.RunStreamData": {
         "type": "object",
         "properties": {
           "type": {
-            "$ref": "#/components/schemas/yoshino_s.soar_helper.gen.v1.RunStreamData_Type"
+            "$ref": "#/components/schemas/yoshino_s.soar_helper.v1.RunStreamData_Type"
           },
           "data": {
             "type": "string",
@@ -748,7 +870,7 @@
         "title": "RunStreamData",
         "additionalProperties": false
       },
-      "yoshino_s.soar_helper.gen.v1.WriteFileRequest": {
+      "yoshino_s.soar_helper.v1.WriteFileRequest": {
         "type": "object",
         "properties": {
           "path": {
@@ -765,21 +887,223 @@
         "title": "WriteFileRequest",
         "additionalProperties": false
       },
-      "yoshino_s.soar_helper.gen.v1.WriteFileResponse": {
+      "yoshino_s.soar_helper.v1.WriteFileResponse": {
+        "type": "object",
+        "title": "WriteFileResponse",
+        "additionalProperties": false
+      },
+      "yoshino_s.soar_helper.v1.UploadRequest": {
         "type": "object",
         "properties": {
-          "code": {
-            "type": "integer",
-            "title": "code",
+          "path": {
+            "type": "string",
+            "title": "path",
             "additionalProperties": false
           },
-          "message": {
+          "key": {
             "type": "string",
-            "title": "message",
+            "title": "key",
             "additionalProperties": false
           }
         },
-        "title": "WriteFileResponse",
+        "title": "UploadRequest",
+        "additionalProperties": false
+      },
+      "yoshino_s.soar_helper.v1.UploadResponse": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "title": "url",
+            "additionalProperties": false
+          }
+        },
+        "title": "UploadResponse",
+        "additionalProperties": false
+      },
+      "yoshino_s.soar_helper.v1.HttpxRequest": {
+        "type": "object",
+        "properties": {
+          "targets": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "title": "targets",
+              "additionalProperties": false
+            }
+          },
+          "timeout": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "timeout",
+            "additionalProperties": false
+          },
+          "concurrent": {
+            "type": "integer",
+            "title": "concurrent",
+            "additionalProperties": false
+          },
+          "matchStatusCode": {
+            "type": "string",
+            "title": "match_status_code",
+            "additionalProperties": false
+          },
+          "matchString": {
+            "type": "string",
+            "title": "match_string",
+            "additionalProperties": false
+          },
+          "screenshot": {
+            "type": "boolean",
+            "title": "screenshot",
+            "additionalProperties": false
+          },
+          "upload": {
+            "type": "boolean",
+            "title": "upload",
+            "additionalProperties": false
+          },
+          "followRedirects": {
+            "type": "boolean",
+            "title": "follow_redirects",
+            "additionalProperties": false
+          },
+          "followHostRedirects": {
+            "type": "boolean",
+            "title": "follow_host_redirects",
+            "additionalProperties": false
+          }
+        },
+        "title": "HttpxRequest",
+        "additionalProperties": false
+      },
+      "yoshino_s.soar_helper.v1.HttpxResponse": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "type": "string",
+            "title": "target",
+            "additionalProperties": false
+          },
+          "success": {
+            "type": "boolean",
+            "title": "success",
+            "additionalProperties": false
+          },
+          "result": {
+            "type": "string",
+            "title": "result",
+            "additionalProperties": false
+          },
+          "error": {
+            "type": "string",
+            "title": "error",
+            "additionalProperties": false
+          },
+          "screenshot": {
+            "type": "string",
+            "title": "screenshot",
+            "additionalProperties": false
+          },
+          "request": {
+            "type": "string",
+            "title": "request",
+            "additionalProperties": false
+          },
+          "url": {
+            "type": "string",
+            "title": "url",
+            "additionalProperties": false
+          },
+          "statusCode": {
+            "type": "integer",
+            "title": "status_code",
+            "additionalProperties": false
+          }
+        },
+        "title": "HttpxResponse",
+        "additionalProperties": false
+      },
+      "yoshino_s.soar_helper.v1.UnauthorRequest": {
+        "type": "object",
+        "properties": {
+          "targets": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "title": "targets",
+              "additionalProperties": false
+            }
+          },
+          "timeout": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "timeout",
+            "additionalProperties": false
+          },
+          "concurrent": {
+            "type": "integer",
+            "title": "concurrent",
+            "additionalProperties": false
+          },
+          "protocol": {
+            "type": "string",
+            "title": "protocol",
+            "additionalProperties": false
+          }
+        },
+        "title": "UnauthorRequest",
+        "additionalProperties": false
+      },
+      "yoshino_s.soar_helper.v1.UnauthorResponse": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "type": "string",
+            "title": "target",
+            "additionalProperties": false
+          },
+          "success": {
+            "type": "boolean",
+            "title": "success",
+            "additionalProperties": false
+          },
+          "result": {
+            "type": "string",
+            "title": "result",
+            "additionalProperties": false
+          },
+          "error": {
+            "type": "string",
+            "title": "error",
+            "additionalProperties": false
+          },
+          "time": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "time",
+            "additionalProperties": false
+          }
+        },
+        "title": "UnauthorResponse",
         "additionalProperties": false
       }
     }
@@ -790,7 +1114,13 @@
       "name": "yoshino_s.soar_helper.v1.IcpQueryService"
     },
     {
-      "name": "yoshino_s.soar_helper.gen.v1.RunnerService"
+      "name": "yoshino_s.soar_helper.v1.RunnerService"
+    },
+    {
+      "name": "yoshino_s.soar_helper.v1.S3Service"
+    },
+    {
+      "name": "yoshino_s.soar_helper.v1.ToolsService"
     }
   ],
   "externalDocs": {}

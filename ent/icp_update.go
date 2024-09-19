@@ -42,6 +42,12 @@ func (iu *IcpUpdate) SetNillableCity(s *string) *IcpUpdate {
 	return iu
 }
 
+// ClearCity clears the value of the "city" field.
+func (iu *IcpUpdate) ClearCity() *IcpUpdate {
+	iu.mutation.ClearCity()
+	return iu
+}
+
 // SetProvince sets the "province" field.
 func (iu *IcpUpdate) SetProvince(s string) *IcpUpdate {
 	iu.mutation.SetProvince(s)
@@ -53,6 +59,12 @@ func (iu *IcpUpdate) SetNillableProvince(s *string) *IcpUpdate {
 	if s != nil {
 		iu.SetProvince(*s)
 	}
+	return iu
+}
+
+// ClearProvince clears the value of the "province" field.
+func (iu *IcpUpdate) ClearProvince() *IcpUpdate {
+	iu.mutation.ClearProvince()
 	return iu
 }
 
@@ -70,6 +82,12 @@ func (iu *IcpUpdate) SetNillableCompany(s *string) *IcpUpdate {
 	return iu
 }
 
+// ClearCompany clears the value of the "company" field.
+func (iu *IcpUpdate) ClearCompany() *IcpUpdate {
+	iu.mutation.ClearCompany()
+	return iu
+}
+
 // SetOwner sets the "owner" field.
 func (iu *IcpUpdate) SetOwner(s string) *IcpUpdate {
 	iu.mutation.SetOwner(s)
@@ -81,6 +99,12 @@ func (iu *IcpUpdate) SetNillableOwner(s *string) *IcpUpdate {
 	if s != nil {
 		iu.SetOwner(*s)
 	}
+	return iu
+}
+
+// ClearOwner clears the value of the "owner" field.
+func (iu *IcpUpdate) ClearOwner() *IcpUpdate {
+	iu.mutation.ClearOwner()
 	return iu
 }
 
@@ -112,6 +136,12 @@ func (iu *IcpUpdate) SetNillableHomepage(s *string) *IcpUpdate {
 	return iu
 }
 
+// ClearHomepage clears the value of the "homepage" field.
+func (iu *IcpUpdate) ClearHomepage() *IcpUpdate {
+	iu.mutation.ClearHomepage()
+	return iu
+}
+
 // SetPermit sets the "permit" field.
 func (iu *IcpUpdate) SetPermit(s string) *IcpUpdate {
 	iu.mutation.SetPermit(s)
@@ -123,6 +153,32 @@ func (iu *IcpUpdate) SetNillablePermit(s *string) *IcpUpdate {
 	if s != nil {
 		iu.SetPermit(*s)
 	}
+	return iu
+}
+
+// ClearPermit clears the value of the "permit" field.
+func (iu *IcpUpdate) ClearPermit() *IcpUpdate {
+	iu.mutation.ClearPermit()
+	return iu
+}
+
+// SetWebName sets the "webName" field.
+func (iu *IcpUpdate) SetWebName(s string) *IcpUpdate {
+	iu.mutation.SetWebName(s)
+	return iu
+}
+
+// SetNillableWebName sets the "webName" field if the given value is not nil.
+func (iu *IcpUpdate) SetNillableWebName(s *string) *IcpUpdate {
+	if s != nil {
+		iu.SetWebName(*s)
+	}
+	return iu
+}
+
+// ClearWebName clears the value of the "webName" field.
+func (iu *IcpUpdate) ClearWebName() *IcpUpdate {
+	iu.mutation.ClearWebName()
 	return iu
 }
 
@@ -185,14 +241,26 @@ func (iu *IcpUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := iu.mutation.City(); ok {
 		_spec.SetField(icp.FieldCity, field.TypeString, value)
 	}
+	if iu.mutation.CityCleared() {
+		_spec.ClearField(icp.FieldCity, field.TypeString)
+	}
 	if value, ok := iu.mutation.Province(); ok {
 		_spec.SetField(icp.FieldProvince, field.TypeString, value)
+	}
+	if iu.mutation.ProvinceCleared() {
+		_spec.ClearField(icp.FieldProvince, field.TypeString)
 	}
 	if value, ok := iu.mutation.Company(); ok {
 		_spec.SetField(icp.FieldCompany, field.TypeString, value)
 	}
+	if iu.mutation.CompanyCleared() {
+		_spec.ClearField(icp.FieldCompany, field.TypeString)
+	}
 	if value, ok := iu.mutation.Owner(); ok {
 		_spec.SetField(icp.FieldOwner, field.TypeString, value)
+	}
+	if iu.mutation.OwnerCleared() {
+		_spec.ClearField(icp.FieldOwner, field.TypeString)
 	}
 	if value, ok := iu.mutation.GetType(); ok {
 		_spec.SetField(icp.FieldType, field.TypeString, value)
@@ -200,8 +268,20 @@ func (iu *IcpUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := iu.mutation.Homepage(); ok {
 		_spec.SetField(icp.FieldHomepage, field.TypeString, value)
 	}
+	if iu.mutation.HomepageCleared() {
+		_spec.ClearField(icp.FieldHomepage, field.TypeString)
+	}
 	if value, ok := iu.mutation.Permit(); ok {
 		_spec.SetField(icp.FieldPermit, field.TypeString, value)
+	}
+	if iu.mutation.PermitCleared() {
+		_spec.ClearField(icp.FieldPermit, field.TypeString)
+	}
+	if value, ok := iu.mutation.WebName(); ok {
+		_spec.SetField(icp.FieldWebName, field.TypeString, value)
+	}
+	if iu.mutation.WebNameCleared() {
+		_spec.ClearField(icp.FieldWebName, field.TypeString)
 	}
 	if value, ok := iu.mutation.UpdatedAt(); ok {
 		_spec.SetField(icp.FieldUpdatedAt, field.TypeTime, value)
@@ -240,6 +320,12 @@ func (iuo *IcpUpdateOne) SetNillableCity(s *string) *IcpUpdateOne {
 	return iuo
 }
 
+// ClearCity clears the value of the "city" field.
+func (iuo *IcpUpdateOne) ClearCity() *IcpUpdateOne {
+	iuo.mutation.ClearCity()
+	return iuo
+}
+
 // SetProvince sets the "province" field.
 func (iuo *IcpUpdateOne) SetProvince(s string) *IcpUpdateOne {
 	iuo.mutation.SetProvince(s)
@@ -251,6 +337,12 @@ func (iuo *IcpUpdateOne) SetNillableProvince(s *string) *IcpUpdateOne {
 	if s != nil {
 		iuo.SetProvince(*s)
 	}
+	return iuo
+}
+
+// ClearProvince clears the value of the "province" field.
+func (iuo *IcpUpdateOne) ClearProvince() *IcpUpdateOne {
+	iuo.mutation.ClearProvince()
 	return iuo
 }
 
@@ -268,6 +360,12 @@ func (iuo *IcpUpdateOne) SetNillableCompany(s *string) *IcpUpdateOne {
 	return iuo
 }
 
+// ClearCompany clears the value of the "company" field.
+func (iuo *IcpUpdateOne) ClearCompany() *IcpUpdateOne {
+	iuo.mutation.ClearCompany()
+	return iuo
+}
+
 // SetOwner sets the "owner" field.
 func (iuo *IcpUpdateOne) SetOwner(s string) *IcpUpdateOne {
 	iuo.mutation.SetOwner(s)
@@ -279,6 +377,12 @@ func (iuo *IcpUpdateOne) SetNillableOwner(s *string) *IcpUpdateOne {
 	if s != nil {
 		iuo.SetOwner(*s)
 	}
+	return iuo
+}
+
+// ClearOwner clears the value of the "owner" field.
+func (iuo *IcpUpdateOne) ClearOwner() *IcpUpdateOne {
+	iuo.mutation.ClearOwner()
 	return iuo
 }
 
@@ -310,6 +414,12 @@ func (iuo *IcpUpdateOne) SetNillableHomepage(s *string) *IcpUpdateOne {
 	return iuo
 }
 
+// ClearHomepage clears the value of the "homepage" field.
+func (iuo *IcpUpdateOne) ClearHomepage() *IcpUpdateOne {
+	iuo.mutation.ClearHomepage()
+	return iuo
+}
+
 // SetPermit sets the "permit" field.
 func (iuo *IcpUpdateOne) SetPermit(s string) *IcpUpdateOne {
 	iuo.mutation.SetPermit(s)
@@ -321,6 +431,32 @@ func (iuo *IcpUpdateOne) SetNillablePermit(s *string) *IcpUpdateOne {
 	if s != nil {
 		iuo.SetPermit(*s)
 	}
+	return iuo
+}
+
+// ClearPermit clears the value of the "permit" field.
+func (iuo *IcpUpdateOne) ClearPermit() *IcpUpdateOne {
+	iuo.mutation.ClearPermit()
+	return iuo
+}
+
+// SetWebName sets the "webName" field.
+func (iuo *IcpUpdateOne) SetWebName(s string) *IcpUpdateOne {
+	iuo.mutation.SetWebName(s)
+	return iuo
+}
+
+// SetNillableWebName sets the "webName" field if the given value is not nil.
+func (iuo *IcpUpdateOne) SetNillableWebName(s *string) *IcpUpdateOne {
+	if s != nil {
+		iuo.SetWebName(*s)
+	}
+	return iuo
+}
+
+// ClearWebName clears the value of the "webName" field.
+func (iuo *IcpUpdateOne) ClearWebName() *IcpUpdateOne {
+	iuo.mutation.ClearWebName()
 	return iuo
 }
 
@@ -413,14 +549,26 @@ func (iuo *IcpUpdateOne) sqlSave(ctx context.Context) (_node *Icp, err error) {
 	if value, ok := iuo.mutation.City(); ok {
 		_spec.SetField(icp.FieldCity, field.TypeString, value)
 	}
+	if iuo.mutation.CityCleared() {
+		_spec.ClearField(icp.FieldCity, field.TypeString)
+	}
 	if value, ok := iuo.mutation.Province(); ok {
 		_spec.SetField(icp.FieldProvince, field.TypeString, value)
+	}
+	if iuo.mutation.ProvinceCleared() {
+		_spec.ClearField(icp.FieldProvince, field.TypeString)
 	}
 	if value, ok := iuo.mutation.Company(); ok {
 		_spec.SetField(icp.FieldCompany, field.TypeString, value)
 	}
+	if iuo.mutation.CompanyCleared() {
+		_spec.ClearField(icp.FieldCompany, field.TypeString)
+	}
 	if value, ok := iuo.mutation.Owner(); ok {
 		_spec.SetField(icp.FieldOwner, field.TypeString, value)
+	}
+	if iuo.mutation.OwnerCleared() {
+		_spec.ClearField(icp.FieldOwner, field.TypeString)
 	}
 	if value, ok := iuo.mutation.GetType(); ok {
 		_spec.SetField(icp.FieldType, field.TypeString, value)
@@ -428,8 +576,20 @@ func (iuo *IcpUpdateOne) sqlSave(ctx context.Context) (_node *Icp, err error) {
 	if value, ok := iuo.mutation.Homepage(); ok {
 		_spec.SetField(icp.FieldHomepage, field.TypeString, value)
 	}
+	if iuo.mutation.HomepageCleared() {
+		_spec.ClearField(icp.FieldHomepage, field.TypeString)
+	}
 	if value, ok := iuo.mutation.Permit(); ok {
 		_spec.SetField(icp.FieldPermit, field.TypeString, value)
+	}
+	if iuo.mutation.PermitCleared() {
+		_spec.ClearField(icp.FieldPermit, field.TypeString)
+	}
+	if value, ok := iuo.mutation.WebName(); ok {
+		_spec.SetField(icp.FieldWebName, field.TypeString, value)
+	}
+	if iuo.mutation.WebNameCleared() {
+		_spec.ClearField(icp.FieldWebName, field.TypeString)
 	}
 	if value, ok := iuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(icp.FieldUpdatedAt, field.TypeTime, value)

@@ -33,6 +33,8 @@ type Icp struct {
 	Homepage string `json:"homepage,omitempty"`
 	// Permit holds the value of the "permit" field.
 	Permit string `json:"permit,omitempty"`
+	// WebName holds the value of the "webName" field.
+	WebName string `json:"webName,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -47,7 +49,7 @@ func (*Icp) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case icp.FieldID:
 			values[i] = new(sql.NullInt64)
-		case icp.FieldHost, icp.FieldCity, icp.FieldProvince, icp.FieldCompany, icp.FieldOwner, icp.FieldType, icp.FieldHomepage, icp.FieldPermit:
+		case icp.FieldHost, icp.FieldCity, icp.FieldProvince, icp.FieldCompany, icp.FieldOwner, icp.FieldType, icp.FieldHomepage, icp.FieldPermit, icp.FieldWebName:
 			values[i] = new(sql.NullString)
 		case icp.FieldCreatedAt, icp.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -120,6 +122,12 @@ func (i *Icp) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				i.Permit = value.String
 			}
+		case icp.FieldWebName:
+			if value, ok := values[j].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field webName", values[j])
+			} else if value.Valid {
+				i.WebName = value.String
+			}
 		case icp.FieldCreatedAt:
 			if value, ok := values[j].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[j])
@@ -191,6 +199,9 @@ func (i *Icp) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("permit=")
 	builder.WriteString(i.Permit)
+	builder.WriteString(", ")
+	builder.WriteString("webName=")
+	builder.WriteString(i.WebName)
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(i.CreatedAt.Format(time.ANSIC))

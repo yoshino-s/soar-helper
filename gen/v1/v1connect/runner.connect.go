@@ -22,7 +22,7 @@ const _ = connect.IsAtLeastVersion1_13_0
 
 const (
 	// RunnerServiceName is the fully-qualified name of the RunnerService service.
-	RunnerServiceName = "yoshino_s.soar_helper.gen.v1.RunnerService"
+	RunnerServiceName = "yoshino_s.soar_helper.v1.RunnerService"
 )
 
 // These constants are the fully-qualified names of the RPCs defined in this package. They're
@@ -34,13 +34,13 @@ const (
 // period.
 const (
 	// RunnerServiceRunProcedure is the fully-qualified name of the RunnerService's Run RPC.
-	RunnerServiceRunProcedure = "/yoshino_s.soar_helper.gen.v1.RunnerService/Run"
+	RunnerServiceRunProcedure = "/yoshino_s.soar_helper.v1.RunnerService/Run"
 	// RunnerServiceRunStreamProcedure is the fully-qualified name of the RunnerService's RunStream RPC.
-	RunnerServiceRunStreamProcedure = "/yoshino_s.soar_helper.gen.v1.RunnerService/RunStream"
+	RunnerServiceRunStreamProcedure = "/yoshino_s.soar_helper.v1.RunnerService/RunStream"
 	// RunnerServiceReadFileProcedure is the fully-qualified name of the RunnerService's ReadFile RPC.
-	RunnerServiceReadFileProcedure = "/yoshino_s.soar_helper.gen.v1.RunnerService/ReadFile"
+	RunnerServiceReadFileProcedure = "/yoshino_s.soar_helper.v1.RunnerService/ReadFile"
 	// RunnerServiceWriteFileProcedure is the fully-qualified name of the RunnerService's WriteFile RPC.
-	RunnerServiceWriteFileProcedure = "/yoshino_s.soar_helper.gen.v1.RunnerService/WriteFile"
+	RunnerServiceWriteFileProcedure = "/yoshino_s.soar_helper.v1.RunnerService/WriteFile"
 )
 
 // These variables are the protoreflect.Descriptor objects for the RPCs defined in this package.
@@ -52,7 +52,7 @@ var (
 	runnerServiceWriteFileMethodDescriptor = runnerServiceServiceDescriptor.Methods().ByName("WriteFile")
 )
 
-// RunnerServiceClient is a client for the yoshino_s.soar_helper.gen.v1.RunnerService service.
+// RunnerServiceClient is a client for the yoshino_s.soar_helper.v1.RunnerService service.
 type RunnerServiceClient interface {
 	Run(context.Context, *connect.Request[v1.RunRequest]) (*connect.Response[v1.RunResponse], error)
 	RunStream(context.Context, *connect.Request[v1.RunRequest]) (*connect.ServerStreamForClient[v1.RunStreamData], error)
@@ -60,7 +60,7 @@ type RunnerServiceClient interface {
 	WriteFile(context.Context, *connect.Request[v1.WriteFileRequest]) (*connect.Response[v1.WriteFileResponse], error)
 }
 
-// NewRunnerServiceClient constructs a client for the yoshino_s.soar_helper.gen.v1.RunnerService
+// NewRunnerServiceClient constructs a client for the yoshino_s.soar_helper.v1.RunnerService
 // service. By default, it uses the Connect protocol with the binary Protobuf Codec, asks for
 // gzipped responses, and sends uncompressed requests. To use the gRPC or gRPC-Web protocols, supply
 // the connect.WithGRPC() or connect.WithGRPCWeb() options.
@@ -105,28 +105,27 @@ type runnerServiceClient struct {
 	writeFile *connect.Client[v1.WriteFileRequest, v1.WriteFileResponse]
 }
 
-// Run calls yoshino_s.soar_helper.gen.v1.RunnerService.Run.
+// Run calls yoshino_s.soar_helper.v1.RunnerService.Run.
 func (c *runnerServiceClient) Run(ctx context.Context, req *connect.Request[v1.RunRequest]) (*connect.Response[v1.RunResponse], error) {
 	return c.run.CallUnary(ctx, req)
 }
 
-// RunStream calls yoshino_s.soar_helper.gen.v1.RunnerService.RunStream.
+// RunStream calls yoshino_s.soar_helper.v1.RunnerService.RunStream.
 func (c *runnerServiceClient) RunStream(ctx context.Context, req *connect.Request[v1.RunRequest]) (*connect.ServerStreamForClient[v1.RunStreamData], error) {
 	return c.runStream.CallServerStream(ctx, req)
 }
 
-// ReadFile calls yoshino_s.soar_helper.gen.v1.RunnerService.ReadFile.
+// ReadFile calls yoshino_s.soar_helper.v1.RunnerService.ReadFile.
 func (c *runnerServiceClient) ReadFile(ctx context.Context, req *connect.Request[v1.ReadFileRequest]) (*connect.Response[v1.ReadFileResponse], error) {
 	return c.readFile.CallUnary(ctx, req)
 }
 
-// WriteFile calls yoshino_s.soar_helper.gen.v1.RunnerService.WriteFile.
+// WriteFile calls yoshino_s.soar_helper.v1.RunnerService.WriteFile.
 func (c *runnerServiceClient) WriteFile(ctx context.Context, req *connect.Request[v1.WriteFileRequest]) (*connect.Response[v1.WriteFileResponse], error) {
 	return c.writeFile.CallUnary(ctx, req)
 }
 
-// RunnerServiceHandler is an implementation of the yoshino_s.soar_helper.gen.v1.RunnerService
-// service.
+// RunnerServiceHandler is an implementation of the yoshino_s.soar_helper.v1.RunnerService service.
 type RunnerServiceHandler interface {
 	Run(context.Context, *connect.Request[v1.RunRequest]) (*connect.Response[v1.RunResponse], error)
 	RunStream(context.Context, *connect.Request[v1.RunRequest], *connect.ServerStream[v1.RunStreamData]) error
@@ -164,7 +163,7 @@ func NewRunnerServiceHandler(svc RunnerServiceHandler, opts ...connect.HandlerOp
 		connect.WithSchema(runnerServiceWriteFileMethodDescriptor),
 		connect.WithHandlerOptions(opts...),
 	)
-	return "/yoshino_s.soar_helper.gen.v1.RunnerService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	return "/yoshino_s.soar_helper.v1.RunnerService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case RunnerServiceRunProcedure:
 			runnerServiceRunHandler.ServeHTTP(w, r)
@@ -184,17 +183,17 @@ func NewRunnerServiceHandler(svc RunnerServiceHandler, opts ...connect.HandlerOp
 type UnimplementedRunnerServiceHandler struct{}
 
 func (UnimplementedRunnerServiceHandler) Run(context.Context, *connect.Request[v1.RunRequest]) (*connect.Response[v1.RunResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("yoshino_s.soar_helper.gen.v1.RunnerService.Run is not implemented"))
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("yoshino_s.soar_helper.v1.RunnerService.Run is not implemented"))
 }
 
 func (UnimplementedRunnerServiceHandler) RunStream(context.Context, *connect.Request[v1.RunRequest], *connect.ServerStream[v1.RunStreamData]) error {
-	return connect.NewError(connect.CodeUnimplemented, errors.New("yoshino_s.soar_helper.gen.v1.RunnerService.RunStream is not implemented"))
+	return connect.NewError(connect.CodeUnimplemented, errors.New("yoshino_s.soar_helper.v1.RunnerService.RunStream is not implemented"))
 }
 
 func (UnimplementedRunnerServiceHandler) ReadFile(context.Context, *connect.Request[v1.ReadFileRequest]) (*connect.Response[v1.ReadFileResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("yoshino_s.soar_helper.gen.v1.RunnerService.ReadFile is not implemented"))
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("yoshino_s.soar_helper.v1.RunnerService.ReadFile is not implemented"))
 }
 
 func (UnimplementedRunnerServiceHandler) WriteFile(context.Context, *connect.Request[v1.WriteFileRequest]) (*connect.Response[v1.WriteFileResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("yoshino_s.soar_helper.gen.v1.RunnerService.WriteFile is not implemented"))
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("yoshino_s.soar_helper.v1.RunnerService.WriteFile is not implemented"))
 }

@@ -32,3 +32,5 @@ dist
 # config and db
 soar-helper.yml
 soar-helper.db
+
+output

@@ -1,0 +1,18 @@
+syntax = "proto3";
+package yoshino_s.soar_helper.v1;
+
+
+option go_package = "gitlab.yoshino-s.xyz/yoshino-s/soar-helper/gen/v1";
+
+message UploadRequest {
+  string path = 1;
+  string key = 2;
+}
+
+message UploadResponse {
+  string url = 1;
+}
+
+service S3Service {
+  rpc Upload(UploadRequest) returns (UploadResponse) {}
+}

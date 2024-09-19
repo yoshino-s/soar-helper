@@ -1,5 +1,5 @@
 syntax = "proto3";
-package yoshino_s.soar_helper.gen.v1;
+package yoshino_s.soar_helper.v1;
 
 option go_package = "gitlab.yoshino-s.xyz/yoshino-s/soar-helper/gen/v1";
 
@@ -9,9 +9,7 @@ message ReadFileRequest {
 }
 
 message ReadFileResponse {
-  uint32 code = 1;
-  string message = 2;
-  string data = 3;
+  string data = 1;
 }
 
 message WriteFileRequest {
@@ -20,8 +18,6 @@ message WriteFileRequest {
 }
 
 message WriteFileResponse {
-  uint32 code = 1;
-  string message = 2;
 }
 
 message RunRequest {
@@ -29,16 +25,10 @@ message RunRequest {
   string stdin = 2;
 }
 
-message RunResult {
+message RunResponse {
   string stdout = 1;
   string stderr = 2;
   int32 exit_code = 3;
-}
-
-message RunResponse {
-  uint32 code = 1;
-  string message = 2;
-  RunResult data = 3;
 }
 
 enum RunStreamData_Type {

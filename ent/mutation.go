@@ -41,6 +41,7 @@ type IcpMutation struct {
 	_type         *string
 	homepage      *string
 	permit        *string
+	webName       *string
 	created_at    *time.Time
 	updated_at    *time.Time
 	clearedFields map[string]struct{}
@@ -214,9 +215,22 @@ func (m *IcpMutation) OldCity(ctx context.Context) (v string, err error) {
 	return oldValue.City, nil
 }
 
+// ClearCity clears the value of the "city" field.
+func (m *IcpMutation) ClearCity() {
+	m.city = nil
+	m.clearedFields[icp.FieldCity] = struct{}{}
+}
+
+// CityCleared returns if the "city" field was cleared in this mutation.
+func (m *IcpMutation) CityCleared() bool {
+	_, ok := m.clearedFields[icp.FieldCity]
+	return ok
+}
+
 // ResetCity resets all changes to the "city" field.
 func (m *IcpMutation) ResetCity() {
 	m.city = nil
+	delete(m.clearedFields, icp.FieldCity)
 }
 
 // SetProvince sets the "province" field.
@@ -250,9 +264,22 @@ func (m *IcpMutation) OldProvince(ctx context.Context) (v string, err error) {
 	return oldValue.Province, nil
 }
 
+// ClearProvince clears the value of the "province" field.
+func (m *IcpMutation) ClearProvince() {
+	m.province = nil
+	m.clearedFields[icp.FieldProvince] = struct{}{}
+}
+
+// ProvinceCleared returns if the "province" field was cleared in this mutation.
+func (m *IcpMutation) ProvinceCleared() bool {
+	_, ok := m.clearedFields[icp.FieldProvince]
+	return ok
+}
+
 // ResetProvince resets all changes to the "province" field.
 func (m *IcpMutation) ResetProvince() {
 	m.province = nil
+	delete(m.clearedFields, icp.FieldProvince)
 }
 
 // SetCompany sets the "company" field.
@@ -286,9 +313,22 @@ func (m *IcpMutation) OldCompany(ctx context.Context) (v string, err error) {
 	return oldValue.Company, nil
 }
 
+// ClearCompany clears the value of the "company" field.
+func (m *IcpMutation) ClearCompany() {
+	m.company = nil
+	m.clearedFields[icp.FieldCompany] = struct{}{}
+}
+
+// CompanyCleared returns if the "company" field was cleared in this mutation.
+func (m *IcpMutation) CompanyCleared() bool {
+	_, ok := m.clearedFields[icp.FieldCompany]
+	return ok
+}
+
 // ResetCompany resets all changes to the "company" field.
 func (m *IcpMutation) ResetCompany() {
 	m.company = nil
+	delete(m.clearedFields, icp.FieldCompany)
 }
 
 // SetOwner sets the "owner" field.
@@ -322,9 +362,22 @@ func (m *IcpMutation) OldOwner(ctx context.Context) (v string, err error) {
 	return oldValue.Owner, nil
 }
 
+// ClearOwner clears the value of the "owner" field.
+func (m *IcpMutation) ClearOwner() {
+	m.owner = nil
+	m.clearedFields[icp.FieldOwner] = struct{}{}
+}
+
+// OwnerCleared returns if the "owner" field was cleared in this mutation.
+func (m *IcpMutation) OwnerCleared() bool {
+	_, ok := m.clearedFields[icp.FieldOwner]
+	return ok
+}
+
 // ResetOwner resets all changes to the "owner" field.
 func (m *IcpMutation) ResetOwner() {
 	m.owner = nil
+	delete(m.clearedFields, icp.FieldOwner)
 }
 
 // SetType sets the "type" field.
@@ -394,9 +447,22 @@ func (m *IcpMutation) OldHomepage(ctx context.Context) (v string, err error) {
 	return oldValue.Homepage, nil
 }
 
+// ClearHomepage clears the value of the "homepage" field.
+func (m *IcpMutation) ClearHomepage() {
+	m.homepage = nil
+	m.clearedFields[icp.FieldHomepage] = struct{}{}
+}
+
+// HomepageCleared returns if the "homepage" field was cleared in this mutation.
+func (m *IcpMutation) HomepageCleared() bool {
+	_, ok := m.clearedFields[icp.FieldHomepage]
+	return ok
+}
+
 // ResetHomepage resets all changes to the "homepage" field.
 func (m *IcpMutation) ResetHomepage() {
 	m.homepage = nil
+	delete(m.clearedFields, icp.FieldHomepage)
 }
 
 // SetPermit sets the "permit" field.
@@ -430,9 +496,71 @@ func (m *IcpMutation) OldPermit(ctx context.Context) (v string, err error) {
 	return oldValue.Permit, nil
 }
 
+// ClearPermit clears the value of the "permit" field.
+func (m *IcpMutation) ClearPermit() {
+	m.permit = nil
+	m.clearedFields[icp.FieldPermit] = struct{}{}
+}
+
+// PermitCleared returns if the "permit" field was cleared in this mutation.
+func (m *IcpMutation) PermitCleared() bool {
+	_, ok := m.clearedFields[icp.FieldPermit]
+	return ok
+}
+
 // ResetPermit resets all changes to the "permit" field.
 func (m *IcpMutation) ResetPermit() {
 	m.permit = nil
+	delete(m.clearedFields, icp.FieldPermit)
+}
+
+// SetWebName sets the "webName" field.
+func (m *IcpMutation) SetWebName(s string) {
+	m.webName = &s
+}
+
+// WebName returns the value of the "webName" field in the mutation.
+func (m *IcpMutation) WebName() (r string, exists bool) {
+	v := m.webName
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWebName returns the old "webName" field's value of the Icp entity.
+// If the Icp object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *IcpMutation) OldWebName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldWebName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldWebName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWebName: %w", err)
+	}
+	return oldValue.WebName, nil
+}
+
+// ClearWebName clears the value of the "webName" field.
+func (m *IcpMutation) ClearWebName() {
+	m.webName = nil
+	m.clearedFields[icp.FieldWebName] = struct{}{}
+}
+
+// WebNameCleared returns if the "webName" field was cleared in this mutation.
+func (m *IcpMutation) WebNameCleared() bool {
+	_, ok := m.clearedFields[icp.FieldWebName]
+	return ok
+}
+
+// ResetWebName resets all changes to the "webName" field.
+func (m *IcpMutation) ResetWebName() {
+	m.webName = nil
+	delete(m.clearedFields, icp.FieldWebName)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -541,7 +669,7 @@ func (m *IcpMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *IcpMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 11)
 	if m.host != nil {
 		fields = append(fields, icp.FieldHost)
 	}
@@ -565,6 +693,9 @@ func (m *IcpMutation) Fields() []string {
 	}
 	if m.permit != nil {
 		fields = append(fields, icp.FieldPermit)
+	}
+	if m.webName != nil {
+		fields = append(fields, icp.FieldWebName)
 	}
 	if m.created_at != nil {
 		fields = append(fields, icp.FieldCreatedAt)
@@ -596,6 +727,8 @@ func (m *IcpMutation) Field(name string) (ent.Value, bool) {
 		return m.Homepage()
 	case icp.FieldPermit:
 		return m.Permit()
+	case icp.FieldWebName:
+		return m.WebName()
 	case icp.FieldCreatedAt:
 		return m.CreatedAt()
 	case icp.FieldUpdatedAt:
@@ -625,6 +758,8 @@ func (m *IcpMutation) OldField(ctx context.Context, name string) (ent.Value, err
 		return m.OldHomepage(ctx)
 	case icp.FieldPermit:
 		return m.OldPermit(ctx)
+	case icp.FieldWebName:
+		return m.OldWebName(ctx)
 	case icp.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case icp.FieldUpdatedAt:
@@ -694,6 +829,13 @@ func (m *IcpMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetPermit(v)
 		return nil
+	case icp.FieldWebName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWebName(v)
+		return nil
 	case icp.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -737,7 +879,29 @@ func (m *IcpMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *IcpMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(icp.FieldCity) {
+		fields = append(fields, icp.FieldCity)
+	}
+	if m.FieldCleared(icp.FieldProvince) {
+		fields = append(fields, icp.FieldProvince)
+	}
+	if m.FieldCleared(icp.FieldCompany) {
+		fields = append(fields, icp.FieldCompany)
+	}
+	if m.FieldCleared(icp.FieldOwner) {
+		fields = append(fields, icp.FieldOwner)
+	}
+	if m.FieldCleared(icp.FieldHomepage) {
+		fields = append(fields, icp.FieldHomepage)
+	}
+	if m.FieldCleared(icp.FieldPermit) {
+		fields = append(fields, icp.FieldPermit)
+	}
+	if m.FieldCleared(icp.FieldWebName) {
+		fields = append(fields, icp.FieldWebName)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -750,6 +914,29 @@ func (m *IcpMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *IcpMutation) ClearField(name string) error {
+	switch name {
+	case icp.FieldCity:
+		m.ClearCity()
+		return nil
+	case icp.FieldProvince:
+		m.ClearProvince()
+		return nil
+	case icp.FieldCompany:
+		m.ClearCompany()
+		return nil
+	case icp.FieldOwner:
+		m.ClearOwner()
+		return nil
+	case icp.FieldHomepage:
+		m.ClearHomepage()
+		return nil
+	case icp.FieldPermit:
+		m.ClearPermit()
+		return nil
+	case icp.FieldWebName:
+		m.ClearWebName()
+		return nil
+	}
 	return fmt.Errorf("unknown Icp nullable field %s", name)
 }
 
@@ -780,6 +967,9 @@ func (m *IcpMutation) ResetField(name string) error {
 		return nil
 	case icp.FieldPermit:
 		m.ResetPermit()
+		return nil
+	case icp.FieldWebName:
+		m.ResetWebName()
 		return nil
 	case icp.FieldCreatedAt:
 		m.ResetCreatedAt()

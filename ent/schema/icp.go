@@ -17,15 +17,16 @@ func (Icp) Fields() []ent.Field {
 	return []ent.Field{
 		// primary key
 		field.String("host").Unique().Immutable(),
-		field.String("city").Default(""),
-		field.String("province").Default(""),
-		field.String("company"),
-		field.String("owner"),
+		field.String("city").Optional(),
+		field.String("province").Optional(),
+		field.String("company").Optional(),
+		field.String("owner").Optional(),
 		field.String("type").Default("INVALID"),
-		field.String("homepage"),
-		field.String("permit"),
-		field.Time("created_at").Default(time.Now()).Immutable(),
-		field.Time("updated_at").Default(time.Now()).UpdateDefault(time.Now),
+		field.String("homepage").Optional(),
+		field.String("permit").Optional(),
+		field.String("webName").Optional(),
+		field.Time("created_at").Default(time.Now).Immutable(),
+		field.Time("updated_at").Default(time.Now).UpdateDefault(time.Now),
 	}
 }
 

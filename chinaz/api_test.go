@@ -1,6 +1,7 @@
 package chinaz
 
 import (
+	"context"
 	"testing"
 
 	. "github.com/smartystreets/goconvey/convey"
@@ -22,7 +23,7 @@ func TestApi(t *testing.T) {
 		// })
 
 		Convey("TestQUery", func() {
-			res, err := chinaz.query("baidu.com")
+			res, err := chinaz.query(context.Background(), "baidu.com")
 			So(err, ShouldBeNil)
 			zap.S().Infof("%+v", res)
 		})

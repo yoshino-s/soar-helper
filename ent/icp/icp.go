@@ -29,6 +29,8 @@ const (
 	FieldHomepage = "homepage"
 	// FieldPermit holds the string denoting the permit field in the database.
 	FieldPermit = "permit"
+	// FieldWebName holds the string denoting the webname field in the database.
+	FieldWebName = "web_name"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
@@ -48,6 +50,7 @@ var Columns = []string{
 	FieldType,
 	FieldHomepage,
 	FieldPermit,
+	FieldWebName,
 	FieldCreatedAt,
 	FieldUpdatedAt,
 }
@@ -63,16 +66,12 @@ func ValidColumn(column string) bool {
 }
 
 var (
-	// DefaultCity holds the default value on creation for the "city" field.
-	DefaultCity string
-	// DefaultProvince holds the default value on creation for the "province" field.
-	DefaultProvince string
 	// DefaultType holds the default value on creation for the "type" field.
 	DefaultType string
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
-	DefaultCreatedAt time.Time
+	DefaultCreatedAt func() time.Time
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
-	DefaultUpdatedAt time.Time
+	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
 )
@@ -123,6 +122,11 @@ func ByHomepage(opts ...sql.OrderTermOption) OrderOption {
 // ByPermit orders the results by the permit field.
 func ByPermit(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPermit, opts...).ToFunc()
+}
+
+// ByWebName orders the results by the webName field.
+func ByWebName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldWebName, opts...).ToFunc()
 }
 
 // ByCreatedAt orders the results by the created_at field.

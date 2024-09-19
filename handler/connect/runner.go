@@ -64,13 +64,9 @@ func (s *RunnerService) Run(ctx context.Context, req *connect.Request[v1.RunRequ
 	}
 
 	return connect.NewResponse(&v1.RunResponse{
-		Code:    0,
-		Message: "success",
-		Data: &v1.RunResult{
-			Stdout:   string(stdoutContent),
-			Stderr:   string(stderrContent),
-			ExitCode: int32(code),
-		},
+		Stdout:   string(stdoutContent),
+		Stderr:   string(stderrContent),
+		ExitCode: int32(code),
 	}), nil
 }
 
@@ -154,9 +150,7 @@ func (s *RunnerService) ReadFile(ctx context.Context, req *connect.Request[v1.Re
 	}
 
 	return connect.NewResponse(&v1.ReadFileResponse{
-		Code:    0,
-		Message: "success",
-		Data:    string(content),
+		Data: string(content),
 	}), nil
 }
 
@@ -172,8 +166,5 @@ func (s *RunnerService) WriteFile(ctx context.Context, req *connect.Request[v1.W
 		return nil, err
 	}
 
-	return connect.NewResponse(&v1.WriteFileResponse{
-		Code:    0,
-		Message: "success",
-	}), nil
+	return connect.NewResponse(&v1.WriteFileResponse{}), nil
 }

@@ -20,6 +20,8 @@ type Handler struct {
 
 	icpQueryHandler v1connect.IcpQueryServiceHandler
 	runnerHandler   v1connect.RunnerServiceHandler
+	toolsHandler    v1connect.ToolsServiceHandler
+	s3Handler       v1connect.S3ServiceHandler
 }
 
 func New() *Handler {
@@ -36,8 +38,16 @@ func (h *Handler) SetRunnerHandler(handler v1connect.RunnerServiceHandler) {
 	h.runnerHandler = handler
 }
 
+func (h *Handler) SetToolsHandler(handler v1connect.ToolsServiceHandler) {
+	h.toolsHandler = handler
+}
+
+func (h *Handler) SetS3Handler(handler v1connect.S3ServiceHandler) {
+	h.s3Handler = handler
+}
+
 func (h *Handler) Setup(ctx context.Context) {
-	common.MustNoNil(h.icpQueryHandler, h.runnerHandler)
+	common.MustNoNil(h.icpQueryHandler, h.runnerHandler, h.toolsHandler)
 	h.Handler.Setup(ctx)
 
 	h.Swagger("/swagger", gen.OpenAPI)
@@ -45,6 +55,8 @@ func (h *Handler) Setup(ctx context.Context) {
 	reflector := grpcreflect.NewStaticReflector(
 		v1connect.IcpQueryServiceName,
 		v1connect.RunnerServiceName,
+		v1connect.ToolsServiceName,
+		v1connect.S3ServiceName,
 	)
 
 	h.HandleGrpc(grpcreflect.NewHandlerV1(reflector))
@@ -56,8 +68,9 @@ func (h *Handler) Setup(ctx context.Context) {
 	)
 
 	h.HandleGrpc(v1connect.NewIcpQueryServiceHandler(h.icpQueryHandler, opt))
-
 	h.HandleGrpc(v1connect.NewRunnerServiceHandler(h.runnerHandler, opt))
+	h.HandleGrpc(v1connect.NewToolsServiceHandler(h.toolsHandler, opt))
+	h.HandleGrpc(v1connect.NewS3ServiceHandler(h.s3Handler, opt))
 }
 
 func (h *Handler) Run(ctx context.Context) {

@@ -15,15 +15,11 @@ message BatchQueryRequest {
 }
 
 message QueryResponse {
-  uint32 code = 1;
-  string message = 2;
-  IcpRecord data = 3;
+  IcpRecord data = 1;
 }
 
 message BatchQueryResponse {
-  uint32 code = 1;
-  string message = 2;
-  repeated IcpRecord data = 3;
+  repeated IcpRecord data = 1;
 }
 
 message IcpRecord {
@@ -39,6 +35,8 @@ message IcpRecord {
   google.protobuf.Timestamp created_at = 10;
   google.protobuf.Timestamp updated_at = 11;
   bool cached = 12;
+  string input = 13;
+  string web_name = 14;
 }
 
 message StatisticResponse {

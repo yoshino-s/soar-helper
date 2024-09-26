@@ -11,14 +11,8 @@ builds:
       - CGO_ENABLED=0
     ldflags:
       - "-X github.com/yoshino-s/go-framework/common.Version={{.Version}}"
-    goos:
-      # - windows
-      - linux
-      # - darwin
-    goarch:
-      - amd64
-      # - arm64
-      # - "386"
+    targets:
+      - linux_amd64_v1
 
 kos:
   - id: ko-image

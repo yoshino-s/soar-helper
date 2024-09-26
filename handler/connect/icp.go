@@ -2,6 +2,7 @@ package connect
 
 import (
 	"context"
+	"fmt"
 
 	"connectrpc.com/connect"
 	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/chinaz"
@@ -68,6 +69,9 @@ func (s *IcpQueryService) BatchQuery(ctx context.Context, req *connect.Request[v
 		return nil, err
 	}
 	for i, icp := range res {
+		if icp == nil {
+			return nil, fmt.Errorf("icp is nil at index %d", i)
+		}
 		records[i] = &v1.IcpRecord{
 			Id:        int64(icp.ID),
 			Host:      icp.Host,

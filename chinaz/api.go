@@ -101,7 +101,11 @@ func (c *Chinaz) Query(ctx context.Context, _domain string) (*ent.Icp, bool, err
 		return nil, false, err
 	}
 
-	return res, false, err
+	r, err := c.query(ctx, domain)
+	if err != nil {
+		return nil, false, err
+	}
+	return r, false, nil
 }
 
 type IcpData struct {

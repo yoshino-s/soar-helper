@@ -21,8 +21,6 @@ kos:
     base_image: alpine:3.20.3
     ldflags:
       - "-X github.com/yoshino-s/go-framework/common.Version={{.Version}}"
-    platforms:
-      - all
     tags:
       - '{{ .Tag }}'
       - '{{ .FullCommit }}'

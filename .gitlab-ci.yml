@@ -12,6 +12,7 @@ stages:
     GIT_DEPTH: 0
     GITLAB_TOKEN: $CI_JOB_TOKEN
     KO_DOCKER_REPO: $CI_REGISTRY_IMAGE
+    KO_DEFAULTBASEIMAGE: alpine:3.20.3
   before_script:
     - echo https://dl-cdn.alpinelinux.org/alpine/edge/testing/ >> /etc/apk/repositories
     - apk update
@@ -29,5 +30,11 @@ release:
 snapshot-release:
   extends: .release
   when: manual
+
   script:
     - goreleaser release --snapshot --clean
+
+build-dev:
+  extends: .release
+  script:
+    - ko build --bare . -t dev -t $CI_COMMIT_SHORT_SHA

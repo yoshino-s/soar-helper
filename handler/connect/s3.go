@@ -2,9 +2,11 @@ package connect
 
 import (
 	"context"
+	"net/http"
 
 	"connectrpc.com/connect"
 	"github.com/minio/minio-go/v7"
+	"github.com/yoshino-s/go-framework/errors"
 	v1 "gitlab.yoshino-s.xyz/yoshino-s/soar-helper/gen/v1"
 	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/gen/v1/v1connect"
 	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/s3"
@@ -27,7 +29,7 @@ func (s *S3Service) SetS3(s3 *s3.S3) {
 func (s *S3Service) Upload(ctx context.Context, req *connect.Request[v1.UploadRequest]) (*connect.Response[v1.UploadResponse], error) {
 	url, err := s.s3.Upload(context.Background(), req.Msg.Key, req.Msg.Path, minio.PutObjectOptions{})
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, http.StatusInternalServerError)
 	}
 	return connect.NewResponse(&v1.UploadResponse{
 		Url: url.String(),

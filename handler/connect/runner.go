@@ -36,11 +36,11 @@ func (s *RunnerService) Run(ctx context.Context, req *connect.Request[v1.RunRequ
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, http.StatusInternalServerError)
 	}
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, http.StatusInternalServerError)
 	}
 
 	code := 0
@@ -50,17 +50,17 @@ func (s *RunnerService) Run(ctx context.Context, req *connect.Request[v1.RunRequ
 		if exitErr, ok := err.(*exec.ExitError); ok {
 			code = exitErr.ExitCode()
 		} else {
-			return nil, err
+			return nil, errors.Wrap(err, http.StatusInternalServerError)
 		}
 	}
 
 	stdoutContent, err := io.ReadAll(stdout)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, http.StatusInternalServerError)
 	}
 	stderrContent, err := io.ReadAll(stderr)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, http.StatusInternalServerError)
 	}
 
 	return connect.NewResponse(&v1.RunResponse{
@@ -81,11 +81,11 @@ func (s *RunnerService) RunStream(ctx context.Context, req *connect.Request[v1.R
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
-		return err
+		return errors.Wrap(err, http.StatusInternalServerError)
 	}
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
-		return err
+		return errors.Wrap(err, http.StatusInternalServerError)
 	}
 
 	wg := conc.NewWaitGroup()
@@ -140,13 +140,13 @@ func (s *RunnerService) RunStream(ctx context.Context, req *connect.Request[v1.R
 func (s *RunnerService) ReadFile(ctx context.Context, req *connect.Request[v1.ReadFileRequest]) (*connect.Response[v1.ReadFileResponse], error) {
 	f, err := os.Open(req.Msg.Path)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, http.StatusInternalServerError)
 	}
 	defer f.Close()
 
 	content, err := io.ReadAll(f)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, http.StatusInternalServerError)
 	}
 
 	return connect.NewResponse(&v1.ReadFileResponse{
@@ -157,13 +157,13 @@ func (s *RunnerService) ReadFile(ctx context.Context, req *connect.Request[v1.Re
 func (s *RunnerService) WriteFile(ctx context.Context, req *connect.Request[v1.WriteFileRequest]) (*connect.Response[v1.WriteFileResponse], error) {
 	f, err := os.OpenFile(req.Msg.Path, os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, http.StatusInternalServerError)
 	}
 	defer f.Close()
 
 	_, err = f.WriteString(req.Msg.Content)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, http.StatusInternalServerError)
 	}
 
 	return connect.NewResponse(&v1.WriteFileResponse{}), nil

@@ -3,10 +3,12 @@ package http
 import (
 	"context"
 
+	"connectrpc.com/connect"
 	"connectrpc.com/grpcreflect"
 	"github.com/yoshino-s/go-framework/application"
 	"github.com/yoshino-s/go-framework/common"
 	"github.com/yoshino-s/go-framework/handlers/http"
+	"github.com/yoshino-s/go-framework/telemetry"
 	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/gen"
 	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/gen/v1/v1connect"
 	"go.akshayshah.org/connectproto"
@@ -62,15 +64,21 @@ func (h *Handler) Setup(ctx context.Context) {
 	h.HandleGrpc(grpcreflect.NewHandlerV1(reflector))
 	h.HandleGrpc(grpcreflect.NewHandlerV1Alpha(reflector))
 
-	opt := connectproto.WithJSON(
+	var opts []connect.HandlerOption
+
+	opts = append(opts, connectproto.WithJSON(
 		protojson.MarshalOptions{EmitUnpopulated: true, EmitDefaultValues: true},
 		protojson.UnmarshalOptions{DiscardUnknown: true},
-	)
+	))
 
-	h.HandleGrpc(v1connect.NewIcpQueryServiceHandler(h.icpQueryHandler, opt))
-	h.HandleGrpc(v1connect.NewRunnerServiceHandler(h.runnerHandler, opt))
-	h.HandleGrpc(v1connect.NewToolsServiceHandler(h.toolsHandler, opt))
-	h.HandleGrpc(v1connect.NewS3ServiceHandler(h.s3Handler, opt))
+	if telemetry.IsSentryInitialized() {
+		opts = append(opts, connect.WithInterceptors(&interceptor{}))
+	}
+
+	h.HandleGrpc(v1connect.NewIcpQueryServiceHandler(h.icpQueryHandler, opts...))
+	h.HandleGrpc(v1connect.NewRunnerServiceHandler(h.runnerHandler, opts...))
+	h.HandleGrpc(v1connect.NewToolsServiceHandler(h.toolsHandler, opts...))
+	h.HandleGrpc(v1connect.NewS3ServiceHandler(h.s3Handler, opts...))
 }
 
 func (h *Handler) Run(ctx context.Context) {

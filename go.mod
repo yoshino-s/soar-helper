@@ -8,7 +8,9 @@ require (
 	connectrpc.com/connect v1.16.2
 	connectrpc.com/grpcreflect v1.2.0
 	entgo.io/ent v0.14.1
+	github.com/getsentry/sentry-go v0.29.0
 	github.com/google/uuid v1.6.0
+	github.com/labstack/echo/v4 v4.12.0
 	github.com/minio/minio-go/v7 v7.0.76
 	github.com/ncruces/go-sqlite3 v0.18.3
 	github.com/projectdiscovery/goflags v0.1.64
@@ -19,7 +21,7 @@ require (
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.19.0
-	github.com/yoshino-s/go-framework v0.4.3
+	github.com/yoshino-s/go-framework v0.4.6
 	github.com/yoshino-s/unauthor v0.1.4
 	go.akshayshah.org/connectproto v0.6.0
 	go.uber.org/zap v1.27.0
@@ -62,7 +64,7 @@ require (
 	github.com/fatih/color v1.17.0 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/gaissmai/bart v0.12.8 // indirect
-	github.com/getsentry/sentry-go v0.29.0 // indirect
+	github.com/go-errors/errors v1.4.2 // indirect
 	github.com/go-faker/faker/v4 v4.5.0 // indirect
 	github.com/go-ini/ini v1.67.0 // indirect
 	github.com/go-jose/go-jose/v4 v4.0.4 // indirect
@@ -98,7 +100,6 @@ require (
 	github.com/klauspost/pgzip v1.2.6 // indirect
 	github.com/kljensen/snowball v0.10.0 // indirect
 	github.com/labstack/echo-contrib v0.17.1 // indirect
-	github.com/labstack/echo/v4 v4.12.0 // indirect
 	github.com/labstack/gommon v0.4.2 // indirect
 	github.com/logrusorgru/aurora v2.0.3+incompatible // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect

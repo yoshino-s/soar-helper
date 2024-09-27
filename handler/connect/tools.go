@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"math"
+	"net/http"
 	"strings"
 	"time"
 
@@ -11,6 +12,7 @@ import (
 	"github.com/minio/minio-go/v7"
 	"github.com/projectdiscovery/goflags"
 	"github.com/projectdiscovery/httpx/runner"
+	"github.com/yoshino-s/go-framework/errors"
 	"github.com/yoshino-s/unauthor/scanner"
 	"github.com/yoshino-s/unauthor/scanner/types"
 	v1 "gitlab.yoshino-s.xyz/yoshino-s/soar-helper/gen/v1"
@@ -152,12 +154,12 @@ func (t *ToolsService) Httpx(ctx context.Context, req *connect.Request[v1.HttpxR
 	}
 
 	if err := options.ValidateOptions(); err != nil {
-		return err
+		return errors.Wrap(err, http.StatusBadRequest)
 	}
 
 	httpxRunner, err := runner.New(&options)
 	if err != nil {
-		return err
+		return errors.Wrap(err, http.StatusInternalServerError)
 	}
 	defer httpxRunner.Close()
 

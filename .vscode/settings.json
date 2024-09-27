@@ -14,6 +14,7 @@
         "chinaz",
         "connectproto",
         "connectrpc",
+        "emptypb",
         "goflags",
         "grpcgateway",
         "grpcreflect",
@@ -21,6 +22,8 @@
         "openapiv",
         "protobuf",
         "protojson",
+        "sentryecho",
+        "timestamppb",
         "unauthor",
         "vulbox"
     ]

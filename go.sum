@@ -479,8 +479,8 @@ github.com/xi2/xz v0.0.0-20171230120015-48954b6210f8 h1:nIPpBwaJSVYIxUFsDv3M8ofm
 github.com/xi2/xz v0.0.0-20171230120015-48954b6210f8/go.mod h1:HUYIGzjTL3rfEspMxjDjgmT5uz5wzYJKVo23qUhYTos=
 github.com/yl2chen/cidranger v1.0.2 h1:lbOWZVCG1tCRX4u24kuM1Tb4nHqWkDxwLdoS+SevawU=
 github.com/yl2chen/cidranger v1.0.2/go.mod h1:9U1yz7WPYDwf0vpNWFaeRh0bjwz5RVgRy/9UEQfHl0g=
-github.com/yoshino-s/go-framework v0.4.1 h1:AD9IYq+vf4vOgMeGV4j0RfGzz6XVjrzLcP7Snf+Bzzo=
-github.com/yoshino-s/go-framework v0.4.1/go.mod h1:7MuH5m84/9VAxmZFl8ivsbGhZBhVVlrLZOYY7qw3NbM=
+github.com/yoshino-s/go-framework v0.4.3 h1:FIs2OUzFuRPPp6c9yHcpqC6sv+BzbwnpFh2OX8m/6CA=
+github.com/yoshino-s/go-framework v0.4.3/go.mod h1:7MuH5m84/9VAxmZFl8ivsbGhZBhVVlrLZOYY7qw3NbM=
 github.com/yoshino-s/unauthor v0.1.4 h1:+vfp7ZpA0e0BxzjXUURUnhik5MyE2SHc4qJ1VdZJScA=
 github.com/yoshino-s/unauthor v0.1.4/go.mod h1:+Z5i8tsgcW7P0IQjXozUB95/bg/SHKj9UGHV+1YA7nM=
 github.com/ysmood/fetchup v0.2.4 h1:2kfWr/UrdiHg4KYRrxL2Jcrqx4DZYD+OtWu7WPBZl5o=

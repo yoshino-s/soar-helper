@@ -42,6 +42,7 @@ var (
 			app.Append(httpApp)
 			app.Append(chinazApp)
 			app.Append(s3App)
+			app.Append(toolsService)
 
 			chinazApp.SetDB(dbApp)
 

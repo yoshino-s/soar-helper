@@ -6,12 +6,14 @@ import (
 	"math"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
 	"connectrpc.com/connect"
 	"github.com/minio/minio-go/v7"
 	"github.com/projectdiscovery/goflags"
 	"github.com/projectdiscovery/httpx/runner"
+	"github.com/yoshino-s/go-framework/application"
 	"github.com/yoshino-s/go-framework/errors"
 	"github.com/yoshino-s/unauthor/scanner"
 	"github.com/yoshino-s/unauthor/scanner/types"
@@ -23,20 +25,27 @@ import (
 
 var _ v1connect.ToolsServiceHandler = (*ToolsService)(nil)
 
+var _ application.Application = (*ToolsService)(nil)
+
 type ToolsService struct {
+	*application.EmptyApplication
 	s3 *s3.S3
 }
 
 func NewToolsService() *ToolsService {
-	return &ToolsService{}
+	return &ToolsService{
+		EmptyApplication: application.NewEmptyApplication(),
+	}
 }
 
 func (s *ToolsService) SetS3(s3 *s3.S3) {
 	s.s3 = s3
 }
 
-func (*ToolsService) Unauthor(ctx context.Context, req *connect.Request[v1.UnauthorRequest], stream *connect.ServerStream[v1.UnauthorResponse]) error {
+func (t *ToolsService) Unauthor(ctx context.Context, req *connect.Request[v1.UnauthorRequest], stream *connect.ServerStream[v1.UnauthorResponse]) error {
 	s := scanner.New()
+	lock := &sync.Mutex{}
+
 	config, ok := s.Configuration().(*scanner.ScannerConfig)
 	if !ok {
 		return fmt.Errorf("unexpected configuration type: %T", s.Configuration())
@@ -59,7 +68,12 @@ func (*ToolsService) Unauthor(ctx context.Context, req *connect.Request[v1.Unaut
 			Error:   result.Error,
 			Result:  result.Result,
 		}
-		stream.Send(resp)
+
+		lock.Lock()
+		defer lock.Unlock()
+		if err := stream.Send(resp); err != nil {
+			t.Logger.Error("failed to send response", zap.Error(err))
+		}
 	}
 
 	if f := config.ScanFuncs[config.Protocol]; f == nil {
@@ -72,6 +86,7 @@ func (*ToolsService) Unauthor(ctx context.Context, req *connect.Request[v1.Unaut
 }
 
 func (t *ToolsService) Httpx(ctx context.Context, req *connect.Request[v1.HttpxRequest], stream *connect.ServerStream[v1.HttpxResponse]) error {
+	lock := &sync.Mutex{}
 
 	if req.Msg.Concurrent <= 0 {
 		req.Msg.Concurrent = 50
@@ -106,11 +121,13 @@ func (t *ToolsService) Httpx(ctx context.Context, req *connect.Request[v1.HttpxR
 		OnResult: func(r runner.Result) {
 			// handle error
 			if r.Err != nil {
-				stream.Send(&v1.HttpxResponse{
+				if err := stream.Send(&v1.HttpxResponse{
 					Target:  r.Input,
 					Success: false,
 					Error:   r.Err.Error(),
-				})
+				}); err != nil {
+					t.Logger.Error("failed to send response", zap.Error(err))
+				}
 			} else {
 				screenshot := r.ScreenshotPath
 				request := r.StoredResponsePath
@@ -119,7 +136,7 @@ func (t *ToolsService) Httpx(ctx context.Context, req *connect.Request[v1.HttpxR
 					if screenshot != "" {
 						screenshotKey := strings.Join(strings.Split(screenshot, "/")[len(strings.Split(screenshot, "/"))-3:], "/")
 						if url, err := t.s3.Upload(ctx, screenshotKey, screenshot, minio.PutObjectOptions{}); err != nil {
-							zap.L().Error("failed to upload screenshot", zap.Error(err))
+							t.Logger.Error("failed to upload screenshot", zap.Error(err))
 						} else {
 							screenshot = url.String()
 						}
@@ -128,7 +145,7 @@ func (t *ToolsService) Httpx(ctx context.Context, req *connect.Request[v1.HttpxR
 					if request != "" {
 						requestKey := strings.Join(strings.Split(request, "/")[len(strings.Split(request, "/"))-3:], "/")
 						if url, err := t.s3.Upload(ctx, requestKey, request, minio.PutObjectOptions{}); err != nil {
-							zap.L().Error("failed to upload request", zap.Error(err))
+							t.Logger.Error("failed to upload request", zap.Error(err))
 						} else {
 							request = url.String()
 						}
@@ -138,6 +155,8 @@ func (t *ToolsService) Httpx(ctx context.Context, req *connect.Request[v1.HttpxR
 				r.ScreenshotPath = ""
 				r.StoredResponsePath = ""
 
+				lock.Lock()
+				defer lock.Unlock()
 				stream.Send(&v1.HttpxResponse{
 					Target:  r.Input,
 					Success: !r.Failed,

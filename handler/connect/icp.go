@@ -6,10 +6,10 @@ import (
 
 	"connectrpc.com/connect"
 	"github.com/yoshino-s/go-framework/errors"
-	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/chinaz"
-	v1 "gitlab.yoshino-s.xyz/yoshino-s/soar-helper/gen/v1"
-	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/gen/v1/v1connect"
-	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/persistent/db"
+	"github.com/yoshino-s/soar-helper/beian"
+	v1 "github.com/yoshino-s/soar-helper/gen/v1"
+	"github.com/yoshino-s/soar-helper/gen/v1/v1connect"
+	"github.com/yoshino-s/soar-helper/persistent/db"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -17,7 +17,7 @@ import (
 var _ v1connect.IcpQueryServiceHandler = (*IcpQueryService)(nil)
 
 type IcpQueryService struct {
-	chinaz *chinaz.Chinaz
+	chinaz *beian.Beian
 	db     *db.Client
 }
 
@@ -25,7 +25,7 @@ func NewIcpQueryService() *IcpQueryService {
 	return &IcpQueryService{}
 }
 
-func (s *IcpQueryService) SetChinaz(chinaz *chinaz.Chinaz) {
+func (s *IcpQueryService) SetChinaz(chinaz *beian.Beian) {
 	s.chinaz = chinaz
 }
 

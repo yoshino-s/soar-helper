@@ -1,7 +1,7 @@
 syntax = "proto3";
 package yoshino_s.soar_helper.v1;
 
-option go_package = "gitlab.yoshino-s.xyz/yoshino-s/soar-helper/gen/v1";
+option go_package = "github.com/yoshino-s/soar-helper/gen/v1";
 
 message UnauthorRequest {
     repeated string targets = 1;

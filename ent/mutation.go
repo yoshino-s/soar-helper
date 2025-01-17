@@ -11,8 +11,8 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/ent/icp"
-	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/ent/predicate"
+	"github.com/yoshino-s/soar-helper/ent/icp"
+	"github.com/yoshino-s/soar-helper/ent/predicate"
 )
 
 const (

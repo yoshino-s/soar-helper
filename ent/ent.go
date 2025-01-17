@@ -12,7 +12,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/ent/icp"
+	"github.com/yoshino-s/soar-helper/ent/icp"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -69,7 +69,7 @@ var (
 	columnCheck sql.ColumnCheck
 )
 
-// columnChecker checks if the column exists in the given table.
+// checkColumn checks if the column exists in the given table.
 func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{

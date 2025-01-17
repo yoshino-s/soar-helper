@@ -1,6 +1,6 @@
 package main
 
-import "gitlab.yoshino-s.xyz/yoshino-s/soar-helper/cmd"
+import "github.com/yoshino-s/soar-helper/cmd"
 
 func main() {
 	cmd.Execute()

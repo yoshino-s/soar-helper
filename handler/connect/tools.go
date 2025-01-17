@@ -15,11 +15,11 @@ import (
 	"github.com/projectdiscovery/httpx/runner"
 	"github.com/yoshino-s/go-framework/application"
 	"github.com/yoshino-s/go-framework/errors"
+	v1 "github.com/yoshino-s/soar-helper/gen/v1"
+	"github.com/yoshino-s/soar-helper/gen/v1/v1connect"
+	"github.com/yoshino-s/soar-helper/s3"
 	"github.com/yoshino-s/unauthor/scanner"
 	"github.com/yoshino-s/unauthor/scanner/types"
-	v1 "gitlab.yoshino-s.xyz/yoshino-s/soar-helper/gen/v1"
-	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/gen/v1/v1connect"
-	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/s3"
 	"go.uber.org/zap"
 )
 

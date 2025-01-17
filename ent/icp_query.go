@@ -7,11 +7,12 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/ent/icp"
-	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/ent/predicate"
+	"github.com/yoshino-s/soar-helper/ent/icp"
+	"github.com/yoshino-s/soar-helper/ent/predicate"
 )
 
 // IcpQuery is the builder for querying Icp entities.
@@ -60,7 +61,7 @@ func (iq *IcpQuery) Order(o ...icp.OrderOption) *IcpQuery {
 // First returns the first Icp entity from the query.
 // Returns a *NotFoundError when no Icp was found.
 func (iq *IcpQuery) First(ctx context.Context) (*Icp, error) {
-	nodes, err := iq.Limit(1).All(setContextOp(ctx, iq.ctx, "First"))
+	nodes, err := iq.Limit(1).All(setContextOp(ctx, iq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -83,7 +84,7 @@ func (iq *IcpQuery) FirstX(ctx context.Context) *Icp {
 // Returns a *NotFoundError when no Icp ID was found.
 func (iq *IcpQuery) FirstID(ctx context.Context) (id int, err error) {
 	var ids []int
-	if ids, err = iq.Limit(1).IDs(setContextOp(ctx, iq.ctx, "FirstID")); err != nil {
+	if ids, err = iq.Limit(1).IDs(setContextOp(ctx, iq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -106,7 +107,7 @@ func (iq *IcpQuery) FirstIDX(ctx context.Context) int {
 // Returns a *NotSingularError when more than one Icp entity is found.
 // Returns a *NotFoundError when no Icp entities are found.
 func (iq *IcpQuery) Only(ctx context.Context) (*Icp, error) {
-	nodes, err := iq.Limit(2).All(setContextOp(ctx, iq.ctx, "Only"))
+	nodes, err := iq.Limit(2).All(setContextOp(ctx, iq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -134,7 +135,7 @@ func (iq *IcpQuery) OnlyX(ctx context.Context) *Icp {
 // Returns a *NotFoundError when no entities are found.
 func (iq *IcpQuery) OnlyID(ctx context.Context) (id int, err error) {
 	var ids []int
-	if ids, err = iq.Limit(2).IDs(setContextOp(ctx, iq.ctx, "OnlyID")); err != nil {
+	if ids, err = iq.Limit(2).IDs(setContextOp(ctx, iq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -159,7 +160,7 @@ func (iq *IcpQuery) OnlyIDX(ctx context.Context) int {
 
 // All executes the query and returns a list of Icps.
 func (iq *IcpQuery) All(ctx context.Context) ([]*Icp, error) {
-	ctx = setContextOp(ctx, iq.ctx, "All")
+	ctx = setContextOp(ctx, iq.ctx, ent.OpQueryAll)
 	if err := iq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -181,7 +182,7 @@ func (iq *IcpQuery) IDs(ctx context.Context) (ids []int, err error) {
 	if iq.ctx.Unique == nil && iq.path != nil {
 		iq.Unique(true)
 	}
-	ctx = setContextOp(ctx, iq.ctx, "IDs")
+	ctx = setContextOp(ctx, iq.ctx, ent.OpQueryIDs)
 	if err = iq.Select(icp.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -199,7 +200,7 @@ func (iq *IcpQuery) IDsX(ctx context.Context) []int {
 
 // Count returns the count of the given query.
 func (iq *IcpQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, iq.ctx, "Count")
+	ctx = setContextOp(ctx, iq.ctx, ent.OpQueryCount)
 	if err := iq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -217,7 +218,7 @@ func (iq *IcpQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (iq *IcpQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, iq.ctx, "Exist")
+	ctx = setContextOp(ctx, iq.ctx, ent.OpQueryExist)
 	switch _, err := iq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -449,7 +450,7 @@ func (igb *IcpGroupBy) Aggregate(fns ...AggregateFunc) *IcpGroupBy {
 
 // Scan applies the selector query and scans the result into the given value.
 func (igb *IcpGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, igb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, igb.build.ctx, ent.OpQueryGroupBy)
 	if err := igb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -497,7 +498,7 @@ func (is *IcpSelect) Aggregate(fns ...AggregateFunc) *IcpSelect {
 
 // Scan applies the selector query and scans the result into the given value.
 func (is *IcpSelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, is.ctx, "Select")
+	ctx = setContextOp(ctx, is.ctx, ent.OpQuerySelect)
 	if err := is.prepareQuery(ctx); err != nil {
 		return err
 	}

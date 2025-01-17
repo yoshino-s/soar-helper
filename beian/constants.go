@@ -1,4 +1,4 @@
-package chinaz
+package beian
 
 import "strings"
 

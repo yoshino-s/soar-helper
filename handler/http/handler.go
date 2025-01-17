@@ -9,8 +9,8 @@ import (
 	"github.com/yoshino-s/go-framework/common"
 	"github.com/yoshino-s/go-framework/handlers/http"
 	"github.com/yoshino-s/go-framework/telemetry"
-	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/gen"
-	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/gen/v1/v1connect"
+	"github.com/yoshino-s/soar-helper/gen"
+	"github.com/yoshino-s/soar-helper/gen/v1/v1connect"
 	"go.akshayshah.org/connectproto"
 	"google.golang.org/protobuf/encoding/protojson"
 )

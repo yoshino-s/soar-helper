@@ -34,3 +34,5 @@ soar-helper.yml
 soar-helper.db
 
 output
+
+.vscode

@@ -6,7 +6,7 @@ import (
 	"github.com/yoshino-s/go-framework/cmd"
 	"github.com/yoshino-s/go-framework/configuration"
 	"github.com/yoshino-s/go-framework/telemetry"
-	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/persistent/db"
+	"github.com/yoshino-s/soar-helper/persistent/db"
 )
 
 var name = "soar-helper"

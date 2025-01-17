@@ -12,8 +12,8 @@ import (
 	"connectrpc.com/connect"
 	"github.com/sourcegraph/conc"
 	"github.com/yoshino-s/go-framework/errors"
-	v1 "gitlab.yoshino-s.xyz/yoshino-s/soar-helper/gen/v1"
-	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/gen/v1/v1connect"
+	v1 "github.com/yoshino-s/soar-helper/gen/v1"
+	"github.com/yoshino-s/soar-helper/gen/v1/v1connect"
 )
 
 var _ v1connect.RunnerServiceHandler = (*RunnerService)(nil)

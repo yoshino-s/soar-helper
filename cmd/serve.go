@@ -6,11 +6,11 @@ import (
 	"github.com/projectdiscovery/gologger"
 	"github.com/projectdiscovery/gologger/levels"
 	"github.com/spf13/cobra"
-	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/chinaz"
-	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/handler/connect"
-	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/handler/http"
-	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/s3"
-	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/utils"
+	"github.com/yoshino-s/soar-helper/beian"
+	"github.com/yoshino-s/soar-helper/handler/connect"
+	"github.com/yoshino-s/soar-helper/handler/http"
+	"github.com/yoshino-s/soar-helper/s3"
+	"github.com/yoshino-s/soar-helper/utils"
 )
 
 func init() {
@@ -22,7 +22,7 @@ func init() {
 }
 
 var (
-	chinazApp = chinaz.New()
+	chinazApp = beian.New()
 	s3App     = s3.New()
 
 	icpQueryService = connect.NewIcpQueryService()

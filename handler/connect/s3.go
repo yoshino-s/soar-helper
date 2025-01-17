@@ -7,9 +7,9 @@ import (
 	"connectrpc.com/connect"
 	"github.com/minio/minio-go/v7"
 	"github.com/yoshino-s/go-framework/errors"
-	v1 "gitlab.yoshino-s.xyz/yoshino-s/soar-helper/gen/v1"
-	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/gen/v1/v1connect"
-	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/s3"
+	v1 "github.com/yoshino-s/soar-helper/gen/v1"
+	"github.com/yoshino-s/soar-helper/gen/v1/v1connect"
+	"github.com/yoshino-s/soar-helper/s3"
 )
 
 var _ v1connect.S3ServiceHandler = (*S3Service)(nil)

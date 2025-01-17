@@ -9,7 +9,7 @@ import (
 	"github.com/yoshino-s/go-framework/application"
 	"github.com/yoshino-s/go-framework/common"
 	"github.com/yoshino-s/go-framework/configuration"
-	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/ent"
+	"github.com/yoshino-s/soar-helper/ent"
 )
 
 type Client struct {

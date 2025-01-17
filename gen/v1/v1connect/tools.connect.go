@@ -8,7 +8,7 @@ import (
 	connect "connectrpc.com/connect"
 	context "context"
 	errors "errors"
-	v1 "gitlab.yoshino-s.xyz/yoshino-s/soar-helper/gen/v1"
+	v1 "github.com/yoshino-s/soar-helper/gen/v1"
 	http "net/http"
 	strings "strings"
 )

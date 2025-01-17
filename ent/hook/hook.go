@@ -6,7 +6,7 @@ import (
 	"context"
 	"fmt"
 
-	"gitlab.yoshino-s.xyz/yoshino-s/soar-helper/ent"
+	"github.com/yoshino-s/soar-helper/ent"
 )
 
 // The IcpFunc type is an adapter to allow the use of ordinary

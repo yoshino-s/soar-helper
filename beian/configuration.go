@@ -12,7 +12,7 @@ var _ configuration.Configuration = (*config)(nil)
 type config struct {
 	//Cookie string
 	ChinazToken string
-	werplusKey  string
+	WerplusKey  string
 }
 
 func (c *config) Register(set *pflag.FlagSet) {

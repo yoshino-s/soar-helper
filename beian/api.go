@@ -127,7 +127,7 @@ func (c *Beian) query(ctx context.Context, domain string) (*ent.Icp, error) {
 	var err error
 	if c.config.ChinazToken != "" {
 		icp, err = c.chinazQuery(ctx, domain)
-	} else if c.config.werplusKey != "" {
+	} else if c.config.WerplusKey != "" {
 		icp, err = c.werplusQuery(ctx, domain)
 	} else {
 		return nil, errors.New("no beian query service", 500)
@@ -174,7 +174,7 @@ func (c *Beian) werplusQuery(ctx context.Context, domain string) (*ent.Icp, erro
 	url, _ := url.Parse("https://api2.wer.plus/api/offline_domain_icp")
 	q := url.Query()
 	q.Set("search", domain)
-	q.Set("key", c.config.werplusKey)
+	q.Set("key", c.config.WerplusKey)
 	url.RawQuery = q.Encode()
 	resp, err := http.Get(url.String())
 	if err != nil {

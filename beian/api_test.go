@@ -13,10 +13,10 @@ func TestApi(t *testing.T) {
 	zap.ReplaceGlobals(zaptest.NewLogger(t))
 	Convey("TestApi", t, func() {
 		chinaz := New()
-		chinaz.config.WerplusKey = ""
+		chinaz.config.WerplusKey = "prKer1HQyPWAa5Vc4ZdtbeuAhb"
 
 		Convey("TestWerplusQuery", func() {
-			res, err := chinaz.werplusQuery(context.Background(), "baidu.com")
+			res, err := chinaz.werplusQuery(context.Background(), "ahapp.net")
 			So(err, ShouldBeNil)
 			zap.S().Infof("%+v", res)
 		})

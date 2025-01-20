@@ -149,21 +149,27 @@ func (c *Beian) query(ctx context.Context, domain string) (*ent.Icp, error) {
 	return c.db.Icp.Get(ctx, icp.ID)
 }
 
+type WerplusIcpDataItem struct {
+	Domain           string `json:"domain"`
+	DomainId         int    `json:"domainId"`
+	LeaderName       string `json:"leaderName"`
+	LimitAccess      string `json:"limitAccess"`
+	MainId           int    `json:"mainId"`
+	MainLicence      string `json:"mainLicence"`
+	NatureName       string `json:"natureName"`
+	ServiceId        int    `json:"serviceId"`
+	ServiceLicence   string `json:"serviceLicence"`
+	UnitName         string `json:"unitName"`
+	UpdateRecordTime string `json:"updateRecordTime"`
+}
+
 type WerplusIcpData struct {
 	Code int    `json:"code"`
 	Msg  string `json:"msg"`
 	Data struct {
-		Domain           string `json:"domain"`
-		DomainId         int    `json:"domainId"`
-		LeaderName       string `json:"leaderName"`
-		LimitAccess      string `json:"limitAccess"`
-		MainId           int    `json:"mainId"`
-		MainLicence      string `json:"mainLicence"`
-		NatureName       string `json:"natureName"`
-		ServiceId        int    `json:"serviceId"`
-		ServiceLicence   string `json:"serviceLicence"`
-		UnitName         string `json:"unitName"`
-		UpdateRecordTime string `json:"updateRecordTime"`
+		Params struct {
+			List []WerplusIcpDataItem `json:"list"`
+		} `json:"params"`
 	} `json:"data"`
 	ExecTime float64 `json:"exec_time"`
 	IP       string  `json:"ip"`
@@ -189,12 +195,21 @@ func (c *Beian) werplusQuery(ctx context.Context, domain string) (*ent.Icp, erro
 		return nil, err
 	}
 
-	if result.Code == 404 {
-		result.Data.NatureName = "INVALID"
+	res := WerplusIcpDataItem{}
+
+	if result.Code != 200 {
+		return nil, errors.New(fmt.Sprintf("werplus query failed: %s", result.Msg), 500)
 	}
+
+	if result.Code == 404 || len(result.Data.Params.List) == 0 {
+		res.NatureName = "INVALID"
+	} else {
+		res = result.Data.Params.List[0]
+	}
+
 	createdAt := time.Now()
-	if result.Data.UpdateRecordTime != "" {
-		createdAt, err = time.Parse(time.DateTime, result.Data.UpdateRecordTime)
+	if res.UpdateRecordTime != "" {
+		createdAt, err = time.Parse(time.DateTime, res.UpdateRecordTime)
 		if err == nil {
 			createdAt = time.Now()
 		}
@@ -202,13 +217,14 @@ func (c *Beian) werplusQuery(ctx context.Context, domain string) (*ent.Icp, erro
 
 	icp := ent.Icp{
 		Host:      domain,
-		Company:   result.Data.UnitName,
-		Owner:     result.Data.LeaderName,
-		Type:      result.Data.NatureName,
+		Company:   res.UnitName,
+		Owner:     res.LeaderName,
+		Type:      res.NatureName,
 		Homepage:  "",
-		Permit:    result.Data.MainLicence,
+		Permit:    res.MainLicence,
 		WebName:   "",
 		CreatedAt: createdAt,
+		UpdatedAt: time.Now(),
 	}
 
 	c.Logger.Debug("query from werplus", zap.String("domain", domain), zap.Any("icp", icp))
@@ -256,13 +272,15 @@ func (c *Beian) chinazQuery(ctx context.Context, domain string) (*ent.Icp, error
 	}
 
 	icp := ent.Icp{
-		Host:     domain,
-		Company:  result.Result.CompanyName,
-		Owner:    result.Result.Owner,
-		Type:     result.Result.CompanyType,
-		Homepage: result.Result.MainPage,
-		Permit:   result.Result.SiteLicense,
-		WebName:  result.Result.SiteName,
+		Host:      domain,
+		Company:   result.Result.CompanyName,
+		Owner:     result.Result.Owner,
+		Type:      result.Result.CompanyType,
+		Homepage:  result.Result.MainPage,
+		Permit:    result.Result.SiteLicense,
+		WebName:   result.Result.SiteName,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	}
 
 	c.Logger.Debug("query from werplus", zap.String("domain", domain), zap.Any("icp", icp))

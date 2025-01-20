@@ -11,8 +11,8 @@ var _ configuration.Configuration = (*config)(nil)
 
 type config struct {
 	//Cookie string
-	ChinazToken string
-	WerplusKey  string
+	ChinazToken string `mapstructure:"chinaz_token"`
+	WerplusKey  string `mapstructure:"werplus_key"`
 }
 
 func (c *config) Register(set *pflag.FlagSet) {

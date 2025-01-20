@@ -123,6 +123,7 @@ func (c *Beian) Query(ctx context.Context, _domain string) (*ent.Icp, bool, erro
 }
 
 func (c *Beian) query(ctx context.Context, domain string) (*ent.Icp, error) {
+	c.Logger.Debug("config", zap.Any("config", c.config))
 	var icp *ent.Icp
 	var err error
 	if c.config.ChinazToken != "" {
@@ -138,7 +139,7 @@ func (c *Beian) query(ctx context.Context, domain string) (*ent.Icp, error) {
 	}
 
 	// save icp
-	_, err = c.db.Icp.Create().
+	icp, err = c.db.Icp.Create().
 		SetIcp(icp).
 		Save(ctx)
 	if err != nil {

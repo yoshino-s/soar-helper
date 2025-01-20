@@ -80,13 +80,13 @@ func (c *Beian) BatchQuery(ctx context.Context, domains []string) ([]*ent.Icp, [
 		}
 		res, err := c.query(ctx, domain)
 		if err != nil {
-			c.Logger.Error("query from chinaz", zap.String("domain", domain), zap.Error(err))
+			c.Logger.Error("query failed", zap.String("domain", domain), zap.Error(err))
 		}
 		resultMap[domain] = resultMapItem{icp: res, cached: false}
 	}
 
 	for idx, domain := range valid_domains {
-		if res, ok := resultMap[domain]; ok {
+		if res, ok := resultMap[domain]; ok && res.icp != nil {
 			results[idx] = res.icp
 			cached[idx] = res.cached
 		} else {

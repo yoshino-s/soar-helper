@@ -29,5 +29,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Run Ko
+        env:
+          KO_DEFAULTBASEIMAGE: alpine:3.20.3
         run: |
           ko build --bare --sbom spdx --tags snapshot,${{ github.sha }},$(git describe --tags)

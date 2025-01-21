@@ -18,7 +18,7 @@ kos:
   - id: ko-image
     build: binary
     main: .
-    base_image: debian:stable-slim
+    base_image: cgr.dev/chainguard/chromium
     ldflags:
       - "-X github.com/yoshino-s/go-framework/common.Version={{.Version}}"
     tags:

@@ -30,6 +30,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Run Ko
         env:
-          KO_DEFAULTBASEIMAGE: debian:stable-slim
+          KO_DEFAULTBASEIMAGE: cgr.dev/chainguard/chromium
         run: |
           ko build --bare --sbom spdx --tags snapshot,${{ github.sha }},$(git describe --tags)

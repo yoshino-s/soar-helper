@@ -2,6 +2,7 @@ package s3
 
 import (
 	"context"
+	"io"
 	"net/url"
 
 	"github.com/minio/minio-go/v7"
@@ -51,5 +52,41 @@ func (s *S3) Upload(ctx context.Context, key string, path string, options minio.
 	}
 	s.Logger.Debug("uploaded", zap.Any("info", info))
 
-	return s.client.PresignedGetObject(ctx, s.config.Bucket, key, s.config.PresignedGetObjectExpires, url.Values{})
+	return s.GetUrl(ctx, s.config.Bucket, key)
+}
+
+func (s *S3) UploadStream(ctx context.Context, key string, reader io.Reader, size int64, options minio.PutObjectOptions) (*url.URL, error) {
+	info, err := s.client.PutObject(ctx, s.config.Bucket, key, reader, size, options)
+	if err != nil {
+		return nil, err
+	}
+	s.Logger.Debug("uploaded", zap.Any("info", info))
+
+	return s.GetUrl(ctx, s.config.Bucket, key)
+}
+
+func (s *S3) StatObject(ctx context.Context, key string, opts minio.StatObjectOptions) (*url.URL, error) {
+	if _, err := s.client.StatObject(ctx, s.config.Bucket, key, opts); err != nil {
+		if minio.ToErrorResponse(err).Code == "NoSuchKey" {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return s.GetUrl(ctx, s.config.Bucket, key)
+}
+
+func (s *S3) GetUrl(ctx context.Context, bucket, key string) (*url.URL, error) {
+	u, err := s.client.PresignedGetObject(ctx, bucket, key, s.config.PresignedGetObjectExpires, url.Values{})
+	if s.config.Public {
+		u.RawQuery = ""
+	}
+	if s.config.AccelerateEndpoint != "" {
+		accelerateEndpoint, err := url.Parse(s.config.AccelerateEndpoint)
+		if err != nil {
+			return nil, err
+		}
+		u.Host = accelerateEndpoint.Host
+		u.Scheme = accelerateEndpoint.Scheme
+	}
+	return u, err
 }

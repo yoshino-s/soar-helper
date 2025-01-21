@@ -18,7 +18,7 @@ kos:
   - id: ko-image
     build: binary
     main: .
-    base_image: alpine:3.20.3
+    base_image: debian:stable-slim
     ldflags:
       - "-X github.com/yoshino-s/go-framework/common.Version={{.Version}}"
     tags:

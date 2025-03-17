@@ -23,6 +23,7 @@ message WriteFileResponse {
 message RunRequest {
   repeated string commands = 1;
   string stdin = 2;
+  string cwd = 3;
 }
 
 message RunResponse {
@@ -43,12 +44,11 @@ message RunStreamData {
   int32 exit_code = 3;
 }
 
+
 service RunnerService {
   rpc Run(RunRequest) returns (RunResponse) {}
-
   rpc RunStream(RunRequest) returns (stream RunStreamData) {}
 
   rpc ReadFile(ReadFileRequest) returns (ReadFileResponse) {}
-
   rpc WriteFile(WriteFileRequest) returns (WriteFileResponse) {}
 }

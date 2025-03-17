@@ -24,7 +24,6 @@ type RunnerService struct {
 func NewRunnerService() *RunnerService {
 	return &RunnerService{}
 }
-
 func (s *RunnerService) Run(ctx context.Context, req *connect.Request[v1.RunRequest]) (*connect.Response[v1.RunResponse], error) {
 	if len(req.Msg.Commands) == 0 {
 		return nil, errors.New("commands is empty", http.StatusBadRequest)

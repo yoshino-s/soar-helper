@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"math"
 	"net/http"
+	"os"
 	"strings"
 	"sync"
 	"time"
 
 	"connectrpc.com/connect"
+	"github.com/google/uuid"
 	"github.com/minio/minio-go/v7"
 	"github.com/projectdiscovery/goflags"
 	"github.com/projectdiscovery/httpx/runner"
@@ -18,6 +20,7 @@ import (
 	v1 "github.com/yoshino-s/soar-helper/gen/v1"
 	"github.com/yoshino-s/soar-helper/gen/v1/v1connect"
 	"github.com/yoshino-s/soar-helper/s3"
+	"github.com/yoshino-s/soar-helper/screenshot"
 	"github.com/yoshino-s/unauthor/scanner"
 	"github.com/yoshino-s/unauthor/scanner/types"
 	"go.uber.org/zap"
@@ -61,12 +64,49 @@ func (t *ToolsService) Unauthor(ctx context.Context, req *connect.Request[v1.Una
 	config.Targets = req.Msg.Targets
 	config.Protocol = req.Msg.Protocol
 
+	cols := 80
+	if req.Msg.ScreenshotWidth > 0 {
+		cols = int(req.Msg.ScreenshotWidth)
+	}
+
+	takeScreenshot := func(result types.ScanFuncResult) (string, error) {
+		tempFile, err := os.CreateTemp("", "screenshot-*.png")
+		if err != nil {
+			return "", err
+		}
+		defer tempFile.Close()
+
+		if err := screenshot.CreateScreenshot([]string{
+			result.Exploit,
+		}, cols, result.Result, tempFile); err != nil {
+			return "", err
+		}
+
+		if req.Msg.Upload && t.s3 != nil {
+			if url, err := t.s3.Upload(ctx, fmt.Sprintf("cmd_screenshot/%s.png", uuid.NewString()), tempFile.Name(), minio.PutObjectOptions{}); err != nil {
+				return "", err
+			} else {
+				return url.String(), nil
+			}
+		}
+
+		return tempFile.Name(), nil
+	}
+
 	s.OutputFunc = func(result types.ScanFuncResult) {
 		resp := &v1.UnauthorResponse{
 			Target:  result.Target,
 			Success: result.Success,
 			Error:   result.Error,
 			Result:  result.Result,
+		}
+
+		if req.Msg.Screenshot {
+			if screenshot, err := takeScreenshot(result); err != nil {
+				resp.Error = err.Error()
+			} else {
+				resp.Screenshot = screenshot
+			}
 		}
 
 		lock.Lock()

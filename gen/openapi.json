@@ -823,6 +823,11 @@
             "type": "string",
             "title": "stdin",
             "additionalProperties": false
+          },
+          "cwd": {
+            "type": "string",
+            "title": "cwd",
+            "additionalProperties": false
           }
         },
         "title": "RunRequest",
@@ -1062,6 +1067,21 @@
             "type": "string",
             "title": "protocol",
             "additionalProperties": false
+          },
+          "screenshot": {
+            "type": "boolean",
+            "title": "screenshot",
+            "additionalProperties": false
+          },
+          "upload": {
+            "type": "boolean",
+            "title": "upload",
+            "additionalProperties": false
+          },
+          "screenshotWidth": {
+            "type": "integer",
+            "title": "screenshot_width",
+            "additionalProperties": false
           }
         },
         "title": "UnauthorRequest",
@@ -1100,6 +1120,11 @@
               }
             ],
             "title": "time",
+            "additionalProperties": false
+          },
+          "screenshot": {
+            "type": "string",
+            "title": "screenshot",
             "additionalProperties": false
           }
         },

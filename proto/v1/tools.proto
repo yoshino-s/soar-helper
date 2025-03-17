@@ -8,6 +8,11 @@ message UnauthorRequest {
     int64 timeout = 2;
     int32 concurrent = 3;
     string protocol = 4;
+
+    bool screenshot = 5;
+    bool upload = 6;
+
+    int32 screenshot_width = 7;
 }
 
 message UnauthorResponse {
@@ -16,6 +21,8 @@ message UnauthorResponse {
     string result = 3;
     string error = 4;
     int64 time = 5;
+
+    string screenshot = 6;
 }
 
 message HttpxRequest {

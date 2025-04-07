@@ -983,6 +983,11 @@
             "type": "boolean",
             "title": "follow_host_redirects",
             "additionalProperties": false
+          },
+          "fullScreenshot": {
+            "type": "boolean",
+            "title": "full_screenshot",
+            "additionalProperties": false
           }
         },
         "title": "HttpxRequest",

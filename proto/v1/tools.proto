@@ -37,6 +37,8 @@ message HttpxRequest {
 
     bool follow_redirects = 8;
     bool follow_host_redirects = 9;
+
+    bool full_screenshot = 10;
 }
 
 message HttpxResponse {

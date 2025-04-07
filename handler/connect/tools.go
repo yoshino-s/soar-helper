@@ -6,11 +6,13 @@ import (
 	"math"
 	"net/http"
 	"os"
+	"reflect"
 	"strings"
 	"sync"
 	"time"
 
 	"connectrpc.com/connect"
+	"github.com/go-rod/rod"
 	"github.com/google/uuid"
 	"github.com/minio/minio-go/v7"
 	"github.com/projectdiscovery/goflags"
@@ -25,6 +27,17 @@ import (
 	"github.com/yoshino-s/unauthor/scanner/types"
 	"go.uber.org/zap"
 )
+
+func init() {
+	pageValue := reflect.ValueOf(rod.Page{})
+	method := pageValue.MethodByName("Screenshot")
+	if method.IsValid() && method.Kind() == reflect.Func {
+		originalFunc := method.Interface().(func(bool) error)
+		pageValue.MethodByName("Screenshot").Set(reflect.MakeFunc(method.Type(), func(args []reflect.Value) []reflect.Value {
+			return reflect.ValueOf(originalFunc).Call([]reflect.Value{reflect.ValueOf(true)})
+		}))
+	}
+}
 
 var _ v1connect.ToolsServiceHandler = (*ToolsService)(nil)
 
@@ -135,13 +148,14 @@ func (t *ToolsService) Httpx(ctx context.Context, req *connect.Request[v1.HttpxR
 		req.Msg.Timeout = int64(10 * time.Second)
 	}
 	options := runner.Options{
-		InputTargetHost:     goflags.StringSlice(req.Msg.Targets),
-		Threads:             int(req.Msg.Concurrent),
-		Timeout:             int(time.Duration(req.Msg.Timeout) / time.Second),
-		Screenshot:          req.Msg.Screenshot,
-		UseInstalledChrome:  true,
-		FollowRedirects:     req.Msg.FollowRedirects,
-		FollowHostRedirects: req.Msg.FollowHostRedirects,
+		InputTargetHost:      goflags.StringSlice(req.Msg.Targets),
+		Threads:              int(req.Msg.Concurrent),
+		Timeout:              int(time.Duration(req.Msg.Timeout) / time.Second),
+		Screenshot:           req.Msg.Screenshot,
+		UseInstalledChrome:   true,
+		FollowRedirects:      req.Msg.FollowRedirects,
+		FollowHostRedirects:  req.Msg.FollowHostRedirects,
+		NoScreenshotFullPage: !req.Msg.FullScreenshot,
 
 		StoreResponse:             true,
 		StoreChain:                true,

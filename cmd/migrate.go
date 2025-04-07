@@ -21,9 +21,7 @@ var (
 		Short: `Migrate runs the schema migration for the database.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			app.Append(application.FuncApplication(func(ctx context.Context) {
-				opts := []schema.MigrateOption{
-					schema.WithGlobalUniqueID(true),
-				}
+				opts := []schema.MigrateOption{}
 
 				if ok, _ := cmd.Flags().GetBool("dry-run"); ok {
 					common.MustNoError(dbApp.Schema.WriteTo(ctx, cmd.OutOrStdout(), opts...))

@@ -147,6 +147,11 @@ func (t *ToolsService) Httpx(ctx context.Context, req *connect.Request[v1.HttpxR
 	if req.Msg.Timeout <= 0 {
 		req.Msg.Timeout = int64(10 * time.Second)
 	}
+
+	if req.Msg.Upload && t.s3 == nil {
+		return connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("s3 is not set"))
+	}
+
 	options := runner.Options{
 		InputTargetHost:      goflags.StringSlice(req.Msg.Targets),
 		Threads:              int(req.Msg.Concurrent),
@@ -177,22 +182,24 @@ func (t *ToolsService) Httpx(ctx context.Context, req *connect.Request[v1.HttpxR
 		OnResult: func(r runner.Result) {
 			// handle error
 			if r.Err != nil {
-				if err := stream.Send(&v1.HttpxResponse{
+				lock.Lock()
+				defer lock.Unlock()
+
+				stream.Send(&v1.HttpxResponse{
 					Target:  r.Input,
 					Success: false,
 					Error:   r.Err.Error(),
-				}); err != nil {
-					t.Logger.Error("failed to send response", zap.Error(err))
-				}
+				})
 			} else {
 				screenshot := r.ScreenshotPath
 				request := r.StoredResponsePath
 
-				if req.Msg.Upload && t.s3 != nil {
+				if req.Msg.Upload {
 					if screenshot != "" {
 						screenshotKey := strings.Join(strings.Split(screenshot, "/")[len(strings.Split(screenshot, "/"))-3:], "/")
 						if url, err := t.s3.Upload(ctx, screenshotKey, screenshot, minio.PutObjectOptions{}); err != nil {
 							t.Logger.Error("failed to upload screenshot", zap.Error(err))
+							screenshot = ""
 						} else {
 							screenshot = url.String()
 						}
@@ -202,6 +209,7 @@ func (t *ToolsService) Httpx(ctx context.Context, req *connect.Request[v1.HttpxR
 						requestKey := strings.Join(strings.Split(request, "/")[len(strings.Split(request, "/"))-3:], "/")
 						if url, err := t.s3.Upload(ctx, requestKey, request, minio.PutObjectOptions{}); err != nil {
 							t.Logger.Error("failed to upload request", zap.Error(err))
+							request = ""
 						} else {
 							request = url.String()
 						}

@@ -153,14 +153,21 @@ func (t *ToolsService) Httpx(ctx context.Context, req *connect.Request[v1.HttpxR
 	}
 
 	options := runner.Options{
-		InputTargetHost:      goflags.StringSlice(req.Msg.Targets),
-		Threads:              int(req.Msg.Concurrent),
-		Timeout:              int(time.Duration(req.Msg.Timeout) / time.Second),
+		InputTargetHost: goflags.StringSlice(req.Msg.Targets),
+		Threads:         int(req.Msg.Concurrent),
+		Timeout:         int(time.Duration(req.Msg.Timeout) / time.Second),
+
 		Screenshot:           req.Msg.Screenshot,
 		UseInstalledChrome:   true,
-		FollowRedirects:      req.Msg.FollowRedirects,
-		FollowHostRedirects:  req.Msg.FollowHostRedirects,
 		NoScreenshotFullPage: !req.Msg.FullScreenshot,
+		NoScreenshotBytes:    true,
+		NoHeadlessBody:       true,
+		HeadlessOptionalArguments: []string{
+			"--disable-features=HttpsUpgrades",
+		},
+
+		FollowRedirects:     req.Msg.FollowRedirects,
+		FollowHostRedirects: req.Msg.FollowHostRedirects,
 
 		OutputMatchStatusCode: req.Msg.MatchStatusCode,
 		OutputMatchString:     []string{req.Msg.MatchString},
@@ -181,9 +188,6 @@ func (t *ToolsService) Httpx(ctx context.Context, req *connect.Request[v1.HttpxR
 		RandomAgent:               true,
 		DisableUpdateCheck:        true,
 		RateLimit:                 150,
-
-		NoScreenshotBytes: true,
-		NoHeadlessBody:    true,
 		OnResult: func(r runner.Result) {
 			// handle error
 			if r.Err != nil {

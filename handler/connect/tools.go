@@ -162,6 +162,9 @@ func (t *ToolsService) Httpx(ctx context.Context, req *connect.Request[v1.HttpxR
 		FollowHostRedirects:  req.Msg.FollowHostRedirects,
 		NoScreenshotFullPage: !req.Msg.FullScreenshot,
 
+		OutputMatchStatusCode: req.Msg.MatchStatusCode,
+		OutputMatchString:     []string{req.Msg.MatchString},
+
 		NoFallbackScheme: true,
 
 		StoreResponse:             true,

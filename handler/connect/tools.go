@@ -162,6 +162,8 @@ func (t *ToolsService) Httpx(ctx context.Context, req *connect.Request[v1.HttpxR
 		FollowHostRedirects:  req.Msg.FollowHostRedirects,
 		NoScreenshotFullPage: !req.Msg.FullScreenshot,
 
+		NoFallbackScheme: true,
+
 		StoreResponse:             true,
 		StoreChain:                true,
 		StoreResponseDir:          "/tmp/output",

@@ -1,7 +1,19 @@
 syntax = "proto3";
 package yoshino_s.soar_helper.v1;
 
-option go_package = "github.com/yoshino-s/soar-helper/gen/v1";
+option go_package = "github.com/yoshino-s/soar-helper/internal/proto/v1";
+
+message ExploitResult {
+    string target = 1;
+    bool success = 2;
+    string result = 3;
+    string error = 4;
+    string exploit = 5;
+    string screenshot = 6;
+    string extra = 7;
+
+    int64 spent = 8;
+}
 
 message UnauthorRequest {
     repeated string targets = 1;
@@ -13,16 +25,6 @@ message UnauthorRequest {
     bool upload = 6;
 
     int32 screenshot_width = 7;
-}
-
-message UnauthorResponse {
-    string target = 1;
-    bool success = 2;
-    string result = 3;
-    string error = 4;
-    int64 time = 5;
-
-    string screenshot = 6;
 }
 
 message HttpxRequest {
@@ -41,20 +43,7 @@ message HttpxRequest {
     bool full_screenshot = 10;
 }
 
-message HttpxResponse {
-    string target = 1;
-    bool success = 2;
-    string result = 3;
-    string error = 4;
-
-    string screenshot = 5;
-    string request = 6;
-
-    string url = 7;
-    int32 status_code = 8;
-}
-
 service ToolsService {
-    rpc Unauthor(UnauthorRequest) returns (stream UnauthorResponse) {}
-    rpc Httpx(HttpxRequest) returns (stream HttpxResponse) {}
+    rpc Unauthor(UnauthorRequest) returns (stream ExploitResult) {}
+    rpc Httpx(HttpxRequest) returns (stream ExploitResult) {}
 }

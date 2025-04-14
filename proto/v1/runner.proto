@@ -1,7 +1,7 @@
 syntax = "proto3";
 package yoshino_s.soar_helper.v1;
 
-option go_package = "github.com/yoshino-s/soar-helper/gen/v1";
+option go_package = "github.com/yoshino-s/soar-helper/internal/proto/v1";
 
 
 message ReadFileRequest {
@@ -32,14 +32,14 @@ message RunResponse {
   int32 exit_code = 3;
 }
 
-enum RunStreamData_Type {
+enum RunStreamDataType {
   STDOUT = 0;
   STDERR = 1;
   EXIT_CODE = 2;
 }
 
 message RunStreamData {
-  RunStreamData_Type type = 1;
+  RunStreamDataType type = 1;
   string data = 2;
   int32 exit_code = 3;
 }

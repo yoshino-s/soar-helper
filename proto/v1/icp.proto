@@ -4,7 +4,7 @@ package yoshino_s.soar_helper.v1;
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/yoshino-s/soar-helper/gen/v1";
+option go_package = "github.com/yoshino-s/soar-helper/internal/proto/v1";
 
 message QueryRequest {
   string host = 1;

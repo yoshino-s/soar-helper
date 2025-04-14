@@ -2,7 +2,7 @@ syntax = "proto3";
 package yoshino_s.soar_helper.v1;
 
 
-option go_package = "github.com/yoshino-s/soar-helper/gen/v1";
+option go_package = "github.com/yoshino-s/soar-helper/internal/proto/v1";
 
 message UploadRequest {
   string path = 1;

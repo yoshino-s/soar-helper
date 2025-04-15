@@ -2,7 +2,6 @@ package connect
 
 import (
 	"context"
-	"net/http"
 
 	"connectrpc.com/connect"
 	"github.com/minio/minio-go/v7"
@@ -29,7 +28,7 @@ func (s *S3Service) SetS3(s3 *s3.S3) {
 func (s *S3Service) Upload(ctx context.Context, req *connect.Request[v1.UploadRequest]) (*connect.Response[v1.UploadResponse], error) {
 	url, err := s.s3.Upload(context.Background(), req.Msg.Key, req.Msg.Path, minio.PutObjectOptions{})
 	if err != nil {
-		return nil, errors.Wrap(err, http.StatusInternalServerError)
+		return nil, errors.Wrap(err, "upload file error")
 	}
 	return connect.NewResponse(&v1.UploadResponse{
 		Url: url.String(),

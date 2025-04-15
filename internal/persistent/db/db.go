@@ -25,7 +25,7 @@ var (
 
 func New() *Client {
 	return &Client{
-		EmptyApplication: application.NewEmptyApplication(),
+		EmptyApplication: application.NewEmptyApplication("db"),
 		config:           Config{},
 	}
 }

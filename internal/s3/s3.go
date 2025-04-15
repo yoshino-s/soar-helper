@@ -20,7 +20,7 @@ type S3 struct {
 
 func New() *S3 {
 	return &S3{
-		EmptyApplication: application.NewEmptyApplication(),
+		EmptyApplication: application.NewEmptyApplication("s3"),
 		config:           config{},
 	}
 }

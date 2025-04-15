@@ -2,7 +2,7 @@ package beian
 
 import "strings"
 
-func to_valid_domain(domain string) (string, bool) {
+func toValidDomain(domain string) (string, bool) {
 	for _, suffix := range allowed_domain_suffix {
 		if strings.HasSuffix(domain, suffix) {
 			other_parts := strings.Split(strings.TrimSuffix(domain, suffix), ".")
@@ -13,8 +13,6 @@ func to_valid_domain(domain string) (string, bool) {
 }
 
 var allowed_domain_suffix = []string{
-	".中国",
-	".cn",
 	".政务.cn",
 	".公益.cn",
 	".gov.cn",
@@ -57,6 +55,8 @@ var allowed_domain_suffix = []string{
 	".tw.cn",
 	".hk.cn",
 	".mo.cn",
+	".中国",
+	".cn",
 	".政务",
 	".公益",
 	".公司",

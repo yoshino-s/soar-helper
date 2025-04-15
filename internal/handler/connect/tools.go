@@ -51,7 +51,7 @@ type ToolsService struct {
 
 func NewToolsService() *ToolsService {
 	return &ToolsService{
-		EmptyApplication: application.NewEmptyApplication(),
+		EmptyApplication: application.NewEmptyApplication("tools"),
 	}
 }
 
@@ -253,12 +253,12 @@ func (t *ToolsService) Httpx(ctx context.Context, req *connect.Request[v1.HttpxR
 	}
 
 	if err := options.ValidateOptions(); err != nil {
-		return errors.Wrap(err, http.StatusBadRequest)
+		return errors.Wrap(err, "invalid options", http.StatusBadRequest)
 	}
 
 	httpxRunner, err := runner.New(&options)
 	if err != nil {
-		return errors.Wrap(err, http.StatusInternalServerError)
+		return errors.Wrap(err, "failed to create httpx runner")
 	}
 	defer httpxRunner.Close()
 

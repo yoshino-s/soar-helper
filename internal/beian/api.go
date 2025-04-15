@@ -26,7 +26,7 @@ type Beian struct {
 
 func New() *Beian {
 	return &Beian{
-		EmptyApplication: application.NewEmptyApplication(),
+		EmptyApplication: application.NewEmptyApplication("beian"),
 		config:           config{},
 	}
 }
@@ -57,7 +57,7 @@ func (c *Beian) BatchQuery(ctx context.Context, domains []string) ([]*ent.Icp, [
 	valid_domains_set := mapset.NewSet[string]()
 
 	for idx, _domain := range domains {
-		domain, ok := to_valid_domain(_domain)
+		domain, ok := toValidDomain(_domain)
 		if !ok {
 			continue
 		}
@@ -104,7 +104,7 @@ func (c *Beian) BatchQuery(ctx context.Context, domains []string) ([]*ent.Icp, [
 }
 
 func (c *Beian) Query(ctx context.Context, _domain string) (*ent.Icp, bool, error) {
-	domain, ok := to_valid_domain(_domain)
+	domain, ok := toValidDomain(_domain)
 	if !ok {
 		return nil, false, fmt.Errorf("invalid domain: %s", _domain)
 	}
@@ -123,7 +123,6 @@ func (c *Beian) Query(ctx context.Context, _domain string) (*ent.Icp, bool, erro
 }
 
 func (c *Beian) query(ctx context.Context, domain string) (*ent.Icp, error) {
-	c.Logger.Debug("config", zap.Any("config", c.config))
 	var icp *ent.Icp
 	var err error
 	if c.config.ChinazToken != "" {
@@ -137,6 +136,8 @@ func (c *Beian) query(ctx context.Context, domain string) (*ent.Icp, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	c.Logger.Debug("query result", zap.String("domain", domain), zap.Any("icp", icp))
 
 	// save icp
 	icp, err = c.db.Icp.Create().

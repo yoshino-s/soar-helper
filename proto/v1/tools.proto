@@ -41,6 +41,8 @@ message HttpxRequest {
     bool follow_host_redirects = 9;
 
     bool full_screenshot = 10;
+
+    string path = 11;
 }
 
 service ToolsService {

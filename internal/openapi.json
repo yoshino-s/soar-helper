@@ -1042,6 +1042,11 @@
             "type": "boolean",
             "title": "full_screenshot",
             "additionalProperties": false
+          },
+          "path": {
+            "type": "string",
+            "title": "path",
+            "additionalProperties": false
           }
         },
         "title": "HttpxRequest",

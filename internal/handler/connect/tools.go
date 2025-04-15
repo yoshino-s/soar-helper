@@ -157,8 +157,10 @@ func (t *ToolsService) Httpx(ctx context.Context, req *connect.Request[v1.HttpxR
 
 	options := runner.Options{
 		InputTargetHost: goflags.StringSlice(req.Msg.Targets),
-		Threads:         int(req.Msg.Concurrent),
-		Timeout:         int(time.Duration(req.Msg.Timeout) / time.Second),
+		RequestURI:      req.Msg.Path,
+
+		Threads: int(req.Msg.Concurrent),
+		Timeout: int(time.Duration(req.Msg.Timeout) / time.Second),
 
 		Screenshot:           req.Msg.Screenshot,
 		UseInstalledChrome:   true,

@@ -1009,7 +1009,7 @@
             "additionalProperties": false
           },
           "matchStatusCode": {
-            "type": "string",
+            "type": "integer",
             "title": "match_status_code",
             "additionalProperties": false
           },

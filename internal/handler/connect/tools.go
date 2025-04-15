@@ -174,8 +174,9 @@ func (t *ToolsService) Httpx(ctx context.Context, req *connect.Request[v1.HttpxR
 		FollowRedirects:     req.Msg.FollowRedirects,
 		FollowHostRedirects: req.Msg.FollowHostRedirects,
 
-		OutputMatchStatusCode: req.Msg.MatchStatusCode,
-		OutputMatchString:     []string{req.Msg.MatchString},
+		Probe: true,
+		// OutputMatchStatusCode: req.Msg.MatchStatusCode,
+		// OutputMatchString:     []string{req.Msg.MatchString},
 
 		NoFallbackScheme: true,
 
@@ -194,61 +195,71 @@ func (t *ToolsService) Httpx(ctx context.Context, req *connect.Request[v1.HttpxR
 		DisableUpdateCheck:        true,
 		RateLimit:                 150,
 		OnResult: func(r runner.Result) {
-			// handle error
+			res := &v1.ExploitResult{
+				Target:  r.Input,
+				Success: !r.Failed,
+				Result:  r.JSON(nil),
+			}
+
 			if r.Err != nil {
-				lock.Lock()
-				defer lock.Unlock()
-
-				stream.Send(&v1.ExploitResult{
-					Target:  r.Input,
-					Success: false,
-					Error:   r.Err.Error(),
-				})
+				res.Success = false
+				res.Error = r.Err.Error()
 			} else {
-				screenshot := r.ScreenshotPath
-				request := r.StoredResponsePath
-
-				if req.Msg.Upload {
-					if screenshot != "" {
-						screenshotKey := strings.Join(strings.Split(screenshot, "/")[len(strings.Split(screenshot, "/"))-3:], "/")
-						if url, err := t.s3.Upload(ctx, screenshotKey, screenshot, minio.PutObjectOptions{}); err != nil {
-							t.Logger.Error("failed to upload screenshot", zap.Error(err))
-							screenshot = ""
-						} else {
-							screenshot = url.String()
-						}
-					}
-
-					if request != "" {
-						requestKey := strings.Join(strings.Split(request, "/")[len(strings.Split(request, "/"))-3:], "/")
-						if url, err := t.s3.Upload(ctx, requestKey, request, minio.PutObjectOptions{}); err != nil {
-							t.Logger.Error("failed to upload request", zap.Error(err))
-							request = ""
-						} else {
-							request = url.String()
-						}
-					}
+				match := true
+				if !strings.Contains(
+					strings.ToLower(r.Raw),
+					strings.ToLower(req.Msg.MatchString),
+				) {
+					match = false
+				}
+				if r.StatusCode != int(req.Msg.MatchStatusCode) {
+					match = false
 				}
 
-				r.ScreenshotPath = ""
-				r.StoredResponsePath = ""
+				res.Success = match
 
-				lock.Lock()
-				defer lock.Unlock()
-				extra, _ := json.Marshal(map[string]interface{}{
-					"request": request,
-					"url":     r.URL,
-					"status":  r.StatusCode,
-				})
-				stream.Send(&v1.ExploitResult{
-					Target:  r.Input,
-					Success: !r.Failed,
-					Result:  r.JSON(nil),
+				if match {
+					screenshot := r.ScreenshotPath
+					request := r.StoredResponsePath
 
-					Screenshot: screenshot,
-					Extra:      string(extra),
-				})
+					if req.Msg.Upload {
+						if screenshot != "" {
+							screenshotKey := strings.Join(strings.Split(screenshot, "/")[len(strings.Split(screenshot, "/"))-3:], "/")
+							if url, err := t.s3.Upload(ctx, screenshotKey, screenshot, minio.PutObjectOptions{}); err != nil {
+								t.Logger.Error("failed to upload screenshot", zap.Error(err))
+								screenshot = ""
+							} else {
+								screenshot = url.String()
+							}
+						}
+
+						if request != "" {
+							requestKey := strings.Join(strings.Split(request, "/")[len(strings.Split(request, "/"))-3:], "/")
+							if url, err := t.s3.Upload(ctx, requestKey, request, minio.PutObjectOptions{}); err != nil {
+								t.Logger.Error("failed to upload request", zap.Error(err))
+								request = ""
+							} else {
+								request = url.String()
+							}
+						}
+					}
+
+					r.ScreenshotPath = ""
+					r.StoredResponsePath = ""
+
+					lock.Lock()
+					defer lock.Unlock()
+					extra, _ := json.Marshal(map[string]interface{}{
+						"request": request,
+						"url":     r.URL,
+						"status":  r.StatusCode,
+					})
+
+					res.Screenshot = screenshot
+					res.Extra = string(extra)
+				}
 			}
+			stream.Send(res)
 		},
 	}
 

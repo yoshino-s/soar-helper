@@ -31,7 +31,7 @@ message HttpxRequest {
     repeated string targets = 1;
     int64 timeout = 2;
     int32 concurrent = 3;
-    string match_status_code = 4;
+    int32 match_status_code = 4;
     string match_string = 5;
 
     bool screenshot = 6;

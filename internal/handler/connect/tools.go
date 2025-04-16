@@ -247,18 +247,21 @@ func (t *ToolsService) Httpx(ctx context.Context, req *connect.Request[v1.HttpxR
 					r.ScreenshotPath = ""
 					r.StoredResponsePath = ""
 
-					lock.Lock()
-					defer lock.Unlock()
 					extra, _ := json.Marshal(map[string]interface{}{
 						"request": request,
 						"url":     r.URL,
 						"status":  r.StatusCode,
 					})
 
+					res.Exploit = r.URL
 					res.Screenshot = screenshot
 					res.Extra = string(extra)
 				}
 			}
+
+			lock.Lock()
+			defer lock.Unlock()
+
 			stream.Send(res)
 		},
 	}

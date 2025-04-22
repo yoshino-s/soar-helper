@@ -1,4 +1,4 @@
-name: snapshot
+name: Build snapshot
 
 on:
   push:
@@ -21,17 +21,8 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: stable
-      - uses: ko-build/setup-ko@v0.6
-      - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v6
-        with:
-          distribution: goreleaser
-          version: "~> v2"
-          args: release --snapshot --clean
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Run Ko
         env:
-          KO_DEFAULTBASEIMAGE: cgr.dev/chainguard/chromium
+          KO_DEFAULTBASEIMAGE: ghcr.io/${{ github.repository }}:base-latest
         run: |
           ko build --bare --sbom spdx --tags snapshot,${{ github.sha }},$(git describe --tags)

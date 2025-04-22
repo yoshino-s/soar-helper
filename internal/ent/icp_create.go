@@ -492,6 +492,18 @@ func (u *IcpUpsert) ClearWebName() *IcpUpsert {
 	return u
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (u *IcpUpsert) SetCreatedAt(v time.Time) *IcpUpsert {
+	u.Set(icp.FieldCreatedAt, v)
+	return u
+}
+
+// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
+func (u *IcpUpsert) UpdateCreatedAt() *IcpUpsert {
+	u.SetExcluded(icp.FieldCreatedAt)
+	return u
+}
+
 // SetUpdatedAt sets the "updated_at" field.
 func (u *IcpUpsert) SetUpdatedAt(v time.Time) *IcpUpsert {
 	u.Set(icp.FieldUpdatedAt, v)
@@ -517,9 +529,6 @@ func (u *IcpUpsertOne) UpdateNewValues() *IcpUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		if _, exists := u.create.mutation.Host(); exists {
 			s.SetIgnore(icp.FieldHost)
-		}
-		if _, exists := u.create.mutation.CreatedAt(); exists {
-			s.SetIgnore(icp.FieldCreatedAt)
 		}
 	}))
 	return u
@@ -710,6 +719,20 @@ func (u *IcpUpsertOne) UpdateWebName() *IcpUpsertOne {
 func (u *IcpUpsertOne) ClearWebName() *IcpUpsertOne {
 	return u.Update(func(s *IcpUpsert) {
 		s.ClearWebName()
+	})
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (u *IcpUpsertOne) SetCreatedAt(v time.Time) *IcpUpsertOne {
+	return u.Update(func(s *IcpUpsert) {
+		s.SetCreatedAt(v)
+	})
+}
+
+// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
+func (u *IcpUpsertOne) UpdateCreatedAt() *IcpUpsertOne {
+	return u.Update(func(s *IcpUpsert) {
+		s.UpdateCreatedAt()
 	})
 }
 
@@ -906,9 +929,6 @@ func (u *IcpUpsertBulk) UpdateNewValues() *IcpUpsertBulk {
 			if _, exists := b.mutation.Host(); exists {
 				s.SetIgnore(icp.FieldHost)
 			}
-			if _, exists := b.mutation.CreatedAt(); exists {
-				s.SetIgnore(icp.FieldCreatedAt)
-			}
 		}
 	}))
 	return u
@@ -1099,6 +1119,20 @@ func (u *IcpUpsertBulk) UpdateWebName() *IcpUpsertBulk {
 func (u *IcpUpsertBulk) ClearWebName() *IcpUpsertBulk {
 	return u.Update(func(s *IcpUpsert) {
 		s.ClearWebName()
+	})
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (u *IcpUpsertBulk) SetCreatedAt(v time.Time) *IcpUpsertBulk {
+	return u.Update(func(s *IcpUpsert) {
+		s.SetCreatedAt(v)
+	})
+}
+
+// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
+func (u *IcpUpsertBulk) UpdateCreatedAt() *IcpUpsertBulk {
+	return u.Update(func(s *IcpUpsert) {
+		s.UpdateCreatedAt()
 	})
 }
 

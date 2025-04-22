@@ -182,6 +182,20 @@ func (iu *IcpUpdate) ClearWebName() *IcpUpdate {
 	return iu
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (iu *IcpUpdate) SetCreatedAt(t time.Time) *IcpUpdate {
+	iu.mutation.SetCreatedAt(t)
+	return iu
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (iu *IcpUpdate) SetNillableCreatedAt(t *time.Time) *IcpUpdate {
+	if t != nil {
+		iu.SetCreatedAt(*t)
+	}
+	return iu
+}
+
 // SetUpdatedAt sets the "updated_at" field.
 func (iu *IcpUpdate) SetUpdatedAt(t time.Time) *IcpUpdate {
 	iu.mutation.SetUpdatedAt(t)
@@ -282,6 +296,9 @@ func (iu *IcpUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if iu.mutation.WebNameCleared() {
 		_spec.ClearField(icp.FieldWebName, field.TypeString)
+	}
+	if value, ok := iu.mutation.CreatedAt(); ok {
+		_spec.SetField(icp.FieldCreatedAt, field.TypeTime, value)
 	}
 	if value, ok := iu.mutation.UpdatedAt(); ok {
 		_spec.SetField(icp.FieldUpdatedAt, field.TypeTime, value)
@@ -460,6 +477,20 @@ func (iuo *IcpUpdateOne) ClearWebName() *IcpUpdateOne {
 	return iuo
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (iuo *IcpUpdateOne) SetCreatedAt(t time.Time) *IcpUpdateOne {
+	iuo.mutation.SetCreatedAt(t)
+	return iuo
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (iuo *IcpUpdateOne) SetNillableCreatedAt(t *time.Time) *IcpUpdateOne {
+	if t != nil {
+		iuo.SetCreatedAt(*t)
+	}
+	return iuo
+}
+
 // SetUpdatedAt sets the "updated_at" field.
 func (iuo *IcpUpdateOne) SetUpdatedAt(t time.Time) *IcpUpdateOne {
 	iuo.mutation.SetUpdatedAt(t)
@@ -590,6 +621,9 @@ func (iuo *IcpUpdateOne) sqlSave(ctx context.Context) (_node *Icp, err error) {
 	}
 	if iuo.mutation.WebNameCleared() {
 		_spec.ClearField(icp.FieldWebName, field.TypeString)
+	}
+	if value, ok := iuo.mutation.CreatedAt(); ok {
+		_spec.SetField(icp.FieldCreatedAt, field.TypeTime, value)
 	}
 	if value, ok := iuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(icp.FieldUpdatedAt, field.TypeTime, value)

@@ -8,10 +8,12 @@ option go_package = "github.com/yoshino-s/soar-helper/internal/proto/v1";
 
 message QueryRequest {
   string host = 1;
+  bool no_cache = 2;
 }
 
 message BatchQueryRequest {
   repeated string hosts = 1;
+  bool no_cache = 2;
 }
 
 message QueryResponse {

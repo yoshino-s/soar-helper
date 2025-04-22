@@ -25,7 +25,7 @@ func (Icp) Fields() []ent.Field {
 		field.String("homepage").Optional(),
 		field.String("permit").Optional(),
 		field.String("webName").Optional(),
-		field.Time("created_at").Default(time.Now).Immutable(),
+		field.Time("created_at").Default(time.Now),
 		field.Time("updated_at").Default(time.Now).UpdateDefault(time.Now),
 	}
 }

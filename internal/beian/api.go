@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"time"
@@ -47,7 +48,7 @@ type resultMapItem struct {
 	cached bool
 }
 
-func (c *Beian) BatchQuery(ctx context.Context, domains []string) ([]*ent.Icp, []bool, error) {
+func (c *Beian) BatchQuery(ctx context.Context, domains []string, noCache bool) ([]*ent.Icp, []bool, error) {
 	results := make([]*ent.Icp, len(domains))
 	cached := make([]bool, len(domains))
 
@@ -65,15 +66,18 @@ func (c *Beian) BatchQuery(ctx context.Context, domains []string) ([]*ent.Icp, [
 		valid_domains_set.Add(domain)
 	}
 
-	queryRes, err := c.db.Icp.Query().Where(icp.HostIn(valid_domains_set.ToSlice()...)).All(ctx)
-	if err != nil {
-		return nil, nil, err
+	if !noCache {
+		queryRes, err := c.db.Icp.Query().Where(icp.HostIn(valid_domains_set.ToSlice()...)).All(ctx)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		for _, res := range queryRes {
+			resultMap[res.Host] = resultMapItem{icp: res, cached: true}
+			valid_domains_set.Remove(res.Host)
+		}
 	}
 
-	for _, res := range queryRes {
-		resultMap[res.Host] = resultMapItem{icp: res, cached: true}
-		valid_domains_set.Remove(res.Host)
-	}
 	for domain := range valid_domains_set.Iter() {
 		if _, ok := resultMap[domain]; ok {
 			continue
@@ -103,16 +107,18 @@ func (c *Beian) BatchQuery(ctx context.Context, domains []string) ([]*ent.Icp, [
 	return results, cached, nil
 }
 
-func (c *Beian) Query(ctx context.Context, _domain string) (*ent.Icp, bool, error) {
+func (c *Beian) Query(ctx context.Context, _domain string, noCache bool) (*ent.Icp, bool, error) {
 	domain, ok := toValidDomain(_domain)
 	if !ok {
 		return nil, false, fmt.Errorf("invalid domain: %s", _domain)
 	}
-	res, err := c.db.Icp.Query().Where(icp.Host(domain)).First(ctx)
-	if err == nil {
-		return res, true, nil
-	} else if !ent.IsNotFound(err) {
-		return nil, false, err
+	if !noCache {
+		res, err := c.db.Icp.Query().Where(icp.Host(domain)).First(ctx)
+		if err == nil {
+			return res, true, nil
+		} else if !ent.IsNotFound(err) {
+			return nil, false, err
+		}
 	}
 
 	r, err := c.query(ctx, domain)
@@ -125,10 +131,10 @@ func (c *Beian) Query(ctx context.Context, _domain string) (*ent.Icp, bool, erro
 func (c *Beian) query(ctx context.Context, domain string) (*ent.Icp, error) {
 	var icp *ent.Icp
 	var err error
-	if c.config.ChinazToken != "" {
-		icp, err = c.chinazQuery(ctx, domain)
-	} else if c.config.WerplusKey != "" {
+	if c.config.WerplusKey != "" {
 		icp, err = c.werplusQuery(ctx, domain)
+	} else if c.config.IcpQueryEndpoint != "" {
+		icp, err = c.icpQueryQuery(ctx, domain)
 	} else {
 		return nil, errors.New("no beian query service", 500)
 	}
@@ -140,14 +146,25 @@ func (c *Beian) query(ctx context.Context, domain string) (*ent.Icp, error) {
 	c.Logger.Debug("query result", zap.String("domain", domain), zap.Any("icp", icp))
 
 	// save icp
-	icp, err = c.db.Icp.Create().
-		SetIcp(icp).
-		Save(ctx)
+	id, err := c.db.Icp.Create().
+		SetHost(icp.Host).
+		SetCity(icp.City).
+		SetProvince(icp.Province).
+		SetCompany(icp.Company).
+		SetOwner(icp.Owner).
+		SetType(icp.Type).
+		SetHomepage(icp.Homepage).
+		SetPermit(icp.Permit).
+		SetWebName(icp.WebName).
+		SetCreatedAt(icp.CreatedAt).
+		OnConflict().
+		UpdateNewValues().
+		ID(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	return c.db.Icp.Get(ctx, icp.ID)
+	return c.db.Icp.Get(ctx, id)
 }
 
 type WerplusIcpDataItem struct {
@@ -225,7 +242,6 @@ func (c *Beian) werplusQuery(ctx context.Context, domain string) (*ent.Icp, erro
 		Permit:    res.MainLicence,
 		WebName:   "",
 		CreatedAt: createdAt,
-		UpdatedAt: time.Now(),
 	}
 
 	c.Logger.Debug("query from werplus", zap.String("domain", domain), zap.Any("icp", icp))
@@ -233,28 +249,38 @@ func (c *Beian) werplusQuery(ctx context.Context, domain string) (*ent.Icp, erro
 	return &icp, nil
 }
 
-type ChinazIcpData struct {
-	Reason    string `json:"Reason"`
-	StateCode int    `json:"StateCode"`
-	Result    struct {
-		CompanyName string `json:"CompanyName"`
-		CompanyType string `json:"CompanyType"`
-		MainPage    string `json:"MainPage"`
-		Owner       string `json:"Owner"`
-		SiteLicense string `json:"SiteLicense"`
-		SiteName    string `json:"SiteName"`
-		VerifyTime  string `json:"VerifyTime"`
-	} `json:"Result"`
+type IcpQueryData struct {
+	Msg  string `json:"msg"`
+	Code int    `json:"code"`
+	Data struct {
+		Total int `json:"total"`
+		List  []struct {
+			ContentTypeName  string `json:"contentTypeName"`
+			Domain           string `json:"domain"`
+			DomainId         int    `json:"domainId"`
+			LeaderName       string `json:"leaderName"`
+			LimitAccess      string `json:"limitAccess"`
+			MainId           int    `json:"mainId"`
+			MainLicence      string `json:"mainLicence"`
+			NatureName       string `json:"natureName"`
+			ServiceId        int    `json:"serviceId"`
+			ServiceLicence   string `json:"serviceLicence"`
+			UnitName         string `json:"unitName"`
+			UpdateRecordTime Time   `json:"updateRecordTime"`
+		} `json:"list"`
+	} `json:"data"`
 }
 
-func (c *Beian) chinazQuery(ctx context.Context, domain string) (*ent.Icp, error) {
-	c.Logger.Debug("query from chinaz", zap.String("domain", domain))
+func (c *Beian) icpQueryQuery(ctx context.Context, domain string) (*ent.Icp, error) {
+	c.Logger.Debug("query from icp-query", zap.String("domain", domain))
 
-	url, _ := url.Parse("https://openapi.chinaz.net/v1/1001/icp")
+	url, err := url.Parse(c.config.IcpQueryEndpoint)
+	if err != nil {
+		return nil, err
+	}
+
 	q := url.Query()
 	q.Set("domain", domain)
-	q.Set("APIKey", c.config.ChinazToken)
-	q.Set("ChinazVer", "1.0")
 	url.RawQuery = q.Encode()
 	resp, err := http.Get(url.String())
 	if err != nil {
@@ -262,29 +288,38 @@ func (c *Beian) chinazQuery(ctx context.Context, domain string) (*ent.Icp, error
 	}
 	defer resp.Body.Close()
 
-	var result *ChinazIcpData
-	err = json.NewDecoder(resp.Body).Decode(&result)
+	result := IcpQueryData{}
+	s, _ := io.ReadAll(resp.Body)
+
+	err = json.Unmarshal(s, &result)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, fmt.Sprintf("icp-query failed, body: %s", string(s)))
 	}
 
-	if result.Result.CompanyType == "" {
-		result.Result.CompanyType = "INVALID"
+	if result.Code != 200 {
+		return nil, errors.New(fmt.Sprintf("icp-query failed: %s", result.Msg), 500)
 	}
 
-	icp := ent.Icp{
-		Host:      domain,
-		Company:   result.Result.CompanyName,
-		Owner:     result.Result.Owner,
-		Type:      result.Result.CompanyType,
-		Homepage:  result.Result.MainPage,
-		Permit:    result.Result.SiteLicense,
-		WebName:   result.Result.SiteName,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+	if result.Data.Total == 0 || len(result.Data.List) == 0 {
+		return &ent.Icp{
+			Host:      domain,
+			Type:      "INVALID",
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		}, nil
+	} else {
+
+		return &ent.Icp{
+			Host:      domain,
+			City:      "",
+			Province:  "",
+			Company:   result.Data.List[0].UnitName,
+			Owner:     result.Data.List[0].LeaderName,
+			Type:      result.Data.List[0].NatureName,
+			Homepage:  "",
+			Permit:    result.Data.List[0].MainLicence,
+			WebName:   "",
+			CreatedAt: time.Time(result.Data.List[0].UpdateRecordTime),
+		}, nil
 	}
-
-	c.Logger.Debug("query from werplus", zap.String("domain", domain), zap.Any("icp", icp))
-
-	return &icp, nil
 }

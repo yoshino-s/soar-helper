@@ -10,15 +10,14 @@ import (
 var _ configuration.Configuration = (*config)(nil)
 
 type config struct {
-	//Cookie string
-	ChinazToken string `mapstructure:"chinaz_token"`
-	WerplusKey  string `mapstructure:"werplus_key"`
+	WerplusKey       string `mapstructure:"werplus_key"`
+	IcpQueryEndpoint string `mapstructure:"icp_query_endpoint"`
 }
 
 func (c *config) Register(set *pflag.FlagSet) {
 	//set.String("chinaz.cookie", "", "chinaz cookie")
-	set.String("beian.chinaz_token", "", "chinaz token")
 	set.String("beian.werplus_key", "", "werplus key")
+	set.String("beian.icp_query_endpoint", "", "icp query endpoint")
 
 	common.MustNoError(viper.BindPFlags(set))
 	configuration.Register(c)
@@ -26,4 +25,5 @@ func (c *config) Register(set *pflag.FlagSet) {
 
 func (c *config) Read() {
 	common.MustDecodeFromMapstructure(viper.AllSettings()["beian"], c)
+	c.IcpQueryEndpoint = viper.GetString("beian.icp_query_endpoint")
 }

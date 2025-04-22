@@ -565,6 +565,11 @@
               "title": "hosts",
               "additionalProperties": false
             }
+          },
+          "noCache": {
+            "type": "boolean",
+            "title": "no_cache",
+            "additionalProperties": false
           }
         },
         "title": "BatchQueryRequest",
@@ -669,6 +674,11 @@
           "host": {
             "type": "string",
             "title": "host",
+            "additionalProperties": false
+          },
+          "noCache": {
+            "type": "boolean",
+            "title": "no_cache",
             "additionalProperties": false
           }
         },

@@ -35,7 +35,7 @@ func (s *IcpQueryService) SetDB(db *db.Client) {
 func (s *IcpQueryService) Query(ctx context.Context, req *connect.Request[v1.QueryRequest]) (*connect.Response[v1.QueryResponse], error) {
 	host := req.Msg.Host
 
-	icp, cached, err := s.chinaz.Query(ctx, host)
+	icp, cached, err := s.chinaz.Query(ctx, host, req.Msg.NoCache)
 	if err != nil {
 		return nil, errors.Wrap(err, "query chinaz icp error")
 	}
@@ -64,7 +64,7 @@ func (s *IcpQueryService) BatchQuery(ctx context.Context, req *connect.Request[v
 	hosts := req.Msg.Hosts
 
 	records := make([]*v1.IcpRecord, len(hosts))
-	res, cached, err := s.chinaz.BatchQuery(ctx, hosts)
+	res, cached, err := s.chinaz.BatchQuery(ctx, hosts, req.Msg.NoCache)
 	if err != nil {
 		return nil, errors.Wrap(err, "query chinaz icp error")
 	}

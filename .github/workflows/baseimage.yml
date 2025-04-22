@@ -1,0 +1,31 @@
+name: Build Base Image
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'baseimage/**'
+      - .github/workflows/baseimage.yml
+
+permissions:
+  packages: write
+
+jobs:
+  goreleaser:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.8.1
+      - uses: distroless/actions/apko-publish@main
+        id: apko
+        with:
+          config: nginx.yaml
+          tag: ghcr.io/distroless/apko-example:nginx
+      - shell: bash
+        run: |
+          COSIGN_EXPERIMENTAL=true cosign sign --yes ${{ steps.apko.outputs.digest }}

@@ -24,7 +24,7 @@ jobs:
       - uses: distroless/actions/apko-publish@main
         id: apko
         with:
-          config: baseimage/apko.yaml
+          config: baseimage/apko.yml
           tag: ghcr.io/${{ github.repository }}-base:latest
       - shell: bash
         run: |

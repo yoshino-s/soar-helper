@@ -12,7 +12,7 @@ permissions:
   packages: write
 
 jobs:
-  goreleaser:
+  apko:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -24,8 +24,8 @@ jobs:
       - uses: distroless/actions/apko-publish@main
         id: apko
         with:
-          config: nginx.yaml
-          tag: ghcr.io/distroless/apko-example:nginx
+          config: baseimage/apko.yaml
+          tag: ghcr.io/${{ github.repository }}-base:latest
       - shell: bash
         run: |
           COSIGN_EXPERIMENTAL=true cosign sign --yes ${{ steps.apko.outputs.digest }}

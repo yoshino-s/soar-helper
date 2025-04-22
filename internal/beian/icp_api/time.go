@@ -1,4 +1,4 @@
-package beian
+package icp_api
 
 import (
 	"errors"

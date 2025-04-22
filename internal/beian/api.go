@@ -4,18 +4,22 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"net/url"
+	"sync"
 	"time"
 
-	mapset "github.com/deckarep/golang-set/v2"
+	"github.com/hashicorp/go-set/v3"
+	"github.com/sourcegraph/conc/iter"
 	"github.com/yoshino-s/go-framework/application"
 	"github.com/yoshino-s/go-framework/configuration"
 	"github.com/yoshino-s/go-framework/errors"
+	"github.com/yoshino-s/soar-helper/internal/beian/icp_api"
 	"github.com/yoshino-s/soar-helper/internal/ent"
 	"github.com/yoshino-s/soar-helper/internal/ent/icp"
 	"github.com/yoshino-s/soar-helper/internal/persistent/db"
+
+	"github.com/yoshino-s/soar-helper/internal/proxy"
 	"go.uber.org/zap"
 )
 
@@ -23,24 +27,32 @@ type Beian struct {
 	*application.EmptyApplication
 	config config
 	db     *db.Client
+	proxy  *proxy.Proxy
+	icpApi *icp_api.IcpApi
+
+	dbLock sync.Mutex
 }
 
 func New() *Beian {
 	return &Beian{
 		EmptyApplication: application.NewEmptyApplication("beian"),
 		config:           config{},
+		dbLock:           sync.Mutex{},
 	}
 }
 
-func (c *Beian) SetDB(db *db.Client) {
+func (c *Beian) Set(db *db.Client, proxy *proxy.Proxy) {
 	c.db = db
+	c.proxy = proxy
+	c.icpApi = icp_api.New(proxy)
 }
 
 func (c *Beian) Configuration() configuration.Configuration {
 	return &c.config
 }
 
-func (c *Beian) Run(ctx context.Context) {
+func (c *Beian) Setup(ctx context.Context) {
+	c.icpApi.RefreshToken(ctx, true)
 }
 
 type resultMapItem struct {
@@ -48,28 +60,30 @@ type resultMapItem struct {
 	cached bool
 }
 
-func (c *Beian) BatchQuery(ctx context.Context, domains []string, noCache bool) ([]*ent.Icp, []bool, error) {
+func (c *Beian) BatchQuery(ctx context.Context, domains []string, noCache bool) ([]*ent.Icp, []bool, map[string]string, error) {
 	results := make([]*ent.Icp, len(domains))
 	cached := make([]bool, len(domains))
+	errorsMap := make(map[string]string)
 
 	resultMap := make(map[string]resultMapItem)
 
 	valid_domains := make([]string, len(domains))
-	valid_domains_set := mapset.NewSet[string]()
+	valid_domains_set := set.New[string](0)
 
 	for idx, _domain := range domains {
 		domain, ok := toValidDomain(_domain)
 		if !ok {
+			errorsMap[_domain] = "invalid domain"
 			continue
 		}
 		valid_domains[idx] = domain
-		valid_domains_set.Add(domain)
+		valid_domains_set.Insert(domain)
 	}
 
 	if !noCache {
-		queryRes, err := c.db.Icp.Query().Where(icp.HostIn(valid_domains_set.ToSlice()...)).All(ctx)
+		queryRes, err := c.db.Icp.Query().Where(icp.HostIn(valid_domains_set.Slice()...)).All(ctx)
 		if err != nil {
-			return nil, nil, err
+			return nil, nil, nil, err
 		}
 
 		for _, res := range queryRes {
@@ -78,16 +92,19 @@ func (c *Beian) BatchQuery(ctx context.Context, domains []string, noCache bool) 
 		}
 	}
 
-	for domain := range valid_domains_set.Iter() {
+	iter.ForEach(valid_domains_set.Slice(), func(_domain *string) {
+		domain := *_domain
 		if _, ok := resultMap[domain]; ok {
-			continue
+			return
 		}
 		res, err := c.query(ctx, domain)
+
 		if err != nil {
 			c.Logger.Error("query failed", zap.String("domain", domain), zap.Error(err))
+			errorsMap[domain] = err.Error()
 		}
 		resultMap[domain] = resultMapItem{icp: res, cached: false}
-	}
+	})
 
 	for idx, domain := range valid_domains {
 		if res, ok := resultMap[domain]; ok && res.icp != nil {
@@ -104,7 +121,7 @@ func (c *Beian) BatchQuery(ctx context.Context, domains []string, noCache bool) 
 		}
 	}
 
-	return results, cached, nil
+	return results, cached, errorsMap, nil
 }
 
 func (c *Beian) Query(ctx context.Context, _domain string, noCache bool) (*ent.Icp, bool, error) {
@@ -133,7 +150,7 @@ func (c *Beian) query(ctx context.Context, domain string) (*ent.Icp, error) {
 	var err error
 	if c.config.WerplusKey != "" {
 		icp, err = c.werplusQuery(ctx, domain)
-	} else if c.config.IcpQueryEndpoint != "" {
+	} else if c.config.MiitSign != "" {
 		icp, err = c.icpQueryQuery(ctx, domain)
 	} else {
 		return nil, errors.New("no beian query service", 500)
@@ -144,6 +161,9 @@ func (c *Beian) query(ctx context.Context, domain string) (*ent.Icp, error) {
 	}
 
 	c.Logger.Debug("query result", zap.String("domain", domain), zap.Any("icp", icp))
+
+	c.dbLock.Lock()
+	defer c.dbLock.Unlock()
 
 	// save icp
 	id, err := c.db.Icp.Create().
@@ -249,58 +269,15 @@ func (c *Beian) werplusQuery(ctx context.Context, domain string) (*ent.Icp, erro
 	return &icp, nil
 }
 
-type IcpQueryData struct {
-	Msg  string `json:"msg"`
-	Code int    `json:"code"`
-	Data struct {
-		Total int `json:"total"`
-		List  []struct {
-			ContentTypeName  string `json:"contentTypeName"`
-			Domain           string `json:"domain"`
-			DomainId         int    `json:"domainId"`
-			LeaderName       string `json:"leaderName"`
-			LimitAccess      string `json:"limitAccess"`
-			MainId           int    `json:"mainId"`
-			MainLicence      string `json:"mainLicence"`
-			NatureName       string `json:"natureName"`
-			ServiceId        int    `json:"serviceId"`
-			ServiceLicence   string `json:"serviceLicence"`
-			UnitName         string `json:"unitName"`
-			UpdateRecordTime Time   `json:"updateRecordTime"`
-		} `json:"list"`
-	} `json:"data"`
-}
-
 func (c *Beian) icpQueryQuery(ctx context.Context, domain string) (*ent.Icp, error) {
 	c.Logger.Debug("query from icp-query", zap.String("domain", domain))
 
-	url, err := url.Parse(c.config.IcpQueryEndpoint)
+	result, err := c.icpApi.Query(ctx, c.config.MiitSign, domain)
 	if err != nil {
 		return nil, err
 	}
 
-	q := url.Query()
-	q.Set("domain", domain)
-	url.RawQuery = q.Encode()
-	resp, err := http.Get(url.String())
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	result := IcpQueryData{}
-	s, _ := io.ReadAll(resp.Body)
-
-	err = json.Unmarshal(s, &result)
-	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf("icp-query failed, body: %s", string(s)))
-	}
-
-	if result.Code != 200 {
-		return nil, errors.New(fmt.Sprintf("icp-query failed: %s", result.Msg), 500)
-	}
-
-	if result.Data.Total == 0 || len(result.Data.List) == 0 {
+	if result.Params.Total == 0 || len(result.Params.List) == 0 {
 		return &ent.Icp{
 			Host:      domain,
 			Type:      "INVALID",
@@ -313,13 +290,13 @@ func (c *Beian) icpQueryQuery(ctx context.Context, domain string) (*ent.Icp, err
 			Host:      domain,
 			City:      "",
 			Province:  "",
-			Company:   result.Data.List[0].UnitName,
-			Owner:     result.Data.List[0].LeaderName,
-			Type:      result.Data.List[0].NatureName,
+			Company:   result.Params.List[0].UnitName,
+			Owner:     result.Params.List[0].LeaderName,
+			Type:      result.Params.List[0].NatureName,
 			Homepage:  "",
-			Permit:    result.Data.List[0].MainLicence,
+			Permit:    result.Params.List[0].MainLicence,
 			WebName:   "",
-			CreatedAt: time.Time(result.Data.List[0].UpdateRecordTime),
+			CreatedAt: time.Time(result.Params.List[0].UpdateRecordTime),
 		}, nil
 	}
 }

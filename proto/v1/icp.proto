@@ -22,6 +22,7 @@ message QueryResponse {
 
 message BatchQueryResponse {
   repeated IcpRecord data = 1;
+  map<string, string> errors = 2;
 }
 
 message IcpRecord {

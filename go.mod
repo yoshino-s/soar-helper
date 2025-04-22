@@ -6,7 +6,6 @@ require (
 	connectrpc.com/connect v1.18.1
 	connectrpc.com/grpcreflect v1.3.0
 	entgo.io/ent v0.14.4
-	github.com/deckarep/golang-set/v2 v2.8.0
 	github.com/esimov/stackblur-go v1.1.0
 	github.com/fogleman/gg v1.3.0
 	github.com/getsentry/sentry-go v0.32.0
@@ -17,6 +16,7 @@ require (
 	github.com/gonvenience/font v0.0.3
 	github.com/gonvenience/term v1.0.4
 	github.com/google/uuid v1.6.0
+	github.com/hashicorp/go-set/v3 v3.0.0
 	github.com/labstack/echo/v4 v4.13.3
 	github.com/minio/minio-go/v7 v7.0.90
 	github.com/ncruces/go-sqlite3 v0.25.0
@@ -29,6 +29,7 @@ require (
 	github.com/spf13/pflag v1.0.6
 	github.com/spf13/viper v1.20.1
 	github.com/yoshino-s/go-framework v0.5.0
+	github.com/yoshino-s/kuaidaili-go v0.0.0-20250422095331-bb1065287a4d
 	github.com/yoshino-s/unauthor v0.2.0
 	go.akshayshah.org/connectproto v0.6.0
 	go.uber.org/zap v1.27.0
@@ -185,7 +186,7 @@ require (
 	github.com/tetratelabs/wazero v1.9.0 // indirect
 	github.com/tidwall/btree v1.7.0 // indirect
 	github.com/tidwall/buntdb v1.3.1 // indirect
-	github.com/tidwall/gjson v1.17.1 // indirect
+	github.com/tidwall/gjson v1.18.0 // indirect
 	github.com/tidwall/grect v0.1.4 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect

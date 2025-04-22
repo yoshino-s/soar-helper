@@ -15,15 +15,15 @@ import (
 
 func init() {
 	httpApp.Configuration().Register(serveCmd.Flags())
-	chinazApp.Configuration().Register(serveCmd.Flags())
+	beianApp.Configuration().Register(serveCmd.Flags())
 	s3App.Configuration().Register(serveCmd.Flags())
 
 	rootCmd.AddCommand(serveCmd)
 }
 
 var (
-	chinazApp = beian.New()
-	s3App     = s3.New()
+	beianApp = beian.New()
+	s3App    = s3.New()
 
 	icpQueryService = connect.NewIcpQueryService()
 	runService      = connect.NewRunnerService()
@@ -40,13 +40,13 @@ var (
 			gologger.DefaultLogger.SetMaxLevel(levels.LevelVerbose)
 
 			app.Append(httpApp)
-			app.Append(chinazApp)
+			app.Append(beianApp)
 			app.Append(s3App)
 			app.Append(toolsService)
 
-			chinazApp.SetDB(dbApp)
+			beianApp.Set(dbApp, proxyApp)
 
-			icpQueryService.SetChinaz(chinazApp)
+			icpQueryService.SetChinaz(beianApp)
 			icpQueryService.SetDB(dbApp)
 
 			s3Service.SetS3(s3App)

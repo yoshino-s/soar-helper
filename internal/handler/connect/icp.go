@@ -64,7 +64,7 @@ func (s *IcpQueryService) BatchQuery(ctx context.Context, req *connect.Request[v
 	hosts := req.Msg.Hosts
 
 	records := make([]*v1.IcpRecord, len(hosts))
-	res, cached, err := s.chinaz.BatchQuery(ctx, hosts, req.Msg.NoCache)
+	res, cached, errs, err := s.chinaz.BatchQuery(ctx, hosts, req.Msg.NoCache)
 	if err != nil {
 		return nil, errors.Wrap(err, "query chinaz icp error")
 	}
@@ -88,7 +88,8 @@ func (s *IcpQueryService) BatchQuery(ctx context.Context, req *connect.Request[v
 	}
 
 	return connect.NewResponse(&v1.BatchQueryResponse{
-		Data: records,
+		Data:   records,
+		Errors: errs,
 	}), nil
 }
 

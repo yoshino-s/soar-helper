@@ -8,6 +8,7 @@ contents:
     - wolfi-base
     - chromium
     - busybox
+    - font-wqy-zenhei
 
 entrypoint:
   command: /usr/bin/chromium-browser

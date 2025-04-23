@@ -36,10 +36,10 @@ jobs:
           fi
       - name: Run Ko
         env:
-          KO_DEFAULTBASEIMAGE: $KO_DOCKER_REPO:base-latest
+          KO_DEFAULTBASEIMAGE: ${{ env.KO_DOCKER_REPO }}:base-latest
         run: |
-          { echo -n "TAGS="; ko build --bare --sbom spdx --tags $TAGS } >> $GITHUB_ENV
+          echo "DIGESTS=$(ko build --bare --sbom spdx --tags $TAGS)" >> $GITHUB_ENV
       - name: Cosign
         shell: bash
         run: |
-          COSIGN_EXPERIMENTAL=true cosign sign --yes $TAGS
+          COSIGN_EXPERIMENTAL=true cosign sign --yes $DIGESTS

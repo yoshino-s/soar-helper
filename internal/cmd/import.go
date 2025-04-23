@@ -9,7 +9,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/yoshino-s/go-framework/application"
-	"github.com/yoshino-s/go-framework/common"
+	"github.com/yoshino-s/go-framework/utils"
 	"go.uber.org/zap"
 )
 
@@ -25,12 +25,12 @@ var (
 		Short: `Import data from file to database.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			app.Append(application.FuncApplication(func(ctx context.Context) {
-				csvFile := common.Must(cmd.Flags().GetString("data"))
-				f := common.Must(os.Open(csvFile))
+				csvFile := utils.Must(cmd.Flags().GetString("data"))
+				f := utils.Must(os.Open(csvFile))
 				defer f.Close()
 
 				r := csv.NewReader(f)
-				headers := common.Must(r.Read())
+				headers := utils.Must(r.Read())
 				app.Logger.Info("headers", zap.Any("headers", headers))
 
 				for {
@@ -39,7 +39,7 @@ var (
 						break
 					}
 					// do something
-					t := common.Must(strconv.ParseInt(record[9], 10, 64))
+					t := utils.Must(strconv.ParseInt(record[9], 10, 64))
 					dbApp.Icp.Create().
 						SetCity(record[0]).
 						SetProvince(record[1]).

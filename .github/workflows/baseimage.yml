@@ -28,11 +28,16 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Install Cosign
         uses: sigstore/cosign-installer@v3.8.1
+      - name: Setup Image Tags
+        run: |
+          repo=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          echo "IMAGE_NAME=ghcr.io/${repo}" >> $GITHUB_ENV
       - uses: distroless/actions/apko-publish@main
         id: apko
         with:
           config: baseimage/apko.yml
-          tag: ghcr.io/${{ github.repository }}:base-latest
-      - shell: bash
+          tag: ${IMAGE_NAME}:base-latest
+      - name: Cosign
+        shell: bash
         run: |
           COSIGN_EXPERIMENTAL=true cosign sign --yes ${{ steps.apko.outputs.digest }}

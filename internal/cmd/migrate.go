@@ -6,7 +6,7 @@ import (
 	"entgo.io/ent/dialect/sql/schema"
 	"github.com/spf13/cobra"
 	"github.com/yoshino-s/go-framework/application"
-	"github.com/yoshino-s/go-framework/common"
+	"github.com/yoshino-s/go-framework/utils"
 )
 
 func init() {
@@ -24,9 +24,9 @@ var (
 				opts := []schema.MigrateOption{}
 
 				if ok, _ := cmd.Flags().GetBool("dry-run"); ok {
-					common.MustNoError(dbApp.Schema.WriteTo(ctx, cmd.OutOrStdout(), opts...))
+					utils.MustNoError(dbApp.Schema.WriteTo(ctx, cmd.OutOrStdout(), opts...))
 				} else {
-					common.MustNoError(dbApp.Schema.Create(ctx, opts...))
+					utils.MustNoError(dbApp.Schema.Create(ctx, opts...))
 				}
 			}))
 

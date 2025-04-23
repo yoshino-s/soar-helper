@@ -1,0 +1,45 @@
+name: Build App Image
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: stable
+      - uses: ko-build/setup-ko@v0.6
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.8.1
+      - name: Setup Tags
+        run: |
+          # setup tags
+          if [ -z "${{ github.event.inputs.tag }}" ]; then
+            echo "No tag provided, using snapshot"
+            echo "TAGS=snapshot,$(git describe --tags),${{ github.sha }}" >> $GITHUB_ENV
+          else
+            echo "Using tag: ${{ github.event.inputs.tag }}"
+            echo "TAGS=${{ github.event.inputs.tag }},${{ github.sha }}" >> $GITHUB_ENV
+          fi
+      - name: Run Ko
+        env:
+          KO_DEFAULTBASEIMAGE: $KO_DOCKER_REPO:base-latest
+        run: |
+          {echo -n "TAGS="; ko build --bare --sbom spdx --tags $TAGS } >> $GITHUB_ENV
+      - name: Cosign
+        shell: bash
+        run: |
+          COSIGN_EXPERIMENTAL=true cosign sign --yes $TAGS

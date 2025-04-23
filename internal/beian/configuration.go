@@ -3,8 +3,8 @@ package beian
 import (
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
-	"github.com/yoshino-s/go-framework/common"
 	"github.com/yoshino-s/go-framework/configuration"
+	"github.com/yoshino-s/go-framework/utils"
 )
 
 var _ configuration.Configuration = (*config)(nil)
@@ -19,10 +19,10 @@ func (c *config) Register(set *pflag.FlagSet) {
 	set.String("beian.werplus_key", "", "werplus key")
 	set.String("beian.miit_sign", "", "sign token for miit")
 
-	common.MustNoError(viper.BindPFlags(set))
+	utils.MustNoError(viper.BindPFlags(set))
 	configuration.Register(c)
 }
 
 func (c *config) Read() {
-	common.MustDecodeFromMapstructure(viper.AllSettings()["beian"], c)
+	utils.MustDecodeFromMapstructure(viper.AllSettings()["beian"], c)
 }

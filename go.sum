@@ -513,12 +513,12 @@ github.com/xi2/xz v0.0.0-20171230120015-48954b6210f8 h1:nIPpBwaJSVYIxUFsDv3M8ofm
 github.com/xi2/xz v0.0.0-20171230120015-48954b6210f8/go.mod h1:HUYIGzjTL3rfEspMxjDjgmT5uz5wzYJKVo23qUhYTos=
 github.com/yl2chen/cidranger v1.0.2 h1:lbOWZVCG1tCRX4u24kuM1Tb4nHqWkDxwLdoS+SevawU=
 github.com/yl2chen/cidranger v1.0.2/go.mod h1:9U1yz7WPYDwf0vpNWFaeRh0bjwz5RVgRy/9UEQfHl0g=
-github.com/yoshino-s/go-framework v0.5.0 h1:W+Ka+rBsEqXiQOPLjhKIu0aTdMNEbnyV23zHy0j+hlk=
-github.com/yoshino-s/go-framework v0.5.0/go.mod h1:eIMJIVftw/jgaz/uZ1blM/MvvXZFeTE6brtxt18pqvM=
+github.com/yoshino-s/go-framework v0.6.0 h1:tg+FhVjgCnrBGENUugVT1fOIaQZksksmQFryrAlKLrA=
+github.com/yoshino-s/go-framework v0.6.0/go.mod h1:lC4PGlDkZTE28NJDD5Wi9CGLM8ETftv1dM97hhrE80E=
 github.com/yoshino-s/kuaidaili-go v0.0.0-20250422095331-bb1065287a4d h1:dmmDDBA5qBKLhVHYu0d7tglv6i6eTC5+hC7a1jWRZq0=
 github.com/yoshino-s/kuaidaili-go v0.0.0-20250422095331-bb1065287a4d/go.mod h1:0nFxc5UVnIm22eRhD2HjSoAi9I3zqgW+Pllpl2lQz4E=
-github.com/yoshino-s/unauthor v0.2.0 h1:Z6Yc7uzzf/Cm5/xmPPJ69l7aZD58lAHk0pxFAXJ0mhI=
-github.com/yoshino-s/unauthor v0.2.0/go.mod h1:4eJJ5j7FssTczr4MAKKvCfhU23z/wn1Ri31BErbg5jg=
+github.com/yoshino-s/unauthor v0.2.1 h1:zKUIu+1x6hJES8ozMnecYZwJDoTw2aQnI/dYUNA451I=
+github.com/yoshino-s/unauthor v0.2.1/go.mod h1:+v+KDdvEEBNOmXj6DHAmVMJUI4AXOy+u8l3v+gcgwkA=
 github.com/ysmood/fetchup v0.2.3 h1:ulX+SonA0Vma5zUFXtv52Kzip/xe7aj4vqT5AJwQ+ZQ=
 github.com/ysmood/fetchup v0.2.3/go.mod h1:xhibcRKziSvol0H1/pj33dnKrYyI2ebIvz5cOOkYGns=
 github.com/ysmood/goob v0.4.0 h1:HsxXhyLBeGzWXnqVKtmT9qM7EuVs/XOgkX7T6r1o1AQ=
@@ -731,6 +731,8 @@ gopkg.in/djherbis/times.v1 v1.3.0/go.mod h1:AQlg6unIsrsCEdQYhTzERy542dz6SFdQFZFv
 gopkg.in/fsnotify.v1 v1.4.7/go.mod h1:Tz8NjZHkW78fSQdbUxIjBTcgA1z1m8ZHf0WmKUhAMys=
 gopkg.in/ini.v1 v1.67.0 h1:Dgnx+6+nfE+IfzjUEISNeydPJh9AXNNsWbGP9KzCsOA=
 gopkg.in/ini.v1 v1.67.0/go.mod h1:pNLf8WUiyNEtQjuu5G5vTm06TEv9tsIgeAvK8hOrP4k=
+gopkg.in/natefinch/lumberjack.v2 v2.2.1 h1:bBRl1b0OH9s/DuPhuXpNl+VtCaJXFZ5/uEFST95x9zc=
+gopkg.in/natefinch/lumberjack.v2 v2.2.1/go.mod h1:YD8tP3GAjkrDg1eZH7EGmyESg/lsYskCTPBJVb9jqSc=
 gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 h1:uRGJdciOHaEIrze2W8Q3AKkepLTh2hOroT7a+7czfdQ=
 gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7/go.mod h1:dt/ZhP58zS4L8KSrWDmTeBkI65Dw0HsyUHuEVlX15mw=
 gopkg.in/yaml.v2 v2.2.1/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=

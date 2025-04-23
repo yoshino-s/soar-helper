@@ -6,9 +6,9 @@ import (
 	"connectrpc.com/connect"
 	"connectrpc.com/grpcreflect"
 	"github.com/yoshino-s/go-framework/application"
-	"github.com/yoshino-s/go-framework/common"
 	"github.com/yoshino-s/go-framework/handlers/http"
 	"github.com/yoshino-s/go-framework/telemetry"
+	"github.com/yoshino-s/go-framework/utils"
 	gen "github.com/yoshino-s/soar-helper/internal/proto"
 	"github.com/yoshino-s/soar-helper/internal/proto/v1/v1connect"
 	"go.akshayshah.org/connectproto"
@@ -49,7 +49,7 @@ func (h *Handler) SetS3Handler(handler v1connect.S3ServiceHandler) {
 }
 
 func (h *Handler) Setup(ctx context.Context) {
-	common.MustNoNil(h.icpQueryHandler, h.runnerHandler, h.toolsHandler)
+	utils.MustNoNil(h.icpQueryHandler, h.runnerHandler, h.toolsHandler)
 	h.Handler.Setup(ctx)
 
 	h.Swagger("/swagger", gen.OpenAPI)

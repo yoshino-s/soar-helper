@@ -7,8 +7,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 
 	"github.com/yoshino-s/go-framework/application"
-	"github.com/yoshino-s/go-framework/common"
 	"github.com/yoshino-s/go-framework/configuration"
+	"github.com/yoshino-s/go-framework/utils"
 	"github.com/yoshino-s/soar-helper/internal/ent"
 )
 
@@ -35,12 +35,12 @@ func (c *Client) Configuration() configuration.Configuration {
 }
 
 func (c *Client) Setup(context.Context) {
-	drv := common.Must(sql.Open(c.config.DriverName, c.config.DataSourceName))
+	drv := utils.Must(sql.Open(c.config.DriverName, c.config.DataSourceName))
 	c.Client = ent.NewClient(ent.Driver(drv)).DebugWithZap(c.Logger)
 }
 
 func (c *Client) Close(context.Context) {
-	common.MustNoError(c.Client.Close())
+	utils.MustNoError(c.Client.Close())
 }
 
 func ReplaceGlobals(_client *Client) {

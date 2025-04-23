@@ -5,8 +5,8 @@ import (
 
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
-	"github.com/yoshino-s/go-framework/common"
 	"github.com/yoshino-s/go-framework/configuration"
+	"github.com/yoshino-s/go-framework/utils"
 )
 
 var _ configuration.Configuration = (*config)(nil)
@@ -34,10 +34,10 @@ func (c *config) Register(set *pflag.FlagSet) {
 	set.Bool("s3.public", false, "s3 public")
 	set.String("s3.accelerate_endpoint", "", "s3 accelerate endpoint")
 
-	common.MustNoError(viper.BindPFlags(set))
+	utils.MustNoError(viper.BindPFlags(set))
 	configuration.Register(c)
 }
 
 func (c *config) Read() {
-	common.MustDecodeFromMapstructure(viper.AllSettings()["s3"], c)
+	utils.MustDecodeFromMapstructure(viper.AllSettings()["s3"], c)
 }

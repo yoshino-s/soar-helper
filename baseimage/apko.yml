@@ -20,4 +20,3 @@ environment:
 
 archs:
   - x86_64
-  - arm64

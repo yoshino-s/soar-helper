@@ -38,7 +38,7 @@ jobs:
         env:
           KO_DEFAULTBASEIMAGE: $KO_DOCKER_REPO:base-latest
         run: |
-          {echo -n "TAGS="; ko build --bare --sbom spdx --tags $TAGS } >> $GITHUB_ENV
+          { echo -n "TAGS="; ko build --bare --sbom spdx --tags $TAGS } >> $GITHUB_ENV
       - name: Cosign
         shell: bash
         run: |

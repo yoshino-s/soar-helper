@@ -36,7 +36,7 @@ jobs:
         id: apko
         with:
           config: baseimage/apko.yml
-          tag: ${IMAGE_NAME}:base-latest
+          tag: ${{ env.IMAGE_NAME }}:base-latest
       - name: Cosign
         shell: bash
         run: |

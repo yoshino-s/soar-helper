@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -154,7 +155,23 @@ func isUnretriable(err error) bool {
 }
 
 func (api *IcpApi) Query(ctx context.Context, sign string, domain string) (*IcpQueryData, error) {
+	blacklist := []string{
+		"dbappsecurity.com.cn",
+	}
+	if slices.Contains(blacklist, domain) {
+		return nil, fmt.Errorf("domain %s is in blacklist", domain)
+	}
+
+	retry_time := 0
 	for {
+		retry_time++
+
+		select {
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		default:
+		}
+
 		proxy := api.proxy.Next(ctx)
 		res, err := api.query(context.WithValue(
 			ctx,
@@ -165,13 +182,16 @@ func (api *IcpApi) Query(ctx context.Context, sign string, domain string) (*IcpQ
 		if err == nil {
 			return res, nil
 		}
+		zap.L().Info("query ICP data failed", zap.String("domain", domain), zap.Error(err), zap.Int("retry_time", retry_time))
+
+		if retry_time >= 5 {
+			return nil, err
+		}
 
 		if isCausedByProxy(err) {
 			api.proxy.Invalidate(proxy)
 			continue
 		}
-
-		zap.L().Info("query ICP data failed", zap.String("domain", domain), zap.Error(err))
 
 		if isUnretriable(err) {
 			return nil, err

@@ -163,13 +163,12 @@ func (api *IcpApi) Query(ctx context.Context, sign string, domain string) (*IcpQ
 		var res *IcpQueryData
 		var err error
 
-		err = api.proxy.Do(func(url *url.URL) error {
+		api.proxy.Do(func(url *url.URL) {
 			res, err = api.query(context.WithValue(
 				ctx,
 				proxyKey{},
 				url,
 			), sign, domain)
-			return err
 		})
 		if err == nil {
 			return res, nil

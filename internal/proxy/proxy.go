@@ -3,6 +3,7 @@ package proxy
 import (
 	"context"
 	"net/url"
+	"strings"
 	"sync"
 	"time"
 
@@ -61,10 +62,7 @@ func (p *Proxy) createProxyClient() error {
 		Product: kuaidailigo.ProductTypeTPS,
 		Status:  kuaidailigo.OrderStatusValid,
 	})
-	if err != nil {
-		return err
-	}
-	if len(r) == 0 {
+	if err != nil || len(r) == 0 {
 		p.Logger.Debug("create proxy client")
 		c, err := p.client.CreateOrder(context.Background(), kuaidailigo.CreateOrderRequest{
 			IsNotify: false,
@@ -80,6 +78,7 @@ func (p *Proxy) createProxyClient() error {
 			return err
 		}
 		p.proxyClient = &kuaidailigo.TPSOrderClient{OrderClient: c}
+		time.Sleep(time.Second * 5) // 	// Wait for the proxy to be available
 	} else {
 		p.Logger.Debug("using existing proxy client", zap.String("order_id", r[0].OrderID))
 		c, err := p.client.GetOrderClient(context.Background(), r[0].OrderID)
@@ -92,10 +91,22 @@ func (p *Proxy) createProxyClient() error {
 	if err != nil {
 		return err
 	}
-	u, err := p.proxyClient.GetProxy(context.Background(), kuaidailigo.ProxyProtocolHTTP)
-	if err != nil {
-		return err
+
+	var u *url.URL
+
+	for {
+		u, err = p.proxyClient.GetProxy(context.Background(), kuaidailigo.ProxyProtocolHTTP)
+		if err != nil {
+			if strings.Contains(err.Error(), "407") { //一开始创建的时候会有一段时间查询不到
+				p.Logger.Debug("getting proxy url failed, retrying")
+				time.Sleep(time.Second)
+				continue
+			}
+			return err
+		}
+		break
 	}
+
 	u.User = url.UserPassword(username, password)
 	p.proxyUrl = u
 	p.Logger.Debug("create proxy client success", zap.String("proxy_url", p.proxyUrl.String()))
@@ -103,12 +114,12 @@ func (p *Proxy) createProxyClient() error {
 	return nil
 }
 
-func (p *Proxy) closeProxyClient() error {
+func (p *Proxy) closeProxyClient() {
 	p.proxyMutex.Lock()
 	defer p.proxyMutex.Unlock()
 
 	if p.proxyClient == nil {
-		return nil
+		return
 	}
 	p.debounce(func() {
 		p.Logger.Debug("close proxy client")
@@ -118,22 +129,15 @@ func (p *Proxy) closeProxyClient() error {
 		p.proxyClient = nil
 		p.proxyUrl = nil
 	})
-	return nil
 }
 
-func (p *Proxy) Do(f func(url *url.URL) error) error {
+func (p *Proxy) Do(f func(url *url.URL)) {
 	if err := p.createProxyClient(); err != nil {
-		return err
+		panic(err)
 	}
 
 	p.Logger.Debug("do proxy request", zap.String("proxy_url", p.proxyUrl.String()))
-	if err := f(p.proxyUrl); err != nil {
-		return err
-	}
+	f(p.proxyUrl)
 
-	if err := p.closeProxyClient(); err != nil {
-		return err
-	}
-
-	return nil
+	p.closeProxyClient()
 }

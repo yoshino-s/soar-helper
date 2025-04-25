@@ -6,6 +6,7 @@ require (
 	connectrpc.com/connect v1.18.1
 	connectrpc.com/grpcreflect v1.3.0
 	entgo.io/ent v0.14.4
+	github.com/bep/debounce v1.2.1
 	github.com/esimov/stackblur-go v1.1.0
 	github.com/fogleman/gg v1.3.0
 	github.com/getsentry/sentry-go v0.32.0

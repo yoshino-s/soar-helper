@@ -134,18 +134,6 @@ func (api *IcpApi) RefreshToken(ctx context.Context, force bool) error {
 	return nil
 }
 
-func isCausedByProxy(err error) bool {
-	if err, ok := err.(*HttpRequestError); ok && err.Response.StatusCode == 403 {
-		return true
-	}
-	// context deadline exceeded (Client.Timeout exceeded while awaiting headers)"}
-	if err, ok := err.(*url.Error); ok && err.Timeout() {
-		return true
-	}
-
-	return false
-}
-
 func isUnretriable(err error) bool {
 	if err, ok := err.(*HttpRequestError); ok && err.Response.StatusCode != 403 {
 		return true
@@ -172,28 +160,24 @@ func (api *IcpApi) Query(ctx context.Context, sign string, domain string) (*IcpQ
 		default:
 		}
 
-		proxy := api.proxy.Next(ctx)
-		res, err := api.query(context.WithValue(
-			ctx,
-			proxyKey{},
-			proxy,
-		), sign, domain)
+		var res *IcpQueryData
+		var err error
 
+		err = api.proxy.Do(func(url *url.URL) error {
+			res, err = api.query(context.WithValue(
+				ctx,
+				proxyKey{},
+				url,
+			), sign, domain)
+			return err
+		})
 		if err == nil {
 			return res, nil
 		}
+
 		zap.L().Info("query ICP data failed", zap.String("domain", domain), zap.Error(err), zap.Int("retry_time", retry_time))
 
-		if retry_time >= 5 {
-			return nil, err
-		}
-
-		if isCausedByProxy(err) {
-			api.proxy.Invalidate(proxy)
-			continue
-		}
-
-		if isUnretriable(err) {
+		if isUnretriable(err) || retry_time >= 5 {
 			return nil, err
 		}
 	}

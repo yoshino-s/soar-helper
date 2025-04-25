@@ -113,7 +113,7 @@ func (c *Beian) BatchQuery(ctx context.Context, domains []string, noCache bool) 
 		} else {
 			results[idx] = &ent.Icp{
 				Host:      domain,
-				Type:      "INVALID",
+				Type:      "ERROR",
 				CreatedAt: time.Now(),
 				UpdatedAt: time.Now(),
 			}

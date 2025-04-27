@@ -118,10 +118,14 @@ func (t *ToolsService) Unauthor(ctx context.Context, req *connect.Request[v1.Una
 		}
 
 		if req.Msg.Screenshot {
-			if screenshot, err := takeScreenshot(result); err != nil {
-				resp.Error = err.Error()
-			} else {
-				resp.Screenshot = screenshot
+			if result.Success {
+				if screenshot, err := takeScreenshot(result); err != nil {
+					resp.Error = err.Error()
+				} else {
+					resp.Screenshot = screenshot
+				}
+			} else { // 不成功就不要截图了
+				resp.Screenshot = ""
 			}
 		}
 

@@ -273,10 +273,9 @@ func (s *Scaffold) image() (image.Image, error) {
 		bc.SetHexColor(s.shadowBaseColor)
 		bc.Fill()
 
-		shadow, err := stackblur.Process(bc.Image(), uint32(s.shadowRadius))
-		if err != nil {
-			return nil, err
-		}
+		dst := image.NewRGBA(bc.Image().Bounds())
+		stackblur.Process(dst, bc.Image(), uint32(s.shadowRadius))
+		shadow := dst
 
 		dc.DrawImage(shadow, 0, 0)
 	}

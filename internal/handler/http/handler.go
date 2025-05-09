@@ -75,7 +75,7 @@ func (h *Handler) Setup(ctx context.Context) {
 		protojson.UnmarshalOptions{DiscardUnknown: true},
 	))
 
-	otelInterceptor, err := otelconnect.NewInterceptor()
+	otelInterceptor, err := otelconnect.NewInterceptor(otelconnect.WithTrustRemote())
 	if err != nil {
 		h.EmptyApplication.Logger.Fatal("failed to create otel interceptor", zap.Error(err))
 	} else {

@@ -9,6 +9,8 @@ import (
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/yoshino-s/go-framework/application"
 	"github.com/yoshino-s/go-framework/configuration"
+	"github.com/yoshino-s/go-framework/log"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.uber.org/zap"
 )
 
@@ -30,11 +32,18 @@ func (s *S3) Configuration() configuration.Configuration {
 }
 
 func (s *S3) Setup(context.Context) {
+	transport, err := minio.DefaultTransport(!s.config.Insecure)
+	if err != nil {
+		panic(err)
+	}
+
 	client, err := minio.New(s.config.Endpoint, &minio.Options{
-		Creds:  credentials.NewStaticV4(s.config.AccessKeyID, s.config.SecretAccessKey, ""),
-		Secure: !s.config.Insecure,
-		Region: s.config.Region,
+		Creds:     credentials.NewStaticV4(s.config.AccessKeyID, s.config.SecretAccessKey, ""),
+		Secure:    !s.config.Insecure,
+		Region:    s.config.Region,
+		Transport: otelhttp.NewTransport(transport),
 	})
+
 	if err != nil {
 		panic(err)
 	}
@@ -50,7 +59,7 @@ func (s *S3) Upload(ctx context.Context, key string, path string, options minio.
 	if err != nil {
 		return nil, err
 	}
-	s.Logger.Debug("uploaded", zap.Any("info", info))
+	s.Logger.Debug("uploaded", zap.Any("info", info), log.Context(ctx))
 
 	return s.GetUrl(ctx, s.config.Bucket, key)
 }
@@ -60,7 +69,7 @@ func (s *S3) UploadStream(ctx context.Context, key string, reader io.Reader, siz
 	if err != nil {
 		return nil, err
 	}
-	s.Logger.Debug("uploaded", zap.Any("info", info))
+	s.Logger.Debug("uploaded", zap.Any("info", info), log.Context(ctx))
 
 	return s.GetUrl(ctx, s.config.Bucket, key)
 }

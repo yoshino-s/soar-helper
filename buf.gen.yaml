@@ -7,7 +7,7 @@ plugins:
     out: internal
     opt: paths=source_relative
   - local: protoc-gen-connect-openapi
-    out: internal
+    out: internal/proto
     opt:
     - path=openapi.json
     - format=json

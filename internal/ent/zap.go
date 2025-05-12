@@ -7,6 +7,7 @@ import (
 
 	"entgo.io/ent/dialect"
 	"github.com/google/uuid"
+	"github.com/yoshino-s/go-framework/log"
 	"go.uber.org/zap"
 )
 
@@ -36,7 +37,7 @@ func debugEntDriver(d dialect.Driver, logger *zap.Logger) dialect.Driver {
 
 // Exec logs its params and calls the underlying driver Exec method.
 func (d *DebugDriver) Exec(ctx context.Context, query string, args, v any) error {
-	d.logger.Debug("driver.Exec", zap.String("query", query), zap.Any("args", args))
+	d.logger.Debug("driver.Exec", zap.String("query", query), zap.Any("args", args), log.Context(ctx))
 	return d.Driver.Exec(ctx, query, args, v)
 }
 
@@ -48,13 +49,13 @@ func (d *DebugDriver) ExecContext(ctx context.Context, query string, args ...any
 	if !ok {
 		return nil, fmt.Errorf("Driver.ExecContext is not supported")
 	}
-	d.logger.Debug("driver.ExecContext", zap.String("query", query), zap.Any("args", args))
+	d.logger.Debug("driver.ExecContext", zap.String("query", query), zap.Any("args", args), log.Context(ctx))
 	return drv.ExecContext(ctx, query, args...)
 }
 
 // Query logs its params and calls the underlying driver Query method.
 func (d *DebugDriver) Query(ctx context.Context, query string, args, v any) error {
-	d.logger.Debug("driver.Query", zap.String("query", query), zap.Any("args", args))
+	d.logger.Debug("driver.Query", zap.String("query", query), zap.Any("args", args), log.Context(ctx))
 	return d.Driver.Query(ctx, query, args, v)
 }
 
@@ -66,7 +67,7 @@ func (d *DebugDriver) QueryContext(ctx context.Context, query string, args ...an
 	if !ok {
 		return nil, fmt.Errorf("Driver.QueryContext is not supported")
 	}
-	d.logger.Debug("driver.QueryContext", zap.String("query", query), zap.Any("args", args))
+	d.logger.Debug("driver.QueryContext", zap.String("query", query), zap.Any("args", args), log.Context(ctx))
 	return drv.QueryContext(ctx, query, args...)
 }
 
@@ -77,7 +78,7 @@ func (d *DebugDriver) Tx(ctx context.Context) (dialect.Tx, error) {
 		return nil, err
 	}
 	id := uuid.New().String()
-	d.logger.Debug("driver.Tx", zap.String("id", id))
+	d.logger.Debug("driver.Tx", zap.String("id", id), log.Context(ctx))
 	return &DebugTx{tx, id, d.logger, ctx}, nil
 }
 
@@ -94,7 +95,7 @@ func (d *DebugDriver) BeginTx(ctx context.Context, opts *sql.TxOptions) (dialect
 		return nil, err
 	}
 	id := uuid.New().String()
-	d.logger.Debug("driver.BeginTx: started", zap.String("id", id))
+	d.logger.Debug("driver.BeginTx: started", zap.String("id", id), log.Context(ctx))
 	return &DebugTx{tx, id, d.logger, ctx}, nil
 }
 
@@ -108,7 +109,7 @@ type DebugTx struct {
 
 // Exec logs its params and calls the underlying transaction Exec method.
 func (d *DebugTx) Exec(ctx context.Context, query string, args, v any) error {
-	d.logger.Debug("Tx.Exec", zap.String("query", query), zap.Any("args", args), zap.String("id", d.id))
+	d.logger.Debug("Tx.Exec", zap.String("query", query), zap.Any("args", args), zap.String("id", d.id), log.Context(ctx))
 	return d.Tx.Exec(ctx, query, args, v)
 }
 
@@ -120,13 +121,13 @@ func (d *DebugTx) ExecContext(ctx context.Context, query string, args ...any) (s
 	if !ok {
 		return nil, fmt.Errorf("Tx.ExecContext is not supported")
 	}
-	d.logger.Debug("Tx.ExecContext", zap.String("query", query), zap.Any("args", args), zap.String("id", d.id))
+	d.logger.Debug("Tx.ExecContext", zap.String("query", query), zap.Any("args", args), zap.String("id", d.id), log.Context(ctx))
 	return drv.ExecContext(ctx, query, args...)
 }
 
 // Query logs its params and calls the underlying transaction Query method.
 func (d *DebugTx) Query(ctx context.Context, query string, args, v any) error {
-	d.logger.Debug("Tx.Query", zap.String("query", query), zap.Any("args", args), zap.String("id", d.id))
+	d.logger.Debug("Tx.Query", zap.String("query", query), zap.Any("args", args), zap.String("id", d.id), log.Context(ctx))
 	return d.Tx.Query(ctx, query, args, v)
 }
 
@@ -138,18 +139,18 @@ func (d *DebugTx) QueryContext(ctx context.Context, query string, args ...any) (
 	if !ok {
 		return nil, fmt.Errorf("Tx.QueryContext is not supported")
 	}
-	d.logger.Debug("Tx.QueryContext", zap.String("query", query), zap.Any("args", args), zap.String("id", d.id))
+	d.logger.Debug("Tx.QueryContext", zap.String("query", query), zap.Any("args", args), zap.String("id", d.id), log.Context(ctx))
 	return drv.QueryContext(ctx, query, args...)
 }
 
 // Commit logs this step and calls the underlying transaction Commit method.
 func (d *DebugTx) Commit() error {
-	d.logger.Debug("Tx.Commit", zap.String("id", d.id))
+	d.logger.Debug("Tx.Commit", zap.String("id", d.id), zap.Any("ctx", d.ctx))
 	return d.Tx.Commit()
 }
 
 // Rollback logs this step and calls the underlying transaction Rollback method.
 func (d *DebugTx) Rollback() error {
-	d.logger.Debug("Tx.Rollback", zap.String("id", d.id))
+	d.logger.Debug("Tx.Rollback", zap.String("id", d.id), zap.Any("ctx", d.ctx))
 	return d.Tx.Rollback()
 }

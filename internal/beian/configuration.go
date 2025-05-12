@@ -10,13 +10,10 @@ import (
 var _ configuration.Configuration = (*config)(nil)
 
 type config struct {
-	WerplusKey string `mapstructure:"werplus_key"`
-	MiitSign   string `mapstructure:"miit_sign"`
+	MiitSign string `mapstructure:"miit_sign"`
 }
 
 func (c *config) Register(set *pflag.FlagSet) {
-	//set.String("chinaz.cookie", "", "chinaz cookie")
-	set.String("beian.werplus_key", "", "werplus key")
 	set.String("beian.miit_sign", "", "sign token for miit")
 
 	utils.MustNoError(viper.BindPFlags(set))

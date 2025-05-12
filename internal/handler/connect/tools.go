@@ -20,6 +20,7 @@ import (
 	"github.com/projectdiscovery/httpx/runner"
 	"github.com/yoshino-s/go-framework/application"
 	"github.com/yoshino-s/go-framework/errors"
+	"github.com/yoshino-s/go-framework/log"
 	v1 "github.com/yoshino-s/soar-helper/internal/proto/v1"
 	"github.com/yoshino-s/soar-helper/internal/proto/v1/v1connect"
 	"github.com/yoshino-s/soar-helper/internal/s3"
@@ -90,7 +91,7 @@ func (t *ToolsService) Unauthor(ctx context.Context, req *connect.Request[v1.Una
 		}
 		defer tempFile.Close()
 
-		if err := screenshot.CreateScreenshot([]string{
+		if err := screenshot.CreateScreenshot(ctx, []string{
 			result.Exploit,
 		}, cols, result.Result, tempFile); err != nil {
 			return "", err
@@ -132,7 +133,7 @@ func (t *ToolsService) Unauthor(ctx context.Context, req *connect.Request[v1.Una
 		lock.Lock()
 		defer lock.Unlock()
 		if err := stream.Send(resp); err != nil {
-			t.Logger.Error("failed to send response", zap.Error(err))
+			t.Logger.Error("failed to send response", zap.Error(err), log.Context(ctx))
 		}
 	}
 
@@ -230,7 +231,7 @@ func (t *ToolsService) Httpx(ctx context.Context, req *connect.Request[v1.HttpxR
 						if screenshot != "" {
 							screenshotKey := strings.Join(strings.Split(screenshot, "/")[len(strings.Split(screenshot, "/"))-3:], "/")
 							if url, err := t.s3.Upload(ctx, screenshotKey, screenshot, minio.PutObjectOptions{}); err != nil {
-								t.Logger.Error("failed to upload screenshot", zap.Error(err))
+								t.Logger.Error("failed to upload screenshot", zap.Error(err), log.Context(ctx))
 								screenshot = ""
 							} else {
 								screenshot = url.String()
@@ -240,7 +241,7 @@ func (t *ToolsService) Httpx(ctx context.Context, req *connect.Request[v1.HttpxR
 						if request != "" {
 							requestKey := strings.Join(strings.Split(request, "/")[len(strings.Split(request, "/"))-3:], "/")
 							if url, err := t.s3.Upload(ctx, requestKey, request, minio.PutObjectOptions{}); err != nil {
-								t.Logger.Error("failed to upload request", zap.Error(err))
+								t.Logger.Error("failed to upload request", zap.Error(err), log.Context(ctx))
 								request = ""
 							} else {
 								request = url.String()

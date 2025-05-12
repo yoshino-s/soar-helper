@@ -1,8 +1,10 @@
 package cmd
 
 import (
+	"context"
+
 	"github.com/spf13/cobra"
-	"github.com/yoshino-s/go-app/otlp"
+	"github.com/yoshino-s/go-app/telemetry"
 	"github.com/yoshino-s/go-framework/application"
 	"github.com/yoshino-s/go-framework/cmd"
 	"github.com/yoshino-s/go-framework/common"
@@ -16,13 +18,14 @@ var name = "soar-helper"
 var app = application.NewMainApplication()
 
 var (
-	otlpApp = otlp.New(
-		otlp.WithDSN("https://signoz-otl-http.yoshino-s.xyz/"),
-		otlp.WithDeploymentEnvironment("Development"),
-		otlp.WithServiceName(name),
-		otlp.WithServiceVersion(common.Version),
+	dbApp        = db.New()
+	telemetryApp = telemetry.New(
+		context.Background(),
+		telemetry.WithLogger(zap.NewExample()),
+		telemetry.WithDSN("https://signoz-otl-http.yoshino-s.xyz"),
+		telemetry.WithServiceName(name),
+		telemetry.WithServiceVersion(common.Version),
 	)
-	dbApp    = db.New()
 	proxyApp = proxy.New()
 	rootCmd  = &cobra.Command{
 		Use: name,
@@ -35,12 +38,14 @@ func init() {
 	cobra.OnInitialize(func() {
 		configuration.Setup(name)
 
-		app.Append(otlpApp)
-		app.Append(dbApp)
-		app.Append(proxyApp)
-
 		zap.ReplaceGlobals(app.Logger)
 	})
+
+	app.Append(dbApp)
+	app.Append(proxyApp)
+	app.Append(application.NewFuncApplication(application.StageClose, func(ctx context.Context) {
+		telemetryApp.Close(ctx)
+	}))
 
 	configuration.GenerateConfiguration.Register(rootCmd.PersistentFlags())
 	app.Configuration().Register(rootCmd.PersistentFlags())

@@ -2,20 +2,17 @@ package http
 
 import (
 	"context"
-	"strings"
 
 	"connectrpc.com/connect"
 	"connectrpc.com/grpcreflect"
 	"connectrpc.com/otelconnect"
-	"github.com/labstack/echo/v4"
 	"github.com/yoshino-s/go-framework/application"
-	"github.com/yoshino-s/go-framework/common"
 	"github.com/yoshino-s/go-framework/handlers/http"
+	"github.com/yoshino-s/go-framework/log"
 	"github.com/yoshino-s/go-framework/utils"
 	gen "github.com/yoshino-s/soar-helper/internal/proto"
 	"github.com/yoshino-s/soar-helper/internal/proto/v1/v1connect"
 	"go.akshayshah.org/connectproto"
-	"go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/encoding/protojson"
 )
@@ -56,9 +53,6 @@ func (h *Handler) SetS3Handler(handler v1connect.S3ServiceHandler) {
 func (h *Handler) Setup(ctx context.Context) {
 	utils.MustNoNil(h.icpQueryHandler, h.runnerHandler, h.toolsHandler)
 	h.Handler.Setup(ctx)
-	h.Echo.Use(otelecho.Middleware(common.AppName, otelecho.WithSkipper(func(c echo.Context) bool {
-		return strings.HasPrefix(c.Request().URL.Path, "/-/")
-	})))
 
 	h.Swagger("/swagger", gen.OpenAPI)
 
@@ -81,14 +75,10 @@ func (h *Handler) Setup(ctx context.Context) {
 
 	otelInterceptor, err := otelconnect.NewInterceptor(otelconnect.WithTrustRemote())
 	if err != nil {
-		h.EmptyApplication.Logger.Fatal("failed to create otel interceptor", zap.Error(err))
+		h.EmptyApplication.Logger.Fatal("failed to create otel interceptor", zap.Error(err), log.Context(ctx))
 	} else {
 		opts = append(opts, connect.WithInterceptors(otelInterceptor))
 	}
-
-	// if telemetry.IsSentryInitialized() {
-	// 	opts = append(opts, connect.WithInterceptors(&interceptor{}))
-	// }
 
 	h.HandleGrpc(v1connect.NewIcpQueryServiceHandler(h.icpQueryHandler, opts...))
 	h.HandleGrpc(v1connect.NewRunnerServiceHandler(h.runnerHandler, opts...))

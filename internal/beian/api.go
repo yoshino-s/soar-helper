@@ -2,10 +2,7 @@ package beian
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"net/http"
-	"net/url"
 	"sync"
 	"time"
 
@@ -13,7 +10,7 @@ import (
 	"github.com/sourcegraph/conc/iter"
 	"github.com/yoshino-s/go-framework/application"
 	"github.com/yoshino-s/go-framework/configuration"
-	"github.com/yoshino-s/go-framework/errors"
+	"github.com/yoshino-s/go-framework/log"
 	"github.com/yoshino-s/soar-helper/internal/beian/icp_api"
 	"github.com/yoshino-s/soar-helper/internal/ent"
 	"github.com/yoshino-s/soar-helper/internal/ent/icp"
@@ -52,6 +49,10 @@ func (c *Beian) Configuration() configuration.Configuration {
 }
 
 func (c *Beian) Setup(ctx context.Context) {
+	if c.config.MiitSign == "" {
+		panic("miit_sign is required")
+	}
+
 	c.icpApi.RefreshToken(ctx, true)
 }
 
@@ -100,7 +101,7 @@ func (c *Beian) BatchQuery(ctx context.Context, domains []string, noCache bool) 
 		res, err := c.query(ctx, domain)
 
 		if err != nil {
-			c.Logger.Error("query failed", zap.String("domain", domain), zap.Error(err))
+			c.Logger.Error("query failed", zap.String("domain", domain), zap.Error(err), log.Context(ctx))
 			errorsMap[domain] = err.Error()
 		}
 		resultMap[domain] = resultMapItem{icp: res, cached: false}
@@ -148,19 +149,13 @@ func (c *Beian) Query(ctx context.Context, _domain string, noCache bool) (*ent.I
 func (c *Beian) query(ctx context.Context, domain string) (*ent.Icp, error) {
 	var icp *ent.Icp
 	var err error
-	if c.config.WerplusKey != "" {
-		icp, err = c.werplusQuery(ctx, domain)
-	} else if c.config.MiitSign != "" {
-		icp, err = c.icpQueryQuery(ctx, domain)
-	} else {
-		return nil, errors.New("no beian query service", 500)
-	}
+	icp, err = c.icpQueryQuery(ctx, domain)
 
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debug("query result", zap.String("domain", domain), zap.Any("icp", icp))
+	c.Logger.Debug("query result", zap.String("domain", domain), zap.Any("icp", icp), log.Context(ctx))
 
 	c.dbLock.Lock()
 	defer c.dbLock.Unlock()
@@ -187,90 +182,8 @@ func (c *Beian) query(ctx context.Context, domain string) (*ent.Icp, error) {
 	return c.db.Icp.Get(ctx, id)
 }
 
-type WerplusIcpDataItem struct {
-	Domain           string `json:"domain"`
-	DomainId         int    `json:"domainId"`
-	LeaderName       string `json:"leaderName"`
-	LimitAccess      string `json:"limitAccess"`
-	MainId           int    `json:"mainId"`
-	MainLicence      string `json:"mainLicence"`
-	NatureName       string `json:"natureName"`
-	ServiceId        int    `json:"serviceId"`
-	ServiceLicence   string `json:"serviceLicence"`
-	UnitName         string `json:"unitName"`
-	UpdateRecordTime string `json:"updateRecordTime"`
-}
-
-type WerplusIcpData struct {
-	Code int    `json:"code"`
-	Msg  string `json:"msg"`
-	Data struct {
-		Params struct {
-			List []WerplusIcpDataItem `json:"list"`
-		} `json:"params"`
-	} `json:"data"`
-	ExecTime float64 `json:"exec_time"`
-	IP       string  `json:"ip"`
-}
-
-func (c *Beian) werplusQuery(ctx context.Context, domain string) (*ent.Icp, error) {
-	c.Logger.Debug("query from werplus", zap.String("domain", domain))
-
-	url, _ := url.Parse("https://api2.wer.plus/api/offline_domain_icp")
-	q := url.Query()
-	q.Set("search", domain)
-	q.Set("key", c.config.WerplusKey)
-	url.RawQuery = q.Encode()
-	resp, err := http.Get(url.String())
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	var result *WerplusIcpData
-	err = json.NewDecoder(resp.Body).Decode(&result)
-	if err != nil {
-		return nil, err
-	}
-
-	res := WerplusIcpDataItem{}
-
-	if result.Code != 200 {
-		return nil, errors.New(fmt.Sprintf("werplus query failed: %s", result.Msg), 500)
-	}
-
-	if result.Code == 404 || len(result.Data.Params.List) == 0 {
-		res.NatureName = "INVALID"
-	} else {
-		res = result.Data.Params.List[0]
-	}
-
-	createdAt := time.Now()
-	if res.UpdateRecordTime != "" {
-		createdAt, err = time.Parse(time.DateTime, res.UpdateRecordTime)
-		if err == nil {
-			createdAt = time.Now()
-		}
-	}
-
-	icp := ent.Icp{
-		Host:      domain,
-		Company:   res.UnitName,
-		Owner:     res.LeaderName,
-		Type:      res.NatureName,
-		Homepage:  "",
-		Permit:    res.MainLicence,
-		WebName:   "",
-		CreatedAt: createdAt,
-	}
-
-	c.Logger.Debug("query from werplus", zap.String("domain", domain), zap.Any("icp", icp))
-
-	return &icp, nil
-}
-
 func (c *Beian) icpQueryQuery(ctx context.Context, domain string) (*ent.Icp, error) {
-	c.Logger.Debug("query from icp-query", zap.String("domain", domain))
+	c.Logger.Debug("query from icp-query", zap.String("domain", domain), log.Context(ctx))
 
 	result, err := c.icpApi.Query(ctx, c.config.MiitSign, domain)
 	if err != nil {

@@ -7,6 +7,8 @@
         "tags": [
           "yoshino_s.soar_helper.v1.IcpQueryService"
         ],
+        "summary": "Query",
+        "operationId": "yoshino_s.soar_helper.v1.IcpQueryService.Query",
         "parameters": [
           {
             "name": "Connect-Protocol-Version",
@@ -36,6 +38,7 @@
         },
         "responses": {
           "default": {
+            "description": "Error",
             "content": {
               "application/json": {
                 "schema": {
@@ -45,6 +48,7 @@
             }
           },
           "200": {
+            "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
@@ -61,6 +65,8 @@
         "tags": [
           "yoshino_s.soar_helper.v1.IcpQueryService"
         ],
+        "summary": "BatchQuery",
+        "operationId": "yoshino_s.soar_helper.v1.IcpQueryService.BatchQuery",
         "parameters": [
           {
             "name": "Connect-Protocol-Version",
@@ -90,6 +96,7 @@
         },
         "responses": {
           "default": {
+            "description": "Error",
             "content": {
               "application/json": {
                 "schema": {
@@ -99,6 +106,7 @@
             }
           },
           "200": {
+            "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
@@ -115,6 +123,8 @@
         "tags": [
           "yoshino_s.soar_helper.v1.IcpQueryService"
         ],
+        "summary": "Statistic",
+        "operationId": "yoshino_s.soar_helper.v1.IcpQueryService.Statistic",
         "parameters": [
           {
             "name": "Connect-Protocol-Version",
@@ -144,6 +154,7 @@
         },
         "responses": {
           "default": {
+            "description": "Error",
             "content": {
               "application/json": {
                 "schema": {
@@ -153,6 +164,7 @@
             }
           },
           "200": {
+            "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
@@ -169,6 +181,8 @@
         "tags": [
           "yoshino_s.soar_helper.v1.RunnerService"
         ],
+        "summary": "Run",
+        "operationId": "yoshino_s.soar_helper.v1.RunnerService.Run",
         "parameters": [
           {
             "name": "Connect-Protocol-Version",
@@ -198,6 +212,7 @@
         },
         "responses": {
           "default": {
+            "description": "Error",
             "content": {
               "application/json": {
                 "schema": {
@@ -207,6 +222,7 @@
             }
           },
           "200": {
+            "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
@@ -218,65 +234,14 @@
         }
       }
     },
-    "/yoshino_s.soar_helper.v1.RunnerService/RunStream": {
-      "post": {
-        "tags": [
-          "yoshino_s.soar_helper.v1.RunnerService"
-        ],
-        "parameters": [
-          {
-            "name": "Connect-Protocol-Version",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/connect-protocol-version"
-            }
-          },
-          {
-            "name": "Connect-Timeout-Ms",
-            "in": "header",
-            "schema": {
-              "$ref": "#/components/schemas/connect-timeout-header"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/yoshino_s.soar_helper.v1.RunRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/yoshino_s.soar_helper.v1.RunStreamData"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
+    "/yoshino_s.soar_helper.v1.RunnerService/RunStream": {},
     "/yoshino_s.soar_helper.v1.RunnerService/ReadFile": {
       "post": {
         "tags": [
           "yoshino_s.soar_helper.v1.RunnerService"
         ],
+        "summary": "ReadFile",
+        "operationId": "yoshino_s.soar_helper.v1.RunnerService.ReadFile",
         "parameters": [
           {
             "name": "Connect-Protocol-Version",
@@ -306,6 +271,7 @@
         },
         "responses": {
           "default": {
+            "description": "Error",
             "content": {
               "application/json": {
                 "schema": {
@@ -315,6 +281,7 @@
             }
           },
           "200": {
+            "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
@@ -331,6 +298,8 @@
         "tags": [
           "yoshino_s.soar_helper.v1.RunnerService"
         ],
+        "summary": "WriteFile",
+        "operationId": "yoshino_s.soar_helper.v1.RunnerService.WriteFile",
         "parameters": [
           {
             "name": "Connect-Protocol-Version",
@@ -360,6 +329,7 @@
         },
         "responses": {
           "default": {
+            "description": "Error",
             "content": {
               "application/json": {
                 "schema": {
@@ -369,6 +339,7 @@
             }
           },
           "200": {
+            "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
@@ -385,6 +356,8 @@
         "tags": [
           "yoshino_s.soar_helper.v1.S3Service"
         ],
+        "summary": "Upload",
+        "operationId": "yoshino_s.soar_helper.v1.S3Service.Upload",
         "parameters": [
           {
             "name": "Connect-Protocol-Version",
@@ -414,6 +387,7 @@
         },
         "responses": {
           "default": {
+            "description": "Error",
             "content": {
               "application/json": {
                 "schema": {
@@ -423,6 +397,7 @@
             }
           },
           "200": {
+            "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
@@ -434,114 +409,8 @@
         }
       }
     },
-    "/yoshino_s.soar_helper.v1.ToolsService/Unauthor": {
-      "post": {
-        "tags": [
-          "yoshino_s.soar_helper.v1.ToolsService"
-        ],
-        "parameters": [
-          {
-            "name": "Connect-Protocol-Version",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/connect-protocol-version"
-            }
-          },
-          {
-            "name": "Connect-Timeout-Ms",
-            "in": "header",
-            "schema": {
-              "$ref": "#/components/schemas/connect-timeout-header"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/yoshino_s.soar_helper.v1.UnauthorRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/yoshino_s.soar_helper.v1.UnauthorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/yoshino_s.soar_helper.v1.ToolsService/Httpx": {
-      "post": {
-        "tags": [
-          "yoshino_s.soar_helper.v1.ToolsService"
-        ],
-        "parameters": [
-          {
-            "name": "Connect-Protocol-Version",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/connect-protocol-version"
-            }
-          },
-          {
-            "name": "Connect-Timeout-Ms",
-            "in": "header",
-            "schema": {
-              "$ref": "#/components/schemas/connect-timeout-header"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/yoshino_s.soar_helper.v1.HttpxRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/yoshino_s.soar_helper.v1.HttpxResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+    "/yoshino_s.soar_helper.v1.ToolsService/Unauthor": {},
+    "/yoshino_s.soar_helper.v1.ToolsService/Httpx": {}
   },
   "components": {
     "schemas": {
@@ -552,7 +421,6 @@
       "google.protobuf.Timestamp": {
         "type": "string",
         "format": "date-time",
-        "additionalProperties": false,
         "description": "A Timestamp represents a point in time independent of any time zone or local\n calendar, encoded as a count of seconds and fractions of seconds at\n nanosecond resolution. The count is relative to an epoch at UTC midnight on\n January 1, 1970, in the proleptic Gregorian calendar which extends the\n Gregorian calendar backwards to year one.\n\n All minutes are 60 seconds long. Leap seconds are \"smeared\" so that no leap\n second table is needed for interpretation, using a [24-hour linear\n smear](https://developers.google.com/time/smear).\n\n The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By\n restricting to that range, we ensure that we can convert to and from [RFC\n 3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.\n\n # Examples\n\n Example 1: Compute Timestamp from POSIX `time()`.\n\n     Timestamp timestamp;\n     timestamp.set_seconds(time(NULL));\n     timestamp.set_nanos(0);\n\n Example 2: Compute Timestamp from POSIX `gettimeofday()`.\n\n     struct timeval tv;\n     gettimeofday(\u0026tv, NULL);\n\n     Timestamp timestamp;\n     timestamp.set_seconds(tv.tv_sec);\n     timestamp.set_nanos(tv.tv_usec * 1000);\n\n Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.\n\n     FILETIME ft;\n     GetSystemTimeAsFileTime(\u0026ft);\n     UINT64 ticks = (((UINT64)ft.dwHighDateTime) \u003c\u003c 32) | ft.dwLowDateTime;\n\n     // A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z\n     // is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.\n     Timestamp timestamp;\n     timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));\n     timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));\n\n Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.\n\n     long millis = System.currentTimeMillis();\n\n     Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)\n         .setNanos((int) ((millis % 1000) * 1000000)).build();\n\n Example 5: Compute Timestamp from Java `Instant.now()`.\n\n     Instant now = Instant.now();\n\n     Timestamp timestamp =\n         Timestamp.newBuilder().setSeconds(now.getEpochSecond())\n             .setNanos(now.getNano()).build();\n\n Example 6: Compute Timestamp from current time in Python.\n\n     timestamp = Timestamp()\n     timestamp.GetCurrentTime()\n\n # JSON Mapping\n\n In JSON format, the Timestamp type is encoded as a string in the\n [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the\n format is \"{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z\"\n where {year} is always expressed using four digits while {month}, {day},\n {hour}, {min}, and {sec} are zero-padded to two digits each. The fractional\n seconds, which can go up to 9 digits (i.e. up to 1 nanosecond resolution),\n are optional. The \"Z\" suffix indicates the timezone (\"UTC\"); the timezone\n is required. A proto3 JSON serializer should always use UTC (as indicated by\n \"Z\") when printing the Timestamp type and a proto3 JSON parser should be\n able to accept both UTC and other timezones (as indicated by an offset).\n\n For example, \"2017-01-15T01:30:15.01Z\" encodes 15.01 seconds past\n 01:30 UTC on January 15, 2017.\n\n In JavaScript, one can convert a Date object to this format using the\n standard\n [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)\n method. In Python, a standard `datetime.datetime` object can be converted\n to this format using\n [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with\n the time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use\n the Joda Time's [`ISODateTimeFormat.dateTime()`](\n http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()\n ) to obtain a formatter capable of generating timestamps in this format."
       },
       "yoshino_s.soar_helper.v1.BatchQueryRequest": {
@@ -561,10 +429,13 @@
           "hosts": {
             "type": "array",
             "items": {
-              "type": "string",
-              "title": "hosts",
-              "additionalProperties": false
-            }
+              "type": "string"
+            },
+            "title": "hosts"
+          },
+          "noCache": {
+            "type": "boolean",
+            "title": "no_cache"
           }
         },
         "title": "BatchQueryRequest",
@@ -577,87 +448,106 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/yoshino_s.soar_helper.v1.IcpRecord"
+            },
+            "title": "data"
+          },
+          "errors": {
+            "type": "object",
+            "title": "errors",
+            "additionalProperties": {
+              "type": "string",
+              "title": "value"
             }
           }
         },
         "title": "BatchQueryResponse",
         "additionalProperties": false
       },
+      "yoshino_s.soar_helper.v1.BatchQueryResponse.ErrorsEntry": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "key"
+          },
+          "value": {
+            "type": "string",
+            "title": "value"
+          }
+        },
+        "title": "ErrorsEntry",
+        "additionalProperties": false
+      },
       "yoshino_s.soar_helper.v1.IcpRecord": {
         "type": "object",
         "properties": {
           "id": {
-            "oneOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "number"
-              }
+            "type": [
+              "integer",
+              "string"
             ],
             "title": "id",
-            "additionalProperties": false
+            "format": "int64"
           },
           "host": {
             "type": "string",
-            "title": "host",
-            "additionalProperties": false
+            "title": "host"
           },
           "city": {
             "type": "string",
-            "title": "city",
-            "additionalProperties": false
+            "title": "city"
           },
           "province": {
             "type": "string",
-            "title": "province",
-            "additionalProperties": false
+            "title": "province"
           },
           "company": {
             "type": "string",
-            "title": "company",
-            "additionalProperties": false
+            "title": "company"
           },
           "owner": {
             "type": "string",
-            "title": "owner",
-            "additionalProperties": false
+            "title": "owner"
           },
           "type": {
             "type": "string",
-            "title": "type",
-            "additionalProperties": false
+            "title": "type"
           },
           "homepage": {
             "type": "string",
-            "title": "homepage",
-            "additionalProperties": false
+            "title": "homepage"
           },
           "permit": {
             "type": "string",
-            "title": "permit",
-            "additionalProperties": false
+            "title": "permit"
           },
           "createdAt": {
-            "$ref": "#/components/schemas/google.protobuf.Timestamp"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/google.protobuf.Timestamp"
+              }
+            ],
+            "title": "created_at"
           },
           "updatedAt": {
-            "$ref": "#/components/schemas/google.protobuf.Timestamp"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/google.protobuf.Timestamp"
+              }
+            ],
+            "title": "updated_at"
           },
           "cached": {
             "type": "boolean",
-            "title": "cached",
-            "additionalProperties": false
+            "title": "cached"
           },
           "input": {
             "type": "string",
-            "title": "input",
-            "additionalProperties": false
+            "title": "input"
           },
           "webName": {
             "type": "string",
-            "title": "web_name",
-            "additionalProperties": false
+            "title": "web_name"
           }
         },
         "title": "IcpRecord",
@@ -668,8 +558,11 @@
         "properties": {
           "host": {
             "type": "string",
-            "title": "host",
-            "additionalProperties": false
+            "title": "host"
+          },
+          "noCache": {
+            "type": "boolean",
+            "title": "no_cache"
           }
         },
         "title": "QueryRequest",
@@ -679,7 +572,12 @@
         "type": "object",
         "properties": {
           "data": {
-            "$ref": "#/components/schemas/yoshino_s.soar_helper.v1.IcpRecord"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/yoshino_s.soar_helper.v1.IcpRecord"
+              }
+            ],
+            "title": "data"
           }
         },
         "title": "QueryResponse",
@@ -689,16 +587,12 @@
         "type": "object",
         "properties": {
           "total": {
-            "oneOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "number"
-              }
+            "type": [
+              "integer",
+              "string"
             ],
             "title": "total",
-            "additionalProperties": false
+            "format": "int64"
           }
         },
         "title": "StatisticResponse",
@@ -775,9 +669,9 @@
         "additionalProperties": true,
         "description": "Contains an arbitrary serialized message along with a @type that describes the type of the serialized message."
       },
-      "yoshino_s.soar_helper.v1.RunStreamData_Type": {
+      "yoshino_s.soar_helper.v1.RunStreamDataType": {
         "type": "string",
-        "title": "RunStreamData_Type",
+        "title": "RunStreamDataType",
         "enum": [
           "STDOUT",
           "STDERR",
@@ -789,8 +683,7 @@
         "properties": {
           "path": {
             "type": "string",
-            "title": "path",
-            "additionalProperties": false
+            "title": "path"
           }
         },
         "title": "ReadFileRequest",
@@ -801,8 +694,7 @@
         "properties": {
           "data": {
             "type": "string",
-            "title": "data",
-            "additionalProperties": false
+            "title": "data"
           }
         },
         "title": "ReadFileResponse",
@@ -814,20 +706,17 @@
           "commands": {
             "type": "array",
             "items": {
-              "type": "string",
-              "title": "commands",
-              "additionalProperties": false
-            }
+              "type": "string"
+            },
+            "title": "commands"
           },
           "stdin": {
             "type": "string",
-            "title": "stdin",
-            "additionalProperties": false
+            "title": "stdin"
           },
           "cwd": {
             "type": "string",
-            "title": "cwd",
-            "additionalProperties": false
+            "title": "cwd"
           }
         },
         "title": "RunRequest",
@@ -838,18 +727,16 @@
         "properties": {
           "stdout": {
             "type": "string",
-            "title": "stdout",
-            "additionalProperties": false
+            "title": "stdout"
           },
           "stderr": {
             "type": "string",
-            "title": "stderr",
-            "additionalProperties": false
+            "title": "stderr"
           },
           "exitCode": {
             "type": "integer",
             "title": "exit_code",
-            "additionalProperties": false
+            "format": "int32"
           }
         },
         "title": "RunResponse",
@@ -859,17 +746,21 @@
         "type": "object",
         "properties": {
           "type": {
-            "$ref": "#/components/schemas/yoshino_s.soar_helper.v1.RunStreamData_Type"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/yoshino_s.soar_helper.v1.RunStreamDataType"
+              }
+            ],
+            "title": "type"
           },
           "data": {
             "type": "string",
-            "title": "data",
-            "additionalProperties": false
+            "title": "data"
           },
           "exitCode": {
             "type": "integer",
             "title": "exit_code",
-            "additionalProperties": false
+            "format": "int32"
           }
         },
         "title": "RunStreamData",
@@ -880,13 +771,11 @@
         "properties": {
           "path": {
             "type": "string",
-            "title": "path",
-            "additionalProperties": false
+            "title": "path"
           },
           "content": {
             "type": "string",
-            "title": "content",
-            "additionalProperties": false
+            "title": "content"
           }
         },
         "title": "WriteFileRequest",
@@ -902,13 +791,11 @@
         "properties": {
           "path": {
             "type": "string",
-            "title": "path",
-            "additionalProperties": false
+            "title": "path"
           },
           "key": {
             "type": "string",
-            "title": "key",
-            "additionalProperties": false
+            "title": "key"
           }
         },
         "title": "UploadRequest",
@@ -919,11 +806,53 @@
         "properties": {
           "url": {
             "type": "string",
-            "title": "url",
-            "additionalProperties": false
+            "title": "url"
           }
         },
         "title": "UploadResponse",
+        "additionalProperties": false
+      },
+      "yoshino_s.soar_helper.v1.ExploitResult": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "type": "string",
+            "title": "target"
+          },
+          "success": {
+            "type": "boolean",
+            "title": "success"
+          },
+          "result": {
+            "type": "string",
+            "title": "result"
+          },
+          "error": {
+            "type": "string",
+            "title": "error"
+          },
+          "exploit": {
+            "type": "string",
+            "title": "exploit"
+          },
+          "screenshot": {
+            "type": "string",
+            "title": "screenshot"
+          },
+          "extra": {
+            "type": "string",
+            "title": "extra"
+          },
+          "spent": {
+            "type": [
+              "integer",
+              "string"
+            ],
+            "title": "spent",
+            "format": "int64"
+          }
+        },
+        "title": "ExploitResult",
         "additionalProperties": false
       },
       "yoshino_s.soar_helper.v1.HttpxRequest": {
@@ -932,112 +861,58 @@
           "targets": {
             "type": "array",
             "items": {
-              "type": "string",
-              "title": "targets",
-              "additionalProperties": false
-            }
+              "type": "string"
+            },
+            "title": "targets"
           },
           "timeout": {
-            "oneOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "number"
-              }
+            "type": [
+              "integer",
+              "string"
             ],
             "title": "timeout",
-            "additionalProperties": false
+            "format": "int64"
           },
           "concurrent": {
             "type": "integer",
             "title": "concurrent",
-            "additionalProperties": false
+            "format": "int32"
           },
           "matchStatusCode": {
-            "type": "string",
+            "type": "integer",
             "title": "match_status_code",
-            "additionalProperties": false
+            "format": "int32"
           },
           "matchString": {
             "type": "string",
-            "title": "match_string",
-            "additionalProperties": false
+            "title": "match_string"
           },
           "screenshot": {
             "type": "boolean",
-            "title": "screenshot",
-            "additionalProperties": false
+            "title": "screenshot"
           },
           "upload": {
             "type": "boolean",
-            "title": "upload",
-            "additionalProperties": false
+            "title": "upload"
           },
           "followRedirects": {
             "type": "boolean",
-            "title": "follow_redirects",
-            "additionalProperties": false
+            "title": "follow_redirects"
           },
           "followHostRedirects": {
             "type": "boolean",
-            "title": "follow_host_redirects",
-            "additionalProperties": false
+            "title": "follow_host_redirects"
           },
           "fullScreenshot": {
             "type": "boolean",
-            "title": "full_screenshot",
-            "additionalProperties": false
+            "title": "full_screenshot"
+          },
+          "path": {
+            "type": "string",
+            "title": "path"
           }
         },
         "title": "HttpxRequest",
-        "additionalProperties": false
-      },
-      "yoshino_s.soar_helper.v1.HttpxResponse": {
-        "type": "object",
-        "properties": {
-          "target": {
-            "type": "string",
-            "title": "target",
-            "additionalProperties": false
-          },
-          "success": {
-            "type": "boolean",
-            "title": "success",
-            "additionalProperties": false
-          },
-          "result": {
-            "type": "string",
-            "title": "result",
-            "additionalProperties": false
-          },
-          "error": {
-            "type": "string",
-            "title": "error",
-            "additionalProperties": false
-          },
-          "screenshot": {
-            "type": "string",
-            "title": "screenshot",
-            "additionalProperties": false
-          },
-          "request": {
-            "type": "string",
-            "title": "request",
-            "additionalProperties": false
-          },
-          "url": {
-            "type": "string",
-            "title": "url",
-            "additionalProperties": false
-          },
-          "statusCode": {
-            "type": "integer",
-            "title": "status_code",
-            "additionalProperties": false
-          }
-        },
-        "title": "HttpxResponse",
         "additionalProperties": false
       },
       "yoshino_s.soar_helper.v1.UnauthorRequest": {
@@ -1046,94 +921,42 @@
           "targets": {
             "type": "array",
             "items": {
-              "type": "string",
-              "title": "targets",
-              "additionalProperties": false
-            }
+              "type": "string"
+            },
+            "title": "targets"
           },
           "timeout": {
-            "oneOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "number"
-              }
+            "type": [
+              "integer",
+              "string"
             ],
             "title": "timeout",
-            "additionalProperties": false
+            "format": "int64"
           },
           "concurrent": {
             "type": "integer",
             "title": "concurrent",
-            "additionalProperties": false
+            "format": "int32"
           },
           "protocol": {
             "type": "string",
-            "title": "protocol",
-            "additionalProperties": false
+            "title": "protocol"
           },
           "screenshot": {
             "type": "boolean",
-            "title": "screenshot",
-            "additionalProperties": false
+            "title": "screenshot"
           },
           "upload": {
             "type": "boolean",
-            "title": "upload",
-            "additionalProperties": false
+            "title": "upload"
           },
           "screenshotWidth": {
             "type": "integer",
             "title": "screenshot_width",
-            "additionalProperties": false
+            "format": "int32"
           }
         },
         "title": "UnauthorRequest",
-        "additionalProperties": false
-      },
-      "yoshino_s.soar_helper.v1.UnauthorResponse": {
-        "type": "object",
-        "properties": {
-          "target": {
-            "type": "string",
-            "title": "target",
-            "additionalProperties": false
-          },
-          "success": {
-            "type": "boolean",
-            "title": "success",
-            "additionalProperties": false
-          },
-          "result": {
-            "type": "string",
-            "title": "result",
-            "additionalProperties": false
-          },
-          "error": {
-            "type": "string",
-            "title": "error",
-            "additionalProperties": false
-          },
-          "time": {
-            "oneOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "number"
-              }
-            ],
-            "title": "time",
-            "additionalProperties": false
-          },
-          "screenshot": {
-            "type": "string",
-            "title": "screenshot",
-            "additionalProperties": false
-          }
-        },
-        "title": "UnauthorResponse",
         "additionalProperties": false
       }
     }
@@ -1152,6 +975,5 @@
     {
       "name": "yoshino_s.soar_helper.v1.ToolsService"
     }
-  ],
-  "externalDocs": {}
+  ]
 }

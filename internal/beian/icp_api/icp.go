@@ -5,25 +5,31 @@ import (
 	"crypto/md5"
 	"crypto/rand"
 	"encoding/hex"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/url"
 	"slices"
 	"strconv"
-	"strings"
 	"time"
 
+	"github.com/yoshino-s/go-app/telemetry/otelresty"
+	"github.com/yoshino-s/go-framework/utils"
 	"github.com/yoshino-s/soar-helper/internal/proxy"
+	"go.opentelemetry.io/otel"
 	"go.uber.org/zap"
+	"resty.dev/v3"
+)
+
+const (
+	ScopeName = "github.com/yoshino-s/soar-helper/internal/beian/icp_api"
 )
 
 type HttpRequestError struct {
-	Response *http.Response
+	Response *resty.Response
 }
 
 func (e *HttpRequestError) Error() string {
-	return fmt.Sprintf("http request error, status code: %d", e.Response.StatusCode)
+	return fmt.Sprintf("http request error, status code: %d", e.Response.StatusCode())
 }
 
 type IcpQueryData struct {
@@ -49,13 +55,11 @@ type IcpQueryData struct {
 }
 
 type IcpApi struct {
-	uid         string
 	token       string
 	tokenExpire time.Time
 
-	proxy *proxy.Proxy
-
-	httpClient *http.Client
+	proxy      *proxy.Proxy
+	httpClient *resty.Client
 }
 
 type proxyKey struct{}
@@ -63,52 +67,42 @@ type proxyKey struct{}
 func New(proxy *proxy.Proxy) *IcpApi {
 	randByte := make([]byte, 16)
 	rand.Read(randByte)
+	uid := hex.EncodeToString(randByte)
+
+	client := resty.New().
+		SetTimeout(5*time.Second).
+		SetHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36").
+		SetHeader("Referer", "https://beian.miit.gov.cn/").
+		SetHeader("Cookie", fmt.Sprintf("__jsluid_s=%s", uid))
+
+	otelresty.TraceClient(client)
+
+	transport := utils.Must(client.HTTPTransport())
+	transport.Proxy = func(req *http.Request) (*url.URL, error) {
+		currentProxy, _ := req.Context().Value(proxyKey{}).(*url.URL)
+		return currentProxy, nil
+	}
 
 	return &IcpApi{
-		uid:   hex.EncodeToString(randByte),
-		token: "",
-		proxy: proxy,
-		httpClient: &http.Client{
-			Timeout: 5 * time.Second,
-			Transport: &http.Transport{
-				Proxy: func(req *http.Request) (*url.URL, error) {
-					currentProxy, _ := req.Context().Value(proxyKey{}).(*url.URL)
-					return currentProxy, nil
-				},
-			},
-		},
+		token:      "",
+		proxy:      proxy,
+		httpClient: client,
 	}
 }
 
 func (api *IcpApi) RefreshToken(ctx context.Context, force bool) error {
+	tracer := otel.GetTracerProvider().Tracer(ScopeName)
+	ctx, span := tracer.Start(ctx, "IcpApi.RefreshToken")
+	defer span.End()
+
 	if time.Now().Before(api.tokenExpire) && !force {
 		return nil
 	}
 
-	zap.L().Debug("refresh token", zap.String("uid", api.uid))
+	zap.L().Debug("refresh token")
 
 	timeStampInt := time.Now().UnixMilli()
 	timeStampStr := strconv.FormatInt(timeStampInt, 10)
-
-	body := url.Values{}
-	body.Set("authKey", fmt.Sprintf("%x", md5.Sum([]byte("testtest"+timeStampStr))))
-	body.Set("timeStamp", timeStampStr)
-
-	req, _ := http.NewRequestWithContext(ctx, http.MethodPost, "https://hlwicpfwc.miit.gov.cn/icpproject_query/api/auth", strings.NewReader(body.Encode()))
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
-	req.Header.Set("Referer", "https://beian.miit.gov.cn/")
-	req.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
-	req.Header.Set("Cookie", fmt.Sprintf("__jsluid_s=%s", api.uid))
-
-	response, err := api.httpClient.Do(req)
-	if err != nil {
-		return err
-	}
-	defer response.Body.Close()
-
-	if response.StatusCode != 200 {
-		return &HttpRequestError{Response: response}
-	}
 
 	var resp struct {
 		Code   int    `json:"code"`
@@ -119,8 +113,21 @@ func (api *IcpApi) RefreshToken(ctx context.Context, force bool) error {
 		} `json:"params"`
 	}
 
-	if err := json.NewDecoder(response.Body).Decode(&resp); err != nil {
+	response, err := api.httpClient.R().
+		SetContext(ctx).
+		SetFormData(map[string]string{
+			"authKey":   fmt.Sprintf("%x", md5.Sum([]byte("testtest"+timeStampStr))),
+			"timeStamp": timeStampStr,
+		}).
+		SetForceResponseContentType("application/json").
+		SetResult(&resp).
+		Post("https://hlwicpfwc.miit.gov.cn/icpproject_query/api/auth")
+	if err != nil {
 		return err
+	}
+
+	if response.StatusCode() != 200 {
+		return &HttpRequestError{Response: response}
 	}
 
 	if resp.Code != 200 {
@@ -135,7 +142,7 @@ func (api *IcpApi) RefreshToken(ctx context.Context, force bool) error {
 }
 
 func isUnretriable(err error) bool {
-	if err, ok := err.(*HttpRequestError); ok && err.Response.StatusCode != 403 {
+	if err, ok := err.(*HttpRequestError); ok && err.Response.StatusCode() != 403 {
 		return true
 	}
 
@@ -163,12 +170,13 @@ func (api *IcpApi) Query(ctx context.Context, sign string, domain string) (*IcpQ
 		var res *IcpQueryData
 		var err error
 
-		api.proxy.Do(func(url *url.URL) {
+		err = api.proxy.Do(ctx, func(ctx context.Context, url *url.URL) error {
 			res, err = api.query(context.WithValue(
 				ctx,
 				proxyKey{},
 				url,
 			), sign, domain)
+			return err
 		})
 		if err == nil {
 			return res, nil
@@ -188,38 +196,30 @@ func (api *IcpApi) query(ctx context.Context, sign string, domain string) (*IcpQ
 	}
 
 	zap.L().Debug("querying ICP data", zap.String("domain", domain))
-	body, _ := json.Marshal(map[string]string{
-		"unitName":    domain,
-		"serviceType": "1",
-		"pageSize":    "",
-		"pageNum":     "",
-	})
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, "https://hlwicpfwc.miit.gov.cn/icpproject_query/api/icpAbbreviateInfo/queryByCondition/", strings.NewReader(string(body)))
-	if err != nil {
-		return nil, err
-	}
+	var resp IcpQueryData
 
-	req.Header.Set("Token", api.token)
-	req.Header.Set("Sign", sign)
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Referer", "https://beian.miit.gov.cn/")
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
-	req.Header.Set("Cookie", fmt.Sprintf("__jsluid_s=%s", api.uid))
-
-	response, err := api.httpClient.Do(req)
+	response, err := api.httpClient.R().
+		SetContext(ctx).
+		SetHeader("Token", api.token).
+		SetHeader("Sign", sign).
+		SetHeader("Content-Type", "application/json").
+		SetBody(map[string]string{
+			"unitName":    domain,
+			"serviceType": "1",
+			"pageSize":    "",
+			"pageNum":     "",
+		}).
+		SetForceResponseContentType("application/json").
+		SetResult(&resp).
+		Post("https://hlwicpfwc.miit.gov.cn/icpproject_query/api/icpAbbreviateInfo/queryByCondition/")
 	if err != nil {
 		return nil, err
 	}
 	defer response.Body.Close()
 
-	if response.StatusCode != 200 {
+	if response.StatusCode() != 200 {
 		return nil, &HttpRequestError{Response: response}
-	}
-
-	var resp IcpQueryData
-	if err := json.NewDecoder(response.Body).Decode(&resp); err != nil {
-		return nil, err
 	}
 
 	if resp.Code != 200 {

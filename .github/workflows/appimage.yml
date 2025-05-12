@@ -31,21 +31,38 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Setup Tags
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          tags: |
+            type=schedule,pattern=nightly,enable=true,priority=1000
+            type=ref,event=branch,enable=true,priority=600
+            type=ref,event=tag,enable=true,priority=600
+            type=ref,event=pr,prefix=pr-,enable=true,priority=600
+            type=sha,enable=true
+          labels: |
+            org.opencontainers.image.title=go-framework demo
+            org.opencontainers.image.description=A demo application for go-framework
+          sep-tags: ","
+          sep-labels: ","
+          sep-annotations: ","
+      - name: Setup variables
         run: |
-          # setup tags
-          if [ -z "${{ github.event.inputs.tag }}" ]; then
-            echo "No tag provided, using snapshot"
-            echo "TAGS=snapshot,$(git describe --tags),${{ github.sha }}" >> $GITHUB_ENV
+          set -efx -o pipefail
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            VERSION="${VERSION:-${GITHUB_REF_NAME}}"
           else
-            echo "Using tag: ${{ github.event.inputs.tag }}"
-            echo "TAGS=${{ github.event.inputs.tag }},${{ github.sha }}" >> $GITHUB_ENV
+            VERSION="${VERSION:-snapshot}"
           fi
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
       - name: Run Ko
         env:
           KO_DEFAULTBASEIMAGE: ${{ env.KO_DOCKER_REPO }}:base-latest
         run: |
-          echo "DIGESTS=$(ko build --bare --sbom spdx --tags $TAGS)" >> $GITHUB_ENV
+          set -eufx -o pipefail
+          DIGESTS="$(ko build ./demo --bare --sbom spdx --tags '${{ steps.meta.outputs.tags }}' --image-annotation '${{ steps.meta.outputs.annotations }}' --image-label '${{ steps.meta.outputs.labels }}')"
+          echo "DIGESTS=$DIGESTS" >> $GITHUB_ENV
       - name: Cosign
         run: |
           COSIGN_EXPERIMENTAL=true cosign sign --yes $DIGESTS

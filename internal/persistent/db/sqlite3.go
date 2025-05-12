@@ -1,6 +1,11 @@
 package db
 
 import (
-	_ "github.com/ncruces/go-sqlite3/driver"
-	_ "github.com/ncruces/go-sqlite3/embed"
+	"database/sql"
+
+	"modernc.org/sqlite"
 )
+
+func init() {
+	sql.Register("sqlite3", &sqlite.Driver{})
+}

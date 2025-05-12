@@ -61,7 +61,7 @@ jobs:
           KO_DEFAULTBASEIMAGE: ${{ env.KO_DOCKER_REPO }}:base-latest
         run: |
           set -eufx -o pipefail
-          DIGESTS="$(ko build ./demo --bare --sbom spdx --tags '${{ steps.meta.outputs.tags }}' --image-annotation '${{ steps.meta.outputs.annotations }}' --image-label '${{ steps.meta.outputs.labels }}')"
+          DIGESTS="$(ko build . --bare --sbom spdx --tags '${{ steps.meta.outputs.tags }}' --image-annotation '${{ steps.meta.outputs.annotations }}' --image-label '${{ steps.meta.outputs.labels }}')"
           echo "DIGESTS=$DIGESTS" >> $GITHUB_ENV
       - name: Cosign
         run: |

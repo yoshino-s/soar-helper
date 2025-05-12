@@ -14,6 +14,8 @@ import (
 	"github.com/yoshino-s/go-framework/log"
 	kuaidailigo "github.com/yoshino-s/kuaidaili-go"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/zap"
 )
 
@@ -63,14 +65,14 @@ func (p *Proxy) createProxyClient(ctx context.Context) error {
 		return nil
 	}
 
-	r, err := p.client.GetAccountOrders(context.Background(), kuaidailigo.GetAccountOrdersRequest{
+	r, err := p.client.GetAccountOrders(ctx, kuaidailigo.GetAccountOrdersRequest{
 		PayType: kuaidailigo.PayTypePostPay,
 		Product: kuaidailigo.ProductTypeTPS,
 		Status:  kuaidailigo.OrderStatusValid,
 	})
 	if err != nil || len(r) == 0 {
 		p.Logger.Debug("create proxy client", log.Context(ctx))
-		c, err := p.client.CreateOrder(context.Background(), kuaidailigo.CreateOrderRequest{
+		c, err := p.client.CreateOrder(ctx, kuaidailigo.CreateOrderRequest{
 			IsNotify: false,
 			PayType:  kuaidailigo.PayTypePostPay,
 			CreateOrderParams: kuaidailigo.CreateTPSParams{
@@ -87,13 +89,13 @@ func (p *Proxy) createProxyClient(ctx context.Context) error {
 		time.Sleep(time.Second * 5) // 	// Wait for the proxy to be available
 	} else {
 		p.Logger.Debug("using existing proxy client", zap.String("order_id", r[0].OrderID), log.Context(ctx))
-		c, err := p.client.GetOrderClient(context.Background(), r[0].OrderID)
+		c, err := p.client.GetOrderClient(ctx, r[0].OrderID)
 		if err != nil {
 			return err
 		}
 		p.proxyClient = &kuaidailigo.TPSOrderClient{OrderClient: c}
 	}
-	username, password, err := p.proxyClient.GetProxyAuthorization(context.Background())
+	username, password, err := p.proxyClient.GetProxyAuthorization(ctx)
 	if err != nil {
 		return err
 	}
@@ -101,7 +103,7 @@ func (p *Proxy) createProxyClient(ctx context.Context) error {
 	var u *url.URL
 
 	for {
-		u, err = p.proxyClient.GetProxy(context.Background(), kuaidailigo.ProxyProtocolHTTP)
+		u, err = p.proxyClient.GetProxy(ctx, kuaidailigo.ProxyProtocolHTTP)
 		if err != nil {
 			if strings.Contains(err.Error(), "407") { //一开始创建的时候会有一段时间查询不到
 				p.Logger.Debug("getting proxy url failed, retrying", log.Context(ctx))
@@ -128,8 +130,11 @@ func (p *Proxy) closeProxyClient(ctx context.Context) {
 		return
 	}
 	p.debounce(func() {
+		ctx, span := otel.GetTracerProvider().Tracer("github.com/yoshino-s/soar-helper/internal/proxy").Start(ctx, "close_proxy_client", trace.WithNewRoot())
+		defer span.End()
+
 		p.Logger.Debug("close proxy client")
-		p.proxyClient.Close(context.Background())
+		p.proxyClient.Close(ctx)
 		p.Logger.Debug("close proxy client success")
 
 		p.proxyClient = nil

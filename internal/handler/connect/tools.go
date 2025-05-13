@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
-	"net/http"
 	"os"
 	"reflect"
 	"strings"
@@ -13,13 +12,13 @@ import (
 	"time"
 
 	"connectrpc.com/connect"
+	"github.com/go-errors/errors"
 	"github.com/go-rod/rod"
 	"github.com/google/uuid"
 	"github.com/minio/minio-go/v7"
 	"github.com/projectdiscovery/goflags"
 	"github.com/projectdiscovery/httpx/runner"
 	"github.com/yoshino-s/go-framework/application"
-	"github.com/yoshino-s/go-framework/errors"
 	"github.com/yoshino-s/go-framework/log"
 	v1 "github.com/yoshino-s/soar-helper/internal/proto/v1"
 	"github.com/yoshino-s/soar-helper/internal/proto/v1/v1connect"
@@ -272,12 +271,12 @@ func (t *ToolsService) Httpx(ctx context.Context, req *connect.Request[v1.HttpxR
 	}
 
 	if err := options.ValidateOptions(); err != nil {
-		return errors.Wrap(err, "invalid options", http.StatusBadRequest)
+		return errors.New(err)
 	}
 
 	httpxRunner, err := runner.New(&options)
 	if err != nil {
-		return errors.Wrap(err, "failed to create httpx runner")
+		return errors.New(err)
 	}
 	defer httpxRunner.Close()
 

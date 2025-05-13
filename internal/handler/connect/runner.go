@@ -4,14 +4,13 @@ import (
 	"bufio"
 	"context"
 	"io"
-	"net/http"
 	"os"
 	"os/exec"
 	"strings"
 
 	"connectrpc.com/connect"
+	"github.com/go-errors/errors"
 	"github.com/sourcegraph/conc"
-	"github.com/yoshino-s/go-framework/errors"
 	v1 "github.com/yoshino-s/soar-helper/internal/proto/v1"
 	"github.com/yoshino-s/soar-helper/internal/proto/v1/v1connect"
 )
@@ -26,7 +25,7 @@ func NewRunnerService() *RunnerService {
 }
 func (s *RunnerService) Run(ctx context.Context, req *connect.Request[v1.RunRequest]) (*connect.Response[v1.RunResponse], error) {
 	if len(req.Msg.Commands) == 0 {
-		return nil, errors.New("commands is empty", http.StatusBadRequest)
+		return nil, errors.Errorf("commands is empty")
 	}
 	cmd := exec.Command(req.Msg.Commands[0], req.Msg.Commands[1:]...)
 	if req.Msg.Stdin != "" {
@@ -35,11 +34,11 @@ func (s *RunnerService) Run(ctx context.Context, req *connect.Request[v1.RunRequ
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
-		return nil, errors.Wrap(err, "stdout pipe error")
+		return nil, errors.New(err)
 	}
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
-		return nil, errors.Wrap(err, "stderr pipe error")
+		return nil, errors.New(err)
 	}
 
 	code := 0
@@ -49,17 +48,17 @@ func (s *RunnerService) Run(ctx context.Context, req *connect.Request[v1.RunRequ
 		if exitErr, ok := err.(*exec.ExitError); ok {
 			code = exitErr.ExitCode()
 		} else {
-			return nil, errors.Wrap(err, "command start error")
+			return nil, errors.New(err)
 		}
 	}
 
 	stdoutContent, err := io.ReadAll(stdout)
 	if err != nil {
-		return nil, errors.Wrap(err, "stdout read error")
+		return nil, errors.New(err)
 	}
 	stderrContent, err := io.ReadAll(stderr)
 	if err != nil {
-		return nil, errors.Wrap(err, "stderr read error")
+		return nil, errors.New(err)
 	}
 
 	return connect.NewResponse(&v1.RunResponse{
@@ -71,7 +70,7 @@ func (s *RunnerService) Run(ctx context.Context, req *connect.Request[v1.RunRequ
 
 func (s *RunnerService) RunStream(ctx context.Context, req *connect.Request[v1.RunRequest], stream *connect.ServerStream[v1.RunStreamData]) error {
 	if len(req.Msg.Commands) == 0 {
-		return errors.New("commands is empty", http.StatusBadRequest)
+		return errors.Errorf("commands is empty")
 	}
 	cmd := exec.Command(req.Msg.Commands[0], req.Msg.Commands[1:]...)
 	if req.Msg.Stdin != "" {
@@ -80,11 +79,11 @@ func (s *RunnerService) RunStream(ctx context.Context, req *connect.Request[v1.R
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
-		return errors.Wrap(err, "stdout pipe error")
+		return errors.New(err)
 	}
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
-		return errors.Wrap(err, "stderr pipe error")
+		return errors.New(err)
 	}
 
 	wg := conc.NewWaitGroup()
@@ -139,13 +138,13 @@ func (s *RunnerService) RunStream(ctx context.Context, req *connect.Request[v1.R
 func (s *RunnerService) ReadFile(ctx context.Context, req *connect.Request[v1.ReadFileRequest]) (*connect.Response[v1.ReadFileResponse], error) {
 	f, err := os.Open(req.Msg.Path)
 	if err != nil {
-		return nil, errors.Wrap(err, "open file error")
+		return nil, errors.New(err)
 	}
 	defer f.Close()
 
 	content, err := io.ReadAll(f)
 	if err != nil {
-		return nil, errors.Wrap(err, "read file error")
+		return nil, errors.New(err)
 	}
 
 	return connect.NewResponse(&v1.ReadFileResponse{
@@ -156,13 +155,13 @@ func (s *RunnerService) ReadFile(ctx context.Context, req *connect.Request[v1.Re
 func (s *RunnerService) WriteFile(ctx context.Context, req *connect.Request[v1.WriteFileRequest]) (*connect.Response[v1.WriteFileResponse], error) {
 	f, err := os.OpenFile(req.Msg.Path, os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
-		return nil, errors.Wrap(err, "open file error")
+		return nil, errors.New(err)
 	}
 	defer f.Close()
 
 	_, err = f.WriteString(req.Msg.Content)
 	if err != nil {
-		return nil, errors.Wrap(err, "write file error")
+		return nil, errors.New(err)
 	}
 
 	return connect.NewResponse(&v1.WriteFileResponse{}), nil

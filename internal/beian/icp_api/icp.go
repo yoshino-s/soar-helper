@@ -91,13 +91,13 @@ func New(proxy *proxy.Proxy) *IcpApi {
 }
 
 func (api *IcpApi) RefreshToken(ctx context.Context, force bool) error {
-	tracer := otel.GetTracerProvider().Tracer(ScopeName)
-	ctx, span := tracer.Start(ctx, "IcpApi.RefreshToken")
-	defer span.End()
-
 	if time.Now().Before(api.tokenExpire) && !force {
 		return nil
 	}
+
+	tracer := otel.GetTracerProvider().Tracer(ScopeName)
+	ctx, span := tracer.Start(ctx, "IcpApi.RefreshToken")
+	defer span.End()
 
 	zap.L().Debug("refresh token")
 

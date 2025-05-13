@@ -2,7 +2,6 @@ package proxy
 
 import (
 	"context"
-	"net/http"
 	"net/url"
 	"strings"
 	"sync"
@@ -13,7 +12,6 @@ import (
 	"github.com/yoshino-s/go-framework/configuration"
 	"github.com/yoshino-s/go-framework/log"
 	kuaidailigo "github.com/yoshino-s/kuaidaili-go"
-	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/zap"
@@ -50,9 +48,6 @@ func (p *Proxy) Setup(ctx context.Context) {
 	p.client = kuaidailigo.NewAccountClient(
 		p.config.SecretId,
 		p.config.SecretKey,
-		kuaidailigo.WithHttpClient(&http.Client{
-			Transport: otelhttp.NewTransport(http.DefaultTransport),
-		}),
 	)
 	p.debounce = debounce.New(time.Duration(p.config.DebounceTime))
 }

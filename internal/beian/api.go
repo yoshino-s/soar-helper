@@ -2,12 +2,13 @@ package beian
 
 import (
 	"context"
-	"fmt"
 	"sync"
 	"time"
 
+	"github.com/go-errors/errors"
 	"github.com/hashicorp/go-set/v3"
 	"github.com/sourcegraph/conc/iter"
+	"github.com/yoshino-s/go-app/telemetry"
 	"github.com/yoshino-s/go-framework/application"
 	"github.com/yoshino-s/go-framework/configuration"
 	"github.com/yoshino-s/go-framework/log"
@@ -128,7 +129,7 @@ func (c *Beian) BatchQuery(ctx context.Context, domains []string, noCache bool) 
 func (c *Beian) Query(ctx context.Context, _domain string, noCache bool) (*ent.Icp, bool, error) {
 	domain, ok := toValidDomain(_domain)
 	if !ok {
-		return nil, false, fmt.Errorf("invalid domain: %s", _domain)
+		return nil, false, telemetry.ReportError(ctx, errors.Errorf("invalid domain: %s", _domain))
 	}
 	if !noCache {
 		res, err := c.db.Icp.Query().Where(icp.Host(domain)).First(ctx)

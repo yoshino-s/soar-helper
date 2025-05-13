@@ -10,8 +10,7 @@ require (
 	github.com/bep/debounce v1.2.1
 	github.com/esimov/stackblur-go v1.1.1
 	github.com/fogleman/gg v1.3.0
-	github.com/getsentry/sentry-go v0.32.0
-	github.com/getsentry/sentry-go/echo v0.32.0
+	github.com/go-errors/errors v1.5.1
 	github.com/go-rod/rod v0.116.2
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/gonvenience/bunt v1.4.1
@@ -19,7 +18,6 @@ require (
 	github.com/gonvenience/term v1.0.4
 	github.com/google/uuid v1.6.0
 	github.com/hashicorp/go-set/v3 v3.0.0
-	github.com/labstack/echo/v4 v4.13.3
 	github.com/minio/minio-go/v7 v7.0.91
 	github.com/projectdiscovery/goflags v0.1.74
 	github.com/projectdiscovery/gologger v1.1.54
@@ -28,13 +26,11 @@ require (
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/pflag v1.0.6
 	github.com/spf13/viper v1.20.1
-	github.com/uptrace/opentelemetry-go-extra/otelsql v0.3.2
-	github.com/yoshino-s/go-app v0.3.1
-	github.com/yoshino-s/go-framework v0.7.2
+	github.com/yoshino-s/go-app v0.3.2
+	github.com/yoshino-s/go-framework v0.7.3
 	github.com/yoshino-s/kuaidaili-go v0.0.2
-	github.com/yoshino-s/unauthor v0.2.3-0.20250510153346-d1301d377e89
+	github.com/yoshino-s/unauthor v0.2.3
 	go.akshayshah.org/connectproto v0.6.0
-	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.60.0
 	go.opentelemetry.io/otel v1.35.0
 	go.opentelemetry.io/otel/trace v1.35.0
 	go.uber.org/zap v1.27.0
@@ -85,10 +81,8 @@ require (
 	github.com/dsnet/compress v0.0.2-0.20230904184137-39efe44ab707 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/fatih/color v1.18.0 // indirect
-	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
 	github.com/gaissmai/bart v0.17.10 // indirect
-	github.com/go-errors/errors v1.5.1 // indirect
 	github.com/go-faker/faker/v4 v4.5.0 // indirect
 	github.com/go-ini/ini v1.67.0 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
@@ -123,6 +117,7 @@ require (
 	github.com/klauspost/pgzip v1.2.6 // indirect
 	github.com/kljensen/snowball v0.8.0 // indirect
 	github.com/labstack/echo-contrib v0.17.2 // indirect
+	github.com/labstack/echo/v4 v4.13.3 // indirect
 	github.com/labstack/gommon v0.4.2 // indirect
 	github.com/logrusorgru/aurora v2.0.3+incompatible // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect

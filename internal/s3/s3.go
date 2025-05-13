@@ -10,7 +10,6 @@ import (
 	"github.com/yoshino-s/go-framework/application"
 	"github.com/yoshino-s/go-framework/configuration"
 	"github.com/yoshino-s/go-framework/log"
-	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.uber.org/zap"
 )
 
@@ -32,16 +31,10 @@ func (s *S3) Configuration() configuration.Configuration {
 }
 
 func (s *S3) Setup(context.Context) {
-	transport, err := minio.DefaultTransport(!s.config.Insecure)
-	if err != nil {
-		panic(err)
-	}
-
 	client, err := minio.New(s.config.Endpoint, &minio.Options{
-		Creds:     credentials.NewStaticV4(s.config.AccessKeyID, s.config.SecretAccessKey, ""),
-		Secure:    !s.config.Insecure,
-		Region:    s.config.Region,
-		Transport: otelhttp.NewTransport(transport),
+		Creds:  credentials.NewStaticV4(s.config.AccessKeyID, s.config.SecretAccessKey, ""),
+		Secure: !s.config.Insecure,
+		Region: s.config.Region,
 	})
 
 	if err != nil {

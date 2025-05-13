@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"connectrpc.com/connect"
-	"github.com/yoshino-s/go-framework/errors"
+	"github.com/go-errors/errors"
 	"github.com/yoshino-s/soar-helper/internal/beian"
 	"github.com/yoshino-s/soar-helper/internal/persistent/db"
 	v1 "github.com/yoshino-s/soar-helper/internal/proto/v1"
@@ -37,7 +37,7 @@ func (s *IcpQueryService) Query(ctx context.Context, req *connect.Request[v1.Que
 
 	icp, cached, err := s.chinaz.Query(ctx, host, req.Msg.NoCache)
 	if err != nil {
-		return nil, errors.Wrap(err, "query chinaz icp error")
+		return nil, errors.New(err)
 	}
 
 	return connect.NewResponse(&v1.QueryResponse{
@@ -66,7 +66,7 @@ func (s *IcpQueryService) BatchQuery(ctx context.Context, req *connect.Request[v
 	records := make([]*v1.IcpRecord, len(hosts))
 	res, cached, errs, err := s.chinaz.BatchQuery(ctx, hosts, req.Msg.NoCache)
 	if err != nil {
-		return nil, errors.Wrap(err, "query chinaz icp error")
+		return nil, errors.New(err)
 	}
 	for i, icp := range res {
 		records[i] = &v1.IcpRecord{
@@ -96,7 +96,7 @@ func (s *IcpQueryService) BatchQuery(ctx context.Context, req *connect.Request[v
 func (s *IcpQueryService) Statistic(ctx context.Context, req *connect.Request[emptypb.Empty]) (*connect.Response[v1.StatisticResponse], error) {
 	total, err := s.db.Icp.Query().Count(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err, "query icp count error")
+		return nil, errors.New(err)
 	}
 	return connect.NewResponse(&v1.StatisticResponse{
 		Total: int64(total),

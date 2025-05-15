@@ -584,8 +584,6 @@ github.com/yl2chen/cidranger v1.0.2 h1:lbOWZVCG1tCRX4u24kuM1Tb4nHqWkDxwLdoS+Seva
 github.com/yl2chen/cidranger v1.0.2/go.mod h1:9U1yz7WPYDwf0vpNWFaeRh0bjwz5RVgRy/9UEQfHl0g=
 github.com/yoshino-s/go-app v0.3.4 h1:IzS74Q+j0L21MrDhFhYjCcBfhmz/7rc2JH3WUmjxsfI=
 github.com/yoshino-s/go-app v0.3.4/go.mod h1:yYGzKcsDKTtvQ3qwkgkcr4ocDol5TBEYL85niAtVYYU=
-github.com/yoshino-s/go-framework v0.7.7 h1:u3I0CuOzDMbgD6oHDuOFIrEa+41H99hkkOe7r+/ppdY=
-github.com/yoshino-s/go-framework v0.7.7/go.mod h1:wwpPwNcDh9eV7w4fC4ARwmBqm+6DKFnZzSmdTURaECI=
 github.com/yoshino-s/go-framework v0.7.8 h1:r2jeFq9S4+A8WpJab7aHwZrvitYGO63sEPXGhVKQYo4=
 github.com/yoshino-s/go-framework v0.7.8/go.mod h1:wwpPwNcDh9eV7w4fC4ARwmBqm+6DKFnZzSmdTURaECI=
 github.com/yoshino-s/kuaidaili-go v0.0.2 h1:9f9pU8HoxKdWcQi5J8VXs/lsQhZn9Mv0/b/pnQjzcUk=

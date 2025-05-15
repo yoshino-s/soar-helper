@@ -11,8 +11,6 @@ import (
 	"github.com/yoshino-s/soar-helper/internal/handler/http"
 	"github.com/yoshino-s/soar-helper/internal/s3"
 	"github.com/yoshino-s/soar-helper/internal/utils"
-	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/trace"
 )
 
 func init() {
@@ -60,11 +58,7 @@ var (
 			httpApp.SetToolsHandler(toolsService)
 			httpApp.SetS3Handler(s3Service)
 
-			ctx, span := otel.Tracer("github.com/yoshino-s/soar-helper").
-				Start(context.Background(), "cmd.serve", trace.WithNewRoot())
-			defer span.End()
-
-			app.Go(ctx)
+			app.Go(context.Background())
 		},
 	}
 )

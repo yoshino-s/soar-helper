@@ -7,8 +7,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/yoshino-s/go-framework/application"
 	"github.com/yoshino-s/go-framework/utils"
-	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/trace"
 )
 
 func init() {
@@ -32,11 +30,7 @@ var (
 				}
 			}))
 
-			ctx, span := otel.Tracer("github.com/yoshino-s/soar-helper").
-				Start(context.Background(), "cmd.migrate", trace.WithNewRoot())
-			defer span.End()
-
-			app.Go(ctx)
+			app.Go(context.TODO())
 		},
 	}
 )

@@ -77,7 +77,7 @@ func (h *Handler) Setup(ctx context.Context) {
 	if err != nil {
 		h.EmptyApplication.Logger.Fatal("failed to create otel interceptor", zap.Error(err), log.Context(ctx))
 	} else {
-		opts = append(opts, connect.WithInterceptors(otelInterceptor))
+		opts = append(opts, connect.WithInterceptors(otelInterceptor, &interceptor{}))
 	}
 
 	h.HandleGrpc(v1connect.NewIcpQueryServiceHandler(h.icpQueryHandler, opts...))

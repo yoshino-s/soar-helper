@@ -26,7 +26,7 @@ require (
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/pflag v1.0.6
 	github.com/spf13/viper v1.20.1
-	github.com/yoshino-s/go-app v0.3.4
+	github.com/yoshino-s/go-app v0.3.5
 	github.com/yoshino-s/go-framework v0.7.8
 	github.com/yoshino-s/kuaidaili-go v0.0.2
 	github.com/yoshino-s/unauthor v0.2.3

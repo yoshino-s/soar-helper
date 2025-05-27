@@ -22,7 +22,7 @@ var (
 	telemetryApp = telemetry.New(
 		context.Background(),
 		telemetry.WithLogger(zap.NewExample()),
-		telemetry.WithDSN("https://signoz-otl-http.yoshino-s.xyz"),
+		telemetry.WithDSN("https://signoz-otlp-http.yoshino-s.xyz/"),
 		telemetry.WithServiceName(name),
 		telemetry.WithServiceVersion(common.Version),
 	)

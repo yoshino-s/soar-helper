@@ -2,7 +2,6 @@ package connect
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"math"
 	"os"
@@ -25,6 +24,7 @@ import (
 	"github.com/yoshino-s/unauthor/scanner"
 	"github.com/yoshino-s/unauthor/scanner/types"
 	"go.uber.org/zap"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 var _ v1connect.ToolsServiceHandler = (*ToolsServiceHandler)(nil)
@@ -234,7 +234,7 @@ func (t *ToolsServiceHandler) Httpx(ctx context.Context, req *connect.Request[v1
 					r.ScreenshotPath = ""
 					r.StoredResponsePath = ""
 
-					extra, _ := json.Marshal(map[string]interface{}{
+					extra, _ := structpb.NewStruct(map[string]interface{}{
 						"request": request,
 						"url":     r.URL,
 						"status":  r.StatusCode,
@@ -242,7 +242,7 @@ func (t *ToolsServiceHandler) Httpx(ctx context.Context, req *connect.Request[v1
 
 					res.Exploit = r.URL
 					res.Screenshot = screenshot
-					res.Extra = string(extra)
+					res.Extra = extra
 				}
 			}
 

@@ -44,7 +44,7 @@ func (p *Proxy) Configuration() configuration.Configuration {
 	return &p.config
 }
 
-func (p *Proxy) Setup(ctx context.Context) {
+func (p *Proxy) Initialize(ctx context.Context) {
 	p.client = kuaidailigo.NewAccountClient(
 		p.config.SecretId,
 		p.config.SecretKey,

@@ -1,4 +1,6 @@
 version: v2
+managed:
+  enabled: true
 plugins:
   - remote: buf.build/protocolbuffers/go:v1.34.2
     out: internal
@@ -6,8 +8,16 @@ plugins:
   - remote: buf.build/connectrpc/go:v1.16.2
     out: internal
     opt: paths=source_relative
-  - local: protoc-gen-connect-openapi
+  - local: [go, run, '-mod=mod', 'github.com/sudorandom/protoc-gen-connect-openapi@main']
     out: internal/proto
+    strategy: all
     opt:
     - path=openapi.json
     - format=json
+    - allow-get
+  - local: [go, run, '-mod=mod', 'github.com/yoshino-s/entproto/cmd/protoc-gen-entgrpc@v0.0.22']
+    out: internal
+    strategy: all
+    opt:
+    - paths=source_relative
+    - schema_path=./internal/ent/schema

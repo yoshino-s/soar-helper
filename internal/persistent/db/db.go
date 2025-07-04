@@ -33,7 +33,7 @@ func (c *Client) Configuration() configuration.Configuration {
 	return &c.config
 }
 
-func (c *Client) Setup(context.Context) {
+func (c *Client) Initialize(context.Context) {
 	drv := utils.Must(sql.Open(c.config.DriverName, c.config.DataSourceName))
 	c.Client = ent.NewClient(ent.Driver(drv)).DebugWithZap(c.Logger)
 }

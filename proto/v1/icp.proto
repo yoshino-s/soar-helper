@@ -2,7 +2,7 @@ syntax = "proto3";
 package yoshino_s.soar_helper.v1;
 
 import "google/protobuf/empty.proto";
-import "google/protobuf/timestamp.proto";
+import "proto/entpb/entpb.proto";
 
 option go_package = "github.com/yoshino-s/soar-helper/internal/proto/v1";
 
@@ -16,30 +16,9 @@ message BatchQueryRequest {
   bool no_cache = 2;
 }
 
-message QueryResponse {
-  IcpRecord data = 1;
-}
-
 message BatchQueryResponse {
-  repeated IcpRecord data = 1;
+  repeated entpb.Icp items = 1;
   map<string, string> errors = 2;
-}
-
-message IcpRecord {
-  int64 id = 1;
-  string host = 2;
-  string city = 3;
-  string province = 4;
-  string company = 5;
-  string owner = 6;
-  string type = 7;
-  string homepage = 8;
-  string permit = 9;
-  google.protobuf.Timestamp created_at = 10;
-  google.protobuf.Timestamp updated_at = 11;
-  bool cached = 12;
-  string input = 13;
-  string web_name = 14;
 }
 
 message StatisticResponse {
@@ -47,7 +26,7 @@ message StatisticResponse {
 }
 
 service IcpQueryService {
-  rpc Query(QueryRequest) returns (QueryResponse) {}
+  rpc Query(QueryRequest) returns (entpb.Icp) {}
   rpc BatchQuery(BatchQueryRequest) returns (BatchQueryResponse) {}
   rpc Statistic(google.protobuf.Empty) returns (StatisticResponse) {}
 }

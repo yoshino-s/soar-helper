@@ -22,6 +22,7 @@ type IcpQuery struct {
 	order      []icp.OrderOption
 	inters     []Interceptor
 	predicates []predicate.Icp
+	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -251,8 +252,9 @@ func (iq *IcpQuery) Clone() *IcpQuery {
 		inters:     append([]Interceptor{}, iq.inters...),
 		predicates: append([]predicate.Icp{}, iq.predicates...),
 		// clone intermediate query.
-		sql:  iq.sql.Clone(),
-		path: iq.path,
+		sql:       iq.sql.Clone(),
+		path:      iq.path,
+		modifiers: append([]func(*sql.Selector){}, iq.modifiers...),
 	}
 }
 
@@ -343,6 +345,9 @@ func (iq *IcpQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Icp, err
 		nodes = append(nodes, node)
 		return node.assignValues(columns, values)
 	}
+	if len(iq.modifiers) > 0 {
+		_spec.Modifiers = iq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -357,6 +362,9 @@ func (iq *IcpQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Icp, err
 
 func (iq *IcpQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := iq.querySpec()
+	if len(iq.modifiers) > 0 {
+		_spec.Modifiers = iq.modifiers
+	}
 	_spec.Node.Columns = iq.ctx.Fields
 	if len(iq.ctx.Fields) > 0 {
 		_spec.Unique = iq.ctx.Unique != nil && *iq.ctx.Unique
@@ -419,6 +427,9 @@ func (iq *IcpQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if iq.ctx.Unique != nil && *iq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range iq.modifiers {
+		m(selector)
+	}
 	for _, p := range iq.predicates {
 		p(selector)
 	}
@@ -434,6 +445,12 @@ func (iq *IcpQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (iq *IcpQuery) Modify(modifiers ...func(s *sql.Selector)) *IcpSelect {
+	iq.modifiers = append(iq.modifiers, modifiers...)
+	return iq.Select()
 }
 
 // IcpGroupBy is the group-by builder for Icp entities.
@@ -524,4 +541,10 @@ func (is *IcpSelect) sqlScan(ctx context.Context, root *IcpQuery, v any) error {
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (is *IcpSelect) Modify(modifiers ...func(s *sql.Selector)) *IcpSelect {
+	is.modifiers = append(is.modifiers, modifiers...)
+	return is
 }

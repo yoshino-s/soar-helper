@@ -22,32 +22,16 @@ var _ application.Application = (*Handler)(nil)
 type Handler struct {
 	*http.Handler
 
-	icpQueryHandler v1connect.IcpQueryServiceHandler
-	runnerHandler   v1connect.RunnerServiceHandler
-	toolsHandler    v1connect.ToolsServiceHandler
-	s3Handler       v1connect.S3ServiceHandler
+	icpQueryHandler v1connect.IcpQueryServiceHandler `inject:""`
+	runnerHandler   v1connect.RunnerServiceHandler   `inject:""`
+	toolsHandler    v1connect.ToolsServiceHandler    `inject:""`
+	s3Handler       v1connect.S3ServiceHandler       `inject:""`
 }
 
 func New() *Handler {
 	return &Handler{
 		Handler: http.New(),
 	}
-}
-
-func (h *Handler) SetIcpQueryHandler(handler v1connect.IcpQueryServiceHandler) {
-	h.icpQueryHandler = handler
-}
-
-func (h *Handler) SetRunnerHandler(handler v1connect.RunnerServiceHandler) {
-	h.runnerHandler = handler
-}
-
-func (h *Handler) SetToolsHandler(handler v1connect.ToolsServiceHandler) {
-	h.toolsHandler = handler
-}
-
-func (h *Handler) SetS3Handler(handler v1connect.S3ServiceHandler) {
-	h.s3Handler = handler
 }
 
 func (h *Handler) Setup(ctx context.Context) {

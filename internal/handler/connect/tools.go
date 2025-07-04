@@ -6,14 +6,12 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"reflect"
 	"strings"
 	"sync"
 	"time"
 
 	"connectrpc.com/connect"
 	"github.com/go-errors/errors"
-	"github.com/go-rod/rod"
 	"github.com/google/uuid"
 	"github.com/minio/minio-go/v7"
 	"github.com/projectdiscovery/goflags"
@@ -29,37 +27,22 @@ import (
 	"go.uber.org/zap"
 )
 
-func init() {
-	pageValue := reflect.ValueOf(rod.Page{})
-	method := pageValue.MethodByName("Screenshot")
-	if method.IsValid() && method.Kind() == reflect.Func {
-		originalFunc := method.Interface().(func(bool) error)
-		pageValue.MethodByName("Screenshot").Set(reflect.MakeFunc(method.Type(), func(args []reflect.Value) []reflect.Value {
-			return reflect.ValueOf(originalFunc).Call([]reflect.Value{reflect.ValueOf(true)})
-		}))
-	}
-}
+var _ v1connect.ToolsServiceHandler = (*ToolsServiceHandler)(nil)
 
-var _ v1connect.ToolsServiceHandler = (*ToolsService)(nil)
+var _ application.Application = (*ToolsServiceHandler)(nil)
 
-var _ application.Application = (*ToolsService)(nil)
-
-type ToolsService struct {
+type ToolsServiceHandler struct {
 	*application.EmptyApplication
-	s3 *s3.S3
+	s3 *s3.S3 `inject:""`
 }
 
-func NewToolsService() *ToolsService {
-	return &ToolsService{
-		EmptyApplication: application.NewEmptyApplication("tools"),
+func NewToolsServiceHandler() *ToolsServiceHandler {
+	return &ToolsServiceHandler{
+		EmptyApplication: application.NewEmptyApplication("ToolsServiceHandler"),
 	}
 }
 
-func (s *ToolsService) SetS3(s3 *s3.S3) {
-	s.s3 = s3
-}
-
-func (t *ToolsService) Unauthor(ctx context.Context, req *connect.Request[v1.UnauthorRequest], stream *connect.ServerStream[v1.ExploitResult]) error {
+func (t *ToolsServiceHandler) Unauthor(ctx context.Context, req *connect.Request[v1.UnauthorRequest], stream *connect.ServerStream[v1.ExploitResult]) error {
 	s := scanner.New()
 	lock := &sync.Mutex{}
 
@@ -145,7 +128,7 @@ func (t *ToolsService) Unauthor(ctx context.Context, req *connect.Request[v1.Una
 	return nil
 }
 
-func (t *ToolsService) Httpx(ctx context.Context, req *connect.Request[v1.HttpxRequest], stream *connect.ServerStream[v1.ExploitResult]) error {
+func (t *ToolsServiceHandler) Httpx(ctx context.Context, req *connect.Request[v1.HttpxRequest], stream *connect.ServerStream[v1.ExploitResult]) error {
 	lock := &sync.Mutex{}
 
 	if req.Msg.Concurrent <= 0 {

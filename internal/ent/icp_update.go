@@ -18,8 +18,9 @@ import (
 // IcpUpdate is the builder for updating Icp entities.
 type IcpUpdate struct {
 	config
-	hooks    []Hook
-	mutation *IcpMutation
+	hooks     []Hook
+	mutation  *IcpMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the IcpUpdate builder.
@@ -243,6 +244,12 @@ func (iu *IcpUpdate) defaults() {
 	}
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (iu *IcpUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *IcpUpdate {
+	iu.modifiers = append(iu.modifiers, modifiers...)
+	return iu
+}
+
 func (iu *IcpUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := sqlgraph.NewUpdateSpec(icp.Table, icp.Columns, sqlgraph.NewFieldSpec(icp.FieldID, field.TypeInt))
 	if ps := iu.mutation.predicates; len(ps) > 0 {
@@ -303,6 +310,7 @@ func (iu *IcpUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := iu.mutation.UpdatedAt(); ok {
 		_spec.SetField(icp.FieldUpdatedAt, field.TypeTime, value)
 	}
+	_spec.AddModifiers(iu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, iu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{icp.Label}
@@ -318,9 +326,10 @@ func (iu *IcpUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // IcpUpdateOne is the builder for updating a single Icp entity.
 type IcpUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *IcpMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *IcpMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCity sets the "city" field.
@@ -551,6 +560,12 @@ func (iuo *IcpUpdateOne) defaults() {
 	}
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (iuo *IcpUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *IcpUpdateOne {
+	iuo.modifiers = append(iuo.modifiers, modifiers...)
+	return iuo
+}
+
 func (iuo *IcpUpdateOne) sqlSave(ctx context.Context) (_node *Icp, err error) {
 	_spec := sqlgraph.NewUpdateSpec(icp.Table, icp.Columns, sqlgraph.NewFieldSpec(icp.FieldID, field.TypeInt))
 	id, ok := iuo.mutation.ID()
@@ -628,6 +643,7 @@ func (iuo *IcpUpdateOne) sqlSave(ctx context.Context) (_node *Icp, err error) {
 	if value, ok := iuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(icp.FieldUpdatedAt, field.TypeTime, value)
 	}
+	_spec.AddModifiers(iuo.modifiers...)
 	_node = &Icp{config: iuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

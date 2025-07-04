@@ -8,6 +8,7 @@ import (
 	connect "connectrpc.com/connect"
 	context "context"
 	errors "errors"
+	entpb "github.com/yoshino-s/soar-helper/internal/proto/entpb"
 	v1 "github.com/yoshino-s/soar-helper/internal/proto/v1"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	http "net/http"
@@ -54,7 +55,7 @@ var (
 
 // IcpQueryServiceClient is a client for the yoshino_s.soar_helper.v1.IcpQueryService service.
 type IcpQueryServiceClient interface {
-	Query(context.Context, *connect.Request[v1.QueryRequest]) (*connect.Response[v1.QueryResponse], error)
+	Query(context.Context, *connect.Request[v1.QueryRequest]) (*connect.Response[entpb.Icp], error)
 	BatchQuery(context.Context, *connect.Request[v1.BatchQueryRequest]) (*connect.Response[v1.BatchQueryResponse], error)
 	Statistic(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.StatisticResponse], error)
 }
@@ -69,7 +70,7 @@ type IcpQueryServiceClient interface {
 func NewIcpQueryServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) IcpQueryServiceClient {
 	baseURL = strings.TrimRight(baseURL, "/")
 	return &icpQueryServiceClient{
-		query: connect.NewClient[v1.QueryRequest, v1.QueryResponse](
+		query: connect.NewClient[v1.QueryRequest, entpb.Icp](
 			httpClient,
 			baseURL+IcpQueryServiceQueryProcedure,
 			connect.WithSchema(icpQueryServiceQueryMethodDescriptor),
@@ -92,13 +93,13 @@ func NewIcpQueryServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 
 // icpQueryServiceClient implements IcpQueryServiceClient.
 type icpQueryServiceClient struct {
-	query      *connect.Client[v1.QueryRequest, v1.QueryResponse]
+	query      *connect.Client[v1.QueryRequest, entpb.Icp]
 	batchQuery *connect.Client[v1.BatchQueryRequest, v1.BatchQueryResponse]
 	statistic  *connect.Client[emptypb.Empty, v1.StatisticResponse]
 }
 
 // Query calls yoshino_s.soar_helper.v1.IcpQueryService.Query.
-func (c *icpQueryServiceClient) Query(ctx context.Context, req *connect.Request[v1.QueryRequest]) (*connect.Response[v1.QueryResponse], error) {
+func (c *icpQueryServiceClient) Query(ctx context.Context, req *connect.Request[v1.QueryRequest]) (*connect.Response[entpb.Icp], error) {
 	return c.query.CallUnary(ctx, req)
 }
 
@@ -115,7 +116,7 @@ func (c *icpQueryServiceClient) Statistic(ctx context.Context, req *connect.Requ
 // IcpQueryServiceHandler is an implementation of the yoshino_s.soar_helper.v1.IcpQueryService
 // service.
 type IcpQueryServiceHandler interface {
-	Query(context.Context, *connect.Request[v1.QueryRequest]) (*connect.Response[v1.QueryResponse], error)
+	Query(context.Context, *connect.Request[v1.QueryRequest]) (*connect.Response[entpb.Icp], error)
 	BatchQuery(context.Context, *connect.Request[v1.BatchQueryRequest]) (*connect.Response[v1.BatchQueryResponse], error)
 	Statistic(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.StatisticResponse], error)
 }
@@ -161,7 +162,7 @@ func NewIcpQueryServiceHandler(svc IcpQueryServiceHandler, opts ...connect.Handl
 // UnimplementedIcpQueryServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedIcpQueryServiceHandler struct{}
 
-func (UnimplementedIcpQueryServiceHandler) Query(context.Context, *connect.Request[v1.QueryRequest]) (*connect.Response[v1.QueryResponse], error) {
+func (UnimplementedIcpQueryServiceHandler) Query(context.Context, *connect.Request[v1.QueryRequest]) (*connect.Response[entpb.Icp], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("yoshino_s.soar_helper.v1.IcpQueryService.Query is not implemented"))
 }
 

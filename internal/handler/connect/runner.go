@@ -11,19 +11,23 @@ import (
 	"connectrpc.com/connect"
 	"github.com/go-errors/errors"
 	"github.com/sourcegraph/conc"
+	"github.com/yoshino-s/go-framework/application"
 	v1 "github.com/yoshino-s/soar-helper/internal/proto/v1"
 	"github.com/yoshino-s/soar-helper/internal/proto/v1/v1connect"
 )
 
-var _ v1connect.RunnerServiceHandler = (*RunnerService)(nil)
+var _ v1connect.RunnerServiceHandler = (*RunnerServiceHandler)(nil)
 
-type RunnerService struct {
+type RunnerServiceHandler struct {
+	*application.EmptyApplication
 }
 
-func NewRunnerService() *RunnerService {
-	return &RunnerService{}
+func NewRunnerServiceHandler() *RunnerServiceHandler {
+	return &RunnerServiceHandler{
+		EmptyApplication: application.NewEmptyApplication("RunnerServiceHandler"),
+	}
 }
-func (s *RunnerService) Run(ctx context.Context, req *connect.Request[v1.RunRequest]) (*connect.Response[v1.RunResponse], error) {
+func (s *RunnerServiceHandler) RunWithoutStream(ctx context.Context, req *connect.Request[v1.RunRequest]) (*connect.Response[v1.RunResponse], error) {
 	if len(req.Msg.Commands) == 0 {
 		return nil, errors.Errorf("commands is empty")
 	}
@@ -68,7 +72,7 @@ func (s *RunnerService) Run(ctx context.Context, req *connect.Request[v1.RunRequ
 	}), nil
 }
 
-func (s *RunnerService) RunStream(ctx context.Context, req *connect.Request[v1.RunRequest], stream *connect.ServerStream[v1.RunStreamData]) error {
+func (s *RunnerServiceHandler) RunStream(ctx context.Context, req *connect.Request[v1.RunRequest], stream *connect.ServerStream[v1.RunStreamData]) error {
 	if len(req.Msg.Commands) == 0 {
 		return errors.Errorf("commands is empty")
 	}
@@ -135,7 +139,7 @@ func (s *RunnerService) RunStream(ctx context.Context, req *connect.Request[v1.R
 	return wg.WaitAndRecover().AsError()
 }
 
-func (s *RunnerService) ReadFile(ctx context.Context, req *connect.Request[v1.ReadFileRequest]) (*connect.Response[v1.ReadFileResponse], error) {
+func (s *RunnerServiceHandler) ReadFile(ctx context.Context, req *connect.Request[v1.ReadFileRequest]) (*connect.Response[v1.ReadFileResponse], error) {
 	f, err := os.Open(req.Msg.Path)
 	if err != nil {
 		return nil, errors.New(err)
@@ -152,7 +156,7 @@ func (s *RunnerService) ReadFile(ctx context.Context, req *connect.Request[v1.Re
 	}), nil
 }
 
-func (s *RunnerService) WriteFile(ctx context.Context, req *connect.Request[v1.WriteFileRequest]) (*connect.Response[v1.WriteFileResponse], error) {
+func (s *RunnerServiceHandler) WriteFile(ctx context.Context, req *connect.Request[v1.WriteFileRequest]) (*connect.Response[v1.WriteFileResponse], error) {
 	f, err := os.OpenFile(req.Msg.Path, os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		return nil, errors.New(err)

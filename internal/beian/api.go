@@ -24,8 +24,7 @@ import (
 type Beian struct {
 	*application.EmptyApplication
 	config config
-	db     *db.Client
-	proxy  *proxy.Proxy
+	db     *db.Client `inject:""`
 	icpApi *icp_api.IcpApi
 
 	dbLock sync.Mutex
@@ -39,9 +38,7 @@ func New() *Beian {
 	}
 }
 
-func (c *Beian) Set(db *db.Client, proxy *proxy.Proxy) {
-	c.db = db
-	c.proxy = proxy
+func (c *Beian) Set(proxy *proxy.Proxy) {
 	c.icpApi = icp_api.New(proxy)
 }
 
@@ -49,7 +46,7 @@ func (c *Beian) Configuration() configuration.Configuration {
 	return &c.config
 }
 
-func (c *Beian) Setup(ctx context.Context) {
+func (c *Beian) Initialize(ctx context.Context) {
 	if c.config.MiitSign == "" {
 		panic("miit_sign is required")
 	}

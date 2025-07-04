@@ -30,7 +30,7 @@ func (s *S3) Configuration() configuration.Configuration {
 	return &s.config
 }
 
-func (s *S3) Setup(context.Context) {
+func (s *S3) Initialize(context.Context) {
 	client, err := minio.New(s.config.Endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(s.config.AccessKeyID, s.config.SecretAccessKey, ""),
 		Secure: !s.config.Insecure,

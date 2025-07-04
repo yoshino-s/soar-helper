@@ -5,95 +5,61 @@ import (
 
 	"connectrpc.com/connect"
 	"github.com/go-errors/errors"
+	"github.com/yoshino-s/entproto/runtime"
+	"github.com/yoshino-s/go-framework/application"
 	"github.com/yoshino-s/soar-helper/internal/beian"
 	"github.com/yoshino-s/soar-helper/internal/persistent/db"
+	"github.com/yoshino-s/soar-helper/internal/proto/entpb"
+	"github.com/yoshino-s/soar-helper/internal/proto/entpb/entpbservice"
 	v1 "github.com/yoshino-s/soar-helper/internal/proto/v1"
 	"github.com/yoshino-s/soar-helper/internal/proto/v1/v1connect"
 	"google.golang.org/protobuf/types/known/emptypb"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-var _ v1connect.IcpQueryServiceHandler = (*IcpQueryService)(nil)
+var _ v1connect.IcpQueryServiceHandler = (*IcpQueryServiceHandler)(nil)
 
-type IcpQueryService struct {
-	chinaz *beian.Beian
-	db     *db.Client
+type IcpQueryServiceHandler struct {
+	*application.EmptyApplication
+	chinaz *beian.Beian `inject:""`
+	db     *db.Client   `inject:""`
 }
 
-func NewIcpQueryService() *IcpQueryService {
-	return &IcpQueryService{}
+func NewIcpQueryServiceHandler() *IcpQueryServiceHandler {
+	return &IcpQueryServiceHandler{
+		EmptyApplication: application.NewEmptyApplication("IcpQueryServiceHandler"),
+	}
 }
 
-func (s *IcpQueryService) SetChinaz(chinaz *beian.Beian) {
-	s.chinaz = chinaz
-}
-
-func (s *IcpQueryService) SetDB(db *db.Client) {
-	s.db = db
-}
-
-func (s *IcpQueryService) Query(ctx context.Context, req *connect.Request[v1.QueryRequest]) (*connect.Response[v1.QueryResponse], error) {
+func (s *IcpQueryServiceHandler) Query(ctx context.Context, req *connect.Request[v1.QueryRequest]) (*connect.Response[entpb.Icp], error) {
 	host := req.Msg.Host
 
-	icp, cached, err := s.chinaz.Query(ctx, host, req.Msg.NoCache)
+	icp, _, err := s.chinaz.Query(ctx, host, req.Msg.NoCache)
 	if err != nil {
 		return nil, errors.New(err)
 	}
 
-	return connect.NewResponse(&v1.QueryResponse{
-		Data: &v1.IcpRecord{
-			Id:        int64(icp.ID),
-			Host:      icp.Host,
-			City:      icp.City,
-			Province:  icp.Province,
-			Company:   icp.Company,
-			Owner:     icp.Owner,
-			Type:      icp.Type,
-			Homepage:  icp.Homepage,
-			Permit:    icp.Permit,
-			CreatedAt: timestamppb.New(icp.CreatedAt),
-			UpdatedAt: timestamppb.New(icp.UpdatedAt),
-			Cached:    cached,
-			Input:     host,
-			WebName:   icp.WebName,
-		},
-	}), nil
+	return runtime.WrapResult(entpbservice.ToProtoIcp(icp))
 }
 
-func (s *IcpQueryService) BatchQuery(ctx context.Context, req *connect.Request[v1.BatchQueryRequest]) (*connect.Response[v1.BatchQueryResponse], error) {
+func (s *IcpQueryServiceHandler) BatchQuery(ctx context.Context, req *connect.Request[v1.BatchQueryRequest]) (*connect.Response[v1.BatchQueryResponse], error) {
 	hosts := req.Msg.Hosts
 
-	records := make([]*v1.IcpRecord, len(hosts))
-	res, cached, errs, err := s.chinaz.BatchQuery(ctx, hosts, req.Msg.NoCache)
+	res, _, errs, err := s.chinaz.BatchQuery(ctx, hosts, req.Msg.NoCache)
 	if err != nil {
-		return nil, errors.New(err)
+		return nil, connect.NewError(connect.CodeInternal, err)
 	}
-	for i, icp := range res {
-		records[i] = &v1.IcpRecord{
-			Id:        int64(icp.ID),
-			Host:      icp.Host,
-			City:      icp.City,
-			Province:  icp.Province,
-			Company:   icp.Company,
-			Owner:     icp.Owner,
-			Type:      icp.Type,
-			Homepage:  icp.Homepage,
-			Permit:    icp.Permit,
-			CreatedAt: timestamppb.New(icp.CreatedAt),
-			UpdatedAt: timestamppb.New(icp.UpdatedAt),
-			Cached:    cached[i],
-			Input:     hosts[i],
-			WebName:   icp.WebName,
-		}
+	records, err := entpbservice.ToProtoIcpList(res)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
 	}
 
 	return connect.NewResponse(&v1.BatchQueryResponse{
-		Data:   records,
+		Items:  records,
 		Errors: errs,
 	}), nil
 }
 
-func (s *IcpQueryService) Statistic(ctx context.Context, req *connect.Request[emptypb.Empty]) (*connect.Response[v1.StatisticResponse], error) {
+func (s *IcpQueryServiceHandler) Statistic(ctx context.Context, req *connect.Request[emptypb.Empty]) (*connect.Response[v1.StatisticResponse], error) {
 	total, err := s.db.Icp.Query().Count(ctx)
 	if err != nil {
 		return nil, errors.New(err)

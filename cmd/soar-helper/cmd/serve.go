@@ -25,10 +25,10 @@ var (
 	beianApp = beian.New()
 	s3App    = s3.New()
 
-	icpQueryService = connect.NewIcpQueryService()
-	runService      = connect.NewRunnerService()
-	toolsService    = connect.NewToolsService()
-	s3Service       = connect.NewS3Service()
+	icpQueryService = connect.NewIcpQueryServiceHandler()
+	runService      = connect.NewRunnerServiceHandler()
+	toolsService    = connect.NewToolsServiceHandler()
+	s3Service       = connect.NewS3ServiceHandler()
 
 	httpApp = http.New()
 
@@ -43,20 +43,10 @@ var (
 			app.Append(beianApp)
 			app.Append(s3App)
 			app.Append(toolsService)
-
-			beianApp.Set(dbApp, proxyApp)
-
-			icpQueryService.SetChinaz(beianApp)
-			icpQueryService.SetDB(dbApp)
-
-			s3Service.SetS3(s3App)
-
-			toolsService.SetS3(s3App)
-
-			httpApp.SetIcpQueryHandler(icpQueryService)
-			httpApp.SetRunnerHandler(runService)
-			httpApp.SetToolsHandler(toolsService)
-			httpApp.SetS3Handler(s3Service)
+			app.Append(connect.NewIcpQueryServiceHandler())
+			app.Append(connect.NewS3ServiceHandler())
+			app.Append(connect.NewToolsServiceHandler())
+			app.Append(connect.NewRunnerServiceHandler())
 
 			app.Go(context.Background())
 		},

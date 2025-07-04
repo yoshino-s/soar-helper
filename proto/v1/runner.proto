@@ -3,7 +3,6 @@ package yoshino_s.soar_helper.v1;
 
 option go_package = "github.com/yoshino-s/soar-helper/internal/proto/v1";
 
-
 message ReadFileRequest {
   string path = 1;
 }
@@ -17,8 +16,7 @@ message WriteFileRequest {
   string content = 2;
 }
 
-message WriteFileResponse {
-}
+message WriteFileResponse {}
 
 message RunRequest {
   repeated string commands = 1;
@@ -44,9 +42,8 @@ message RunStreamData {
   int32 exit_code = 3;
 }
 
-
 service RunnerService {
-  rpc Run(RunRequest) returns (RunResponse) {}
+  rpc RunWithoutStream(RunRequest) returns (RunResponse) {}
   rpc RunStream(RunRequest) returns (stream RunStreamData) {}
 
   rpc ReadFile(ReadFileRequest) returns (ReadFileResponse) {}

@@ -66,3 +66,9 @@ jobs:
       - name: Cosign
         run: |
           COSIGN_EXPERIMENTAL=true cosign sign --yes $DIGESTS
+      - name: Deploy
+        env:
+          DEPLOY_SCRIPT: ${{ secrets.DEPLOY_SCRIPT }}
+        run: |
+          echo $DEPLOY_SCRIPT > /tmp/deploy.sh
+          bash /tmp/deploy.sh $DIGESTS

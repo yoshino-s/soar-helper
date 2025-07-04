@@ -24,7 +24,8 @@ import (
 type Beian struct {
 	*application.EmptyApplication
 	config config
-	db     *db.Client `inject:""`
+	DB     *db.Client   `inject:""`
+	Proxy  *proxy.Proxy `inject:""`
 	icpApi *icp_api.IcpApi
 
 	dbLock sync.Mutex
@@ -38,15 +39,13 @@ func New() *Beian {
 	}
 }
 
-func (c *Beian) Set(proxy *proxy.Proxy) {
-	c.icpApi = icp_api.New(proxy)
-}
-
 func (c *Beian) Configuration() configuration.Configuration {
 	return &c.config
 }
 
 func (c *Beian) Initialize(ctx context.Context) {
+	c.icpApi = icp_api.New(c.Proxy)
+
 	if c.config.MiitSign == "" {
 		panic("miit_sign is required")
 	}
@@ -80,7 +79,7 @@ func (c *Beian) BatchQuery(ctx context.Context, domains []string, noCache bool) 
 	}
 
 	if !noCache {
-		queryRes, err := c.db.Icp.Query().Where(icp.HostIn(valid_domains_set.Slice()...)).All(ctx)
+		queryRes, err := c.DB.Icp.Query().Where(icp.HostIn(valid_domains_set.Slice()...)).All(ctx)
 		if err != nil {
 			return nil, nil, nil, err
 		}
@@ -129,7 +128,7 @@ func (c *Beian) Query(ctx context.Context, _domain string, noCache bool) (*ent.I
 		return nil, false, telemetry.ReportError(ctx, errors.Errorf("invalid domain: %s", _domain))
 	}
 	if !noCache {
-		res, err := c.db.Icp.Query().Where(icp.Host(domain)).First(ctx)
+		res, err := c.DB.Icp.Query().Where(icp.Host(domain)).First(ctx)
 		if err == nil {
 			return res, true, nil
 		} else if !ent.IsNotFound(err) {
@@ -159,7 +158,7 @@ func (c *Beian) query(ctx context.Context, domain string) (*ent.Icp, error) {
 	defer c.dbLock.Unlock()
 
 	// save icp
-	id, err := c.db.Icp.Create().
+	id, err := c.DB.Icp.Create().
 		SetHost(icp.Host).
 		SetCity(icp.City).
 		SetProvince(icp.Province).
@@ -177,7 +176,7 @@ func (c *Beian) query(ctx context.Context, domain string) (*ent.Icp, error) {
 		return nil, err
 	}
 
-	return c.db.Icp.Get(ctx, id)
+	return c.DB.Icp.Get(ctx, id)
 }
 
 func (c *Beian) icpQueryQuery(ctx context.Context, domain string) (*ent.Icp, error) {

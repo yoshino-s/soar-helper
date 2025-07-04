@@ -8,8 +8,7 @@ import (
 	"connectrpc.com/otelconnect"
 	"github.com/yoshino-s/go-framework/application"
 	"github.com/yoshino-s/go-framework/handlers/http"
-	"github.com/yoshino-s/go-framework/log"
-	"github.com/yoshino-s/go-framework/utils"
+	connect_handler "github.com/yoshino-s/soar-helper/internal/handler/connect"
 	gen "github.com/yoshino-s/soar-helper/internal/proto"
 	"github.com/yoshino-s/soar-helper/internal/proto/v1/v1connect"
 	"go.akshayshah.org/connectproto"
@@ -21,11 +20,6 @@ var _ application.Application = (*Handler)(nil)
 
 type Handler struct {
 	*http.Handler
-
-	icpQueryHandler v1connect.IcpQueryServiceHandler `inject:""`
-	runnerHandler   v1connect.RunnerServiceHandler   `inject:""`
-	toolsHandler    v1connect.ToolsServiceHandler    `inject:""`
-	s3Handler       v1connect.S3ServiceHandler       `inject:""`
 }
 
 func New() *Handler {
@@ -34,12 +28,12 @@ func New() *Handler {
 	}
 }
 
-func (h *Handler) Setup(ctx context.Context) {
-	utils.MustNoNil(h.icpQueryHandler, h.runnerHandler, h.toolsHandler)
-	h.Handler.Setup(ctx)
-
-	h.Swagger("/swagger", gen.OpenAPI)
-
+func (h *Handler) Set(
+	icpQueryServiceHandler *connect_handler.IcpQueryServiceHandler,
+	runnerServiceHandler *connect_handler.RunnerServiceHandler,
+	toolsServiceHandler *connect_handler.ToolsServiceHandler,
+	s3ServiceHandler *connect_handler.S3ServiceHandler,
+) {
 	reflector := grpcreflect.NewStaticReflector(
 		v1connect.IcpQueryServiceName,
 		v1connect.RunnerServiceName,
@@ -59,15 +53,21 @@ func (h *Handler) Setup(ctx context.Context) {
 
 	otelInterceptor, err := otelconnect.NewInterceptor(otelconnect.WithTrustRemote())
 	if err != nil {
-		h.EmptyApplication.Logger.Fatal("failed to create otel interceptor", zap.Error(err), log.Context(ctx))
+		h.EmptyApplication.Logger.Fatal("failed to create otel interceptor", zap.Error(err))
 	} else {
 		opts = append(opts, connect.WithInterceptors(otelInterceptor, &interceptor{}))
 	}
 
-	h.HandleGrpc(v1connect.NewIcpQueryServiceHandler(h.icpQueryHandler, opts...))
-	h.HandleGrpc(v1connect.NewRunnerServiceHandler(h.runnerHandler, opts...))
-	h.HandleGrpc(v1connect.NewToolsServiceHandler(h.toolsHandler, opts...))
-	h.HandleGrpc(v1connect.NewS3ServiceHandler(h.s3Handler, opts...))
+	h.HandleGrpc(v1connect.NewIcpQueryServiceHandler(icpQueryServiceHandler, opts...))
+	h.HandleGrpc(v1connect.NewRunnerServiceHandler(runnerServiceHandler, opts...))
+	h.HandleGrpc(v1connect.NewToolsServiceHandler(toolsServiceHandler, opts...))
+	h.HandleGrpc(v1connect.NewS3ServiceHandler(s3ServiceHandler, opts...))
+}
+
+func (h *Handler) Setup(ctx context.Context) {
+	h.Handler.Setup(ctx)
+
+	h.Swagger("/swagger", gen.OpenAPI)
 }
 
 func (h *Handler) Run(ctx context.Context) {

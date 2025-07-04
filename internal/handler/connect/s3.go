@@ -16,7 +16,7 @@ var _ v1connect.S3ServiceHandler = (*S3ServiceHandler)(nil)
 
 type S3ServiceHandler struct {
 	*application.EmptyApplication
-	s3 *s3.S3 `inject:""`
+	S3 *s3.S3 `inject:""`
 }
 
 func NewS3ServiceHandler() *S3ServiceHandler {
@@ -26,7 +26,7 @@ func NewS3ServiceHandler() *S3ServiceHandler {
 }
 
 func (s *S3ServiceHandler) Upload(ctx context.Context, req *connect.Request[v1.UploadRequest]) (*connect.Response[v1.UploadResponse], error) {
-	url, err := s.s3.Upload(ctx, req.Msg.Key, req.Msg.Path, minio.PutObjectOptions{})
+	url, err := s.S3.Upload(ctx, req.Msg.Key, req.Msg.Path, minio.PutObjectOptions{})
 	if err != nil {
 		return nil, errors.New(err)
 	}

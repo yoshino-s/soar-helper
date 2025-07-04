@@ -25,11 +25,6 @@ var (
 	beianApp = beian.New()
 	s3App    = s3.New()
 
-	icpQueryService = connect.NewIcpQueryServiceHandler()
-	runService      = connect.NewRunnerServiceHandler()
-	toolsService    = connect.NewToolsServiceHandler()
-	s3Service       = connect.NewS3ServiceHandler()
-
 	httpApp = http.New()
 
 	serveCmd = &cobra.Command{
@@ -42,7 +37,6 @@ var (
 			app.Append(httpApp)
 			app.Append(beianApp)
 			app.Append(s3App)
-			app.Append(toolsService)
 			app.Append(connect.NewIcpQueryServiceHandler())
 			app.Append(connect.NewS3ServiceHandler())
 			app.Append(connect.NewToolsServiceHandler())

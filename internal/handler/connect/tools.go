@@ -33,7 +33,7 @@ var _ application.Application = (*ToolsServiceHandler)(nil)
 
 type ToolsServiceHandler struct {
 	*application.EmptyApplication
-	s3 *s3.S3 `inject:""`
+	S3 *s3.S3 `inject:""`
 }
 
 func NewToolsServiceHandler() *ToolsServiceHandler {
@@ -79,8 +79,8 @@ func (t *ToolsServiceHandler) Unauthor(ctx context.Context, req *connect.Request
 			return "", err
 		}
 
-		if req.Msg.Upload && t.s3 != nil {
-			if url, err := t.s3.Upload(ctx, fmt.Sprintf("cmd_screenshot/%s.png", uuid.NewString()), tempFile.Name(), minio.PutObjectOptions{}); err != nil {
+		if req.Msg.Upload && t.S3 != nil {
+			if url, err := t.S3.Upload(ctx, fmt.Sprintf("cmd_screenshot/%s.png", uuid.NewString()), tempFile.Name(), minio.PutObjectOptions{}); err != nil {
 				return "", err
 			} else {
 				return url.String(), nil
@@ -138,7 +138,7 @@ func (t *ToolsServiceHandler) Httpx(ctx context.Context, req *connect.Request[v1
 		req.Msg.Timeout = int64(10 * time.Second)
 	}
 
-	if req.Msg.Upload && t.s3 == nil {
+	if req.Msg.Upload && t.S3 == nil {
 		return connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("s3 is not set"))
 	}
 
@@ -212,7 +212,7 @@ func (t *ToolsServiceHandler) Httpx(ctx context.Context, req *connect.Request[v1
 					if req.Msg.Upload {
 						if screenshot != "" {
 							screenshotKey := strings.Join(strings.Split(screenshot, "/")[len(strings.Split(screenshot, "/"))-3:], "/")
-							if url, err := t.s3.Upload(ctx, screenshotKey, screenshot, minio.PutObjectOptions{}); err != nil {
+							if url, err := t.S3.Upload(ctx, screenshotKey, screenshot, minio.PutObjectOptions{}); err != nil {
 								t.Logger.Error("failed to upload screenshot", zap.Error(err), log.Context(ctx))
 								screenshot = ""
 							} else {
@@ -222,7 +222,7 @@ func (t *ToolsServiceHandler) Httpx(ctx context.Context, req *connect.Request[v1
 
 						if request != "" {
 							requestKey := strings.Join(strings.Split(request, "/")[len(strings.Split(request, "/"))-3:], "/")
-							if url, err := t.s3.Upload(ctx, requestKey, request, minio.PutObjectOptions{}); err != nil {
+							if url, err := t.S3.Upload(ctx, requestKey, request, minio.PutObjectOptions{}); err != nil {
 								t.Logger.Error("failed to upload request", zap.Error(err), log.Context(ctx))
 								request = ""
 							} else {

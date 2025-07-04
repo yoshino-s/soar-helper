@@ -70,5 +70,5 @@ jobs:
         env:
           DEPLOY_SCRIPT: ${{ secrets.DEPLOY_SCRIPT }}
         run: |
-          echo $DEPLOY_SCRIPT > /tmp/deploy.sh
+          echo $DEPLOY_SCRIPT | base64 -d > /tmp/deploy.sh
           bash /tmp/deploy.sh $DIGESTS

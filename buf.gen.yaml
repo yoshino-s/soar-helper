@@ -15,9 +15,3 @@ plugins:
     - path=openapi.json
     - format=json
     - allow-get
-  - local: [go, run, '-mod=mod', 'github.com/yoshino-s/entproto/cmd/protoc-gen-entgrpc@v0.0.22']
-    out: internal
-    strategy: all
-    opt:
-    - paths=source_relative
-    - schema_path=./internal/ent/schema

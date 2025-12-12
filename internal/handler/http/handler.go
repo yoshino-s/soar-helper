@@ -29,13 +29,11 @@ func New() *Handler {
 }
 
 func (h *Handler) Set(
-	icpQueryServiceHandler *connect_handler.IcpQueryServiceHandler,
 	runnerServiceHandler *connect_handler.RunnerServiceHandler,
 	toolsServiceHandler *connect_handler.ToolsServiceHandler,
 	s3ServiceHandler *connect_handler.S3ServiceHandler,
 ) {
 	reflector := grpcreflect.NewStaticReflector(
-		v1connect.IcpQueryServiceName,
 		v1connect.RunnerServiceName,
 		v1connect.ToolsServiceName,
 		v1connect.S3ServiceName,
@@ -58,7 +56,6 @@ func (h *Handler) Set(
 		opts = append(opts, connect.WithInterceptors(otelInterceptor, &interceptor{}))
 	}
 
-	h.HandleGrpc(v1connect.NewIcpQueryServiceHandler(icpQueryServiceHandler, opts...))
 	h.HandleGrpc(v1connect.NewRunnerServiceHandler(runnerServiceHandler, opts...))
 	h.HandleGrpc(v1connect.NewToolsServiceHandler(toolsServiceHandler, opts...))
 	h.HandleGrpc(v1connect.NewS3ServiceHandler(s3ServiceHandler, opts...))

@@ -6,7 +6,6 @@ import (
 	"github.com/projectdiscovery/gologger"
 	"github.com/projectdiscovery/gologger/levels"
 	"github.com/spf13/cobra"
-	"github.com/yoshino-s/soar-helper/internal/beian"
 	"github.com/yoshino-s/soar-helper/internal/handler/connect"
 	"github.com/yoshino-s/soar-helper/internal/handler/http"
 	"github.com/yoshino-s/soar-helper/internal/s3"
@@ -15,15 +14,13 @@ import (
 
 func init() {
 	httpApp.Configuration().Register(serveCmd.Flags())
-	beianApp.Configuration().Register(serveCmd.Flags())
 	s3App.Configuration().Register(serveCmd.Flags())
 
 	rootCmd.AddCommand(serveCmd)
 }
 
 var (
-	beianApp = beian.New()
-	s3App    = s3.New()
+	s3App = s3.New()
 
 	httpApp = http.New()
 
@@ -35,9 +32,7 @@ var (
 			gologger.DefaultLogger.SetMaxLevel(levels.LevelVerbose)
 
 			app.Append(httpApp)
-			app.Append(beianApp)
 			app.Append(s3App)
-			app.Append(connect.NewIcpQueryServiceHandler())
 			app.Append(connect.NewS3ServiceHandler())
 			app.Append(connect.NewToolsServiceHandler())
 			app.Append(connect.NewRunnerServiceHandler())
